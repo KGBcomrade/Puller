@@ -115,5 +115,8 @@ class MainWindow(QMainWindow):
 
     def callSetupDialog(self):
         setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw)
-        setupWindow.exec()
+        if setupWindow.exec():
+            self.r0 = setupWindow.r0
+            self.rw = setupWindow.rw
+            self.lw = setupWindow.lw
 
