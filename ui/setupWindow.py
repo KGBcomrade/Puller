@@ -56,12 +56,12 @@ class SetupWindow(QDialog):
         self.LPlot.plot(x, Lx(x))
         self.rPlot.plot(x, Rx(x))
 
-    def updateR0(self):
-        self.r0 = self.r0Input.value()
+    def updateR0(self, r0):
+        self.r0 = r0
         self.updatePlots()
-    def updateRw(self):
-        self.rw = self.rwInput.value()
+    def updateRw(self, rw):
+        self.rw = rw
         self.updatePlots()
-    def updateLw(self):
-        self.lw = self.lwInput.value()
+    def updateLw(self, lw):
+        self.lw = lw
         self.updatePlots()
