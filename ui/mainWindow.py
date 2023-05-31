@@ -81,11 +81,11 @@ class MainWindow(QMainWindow):
 
         # x plot
         self.xPlot = Plot(ylabel='$x$, mm')
-        self.xvInput = QDoubleSpinBox()
+        self.xvInput = QDoubleSpinBox(decimals=5)
         self.xvInput.setValue(self.xv)
-        self.xaInput = QDoubleSpinBox()
+        self.xaInput = QDoubleSpinBox(decimals=5)
         self.xaInput.setValue(self.xa)
-        self.xdInput = QDoubleSpinBox()
+        self.xdInput = QDoubleSpinBox(decimals=5)
         self.xdInput.setValue(self.xd)
         xPlotLayout.addWidget(self.xPlot)
         xPlotLayout.addLayout(xPlotSideLayout)
@@ -101,9 +101,9 @@ class MainWindow(QMainWindow):
         
         # L plot
         self.LPlot = Plot(ylabel='$L$, mm')
-        self.LvInput = QDoubleSpinBox()
+        self.LvInput = QDoubleSpinBox(decimals=5)
         self.LvInput.setValue(self.Lv)
-        self.LaInput = QDoubleSpinBox()
+        self.LaInput = QDoubleSpinBox(decimals=5)
         self.LaInput.setValue(self.La)
         self.pullingSetupButton = QPushButton(pullingSetupButtonText)
         LPlotLayout.addWidget(self.LPlot)
