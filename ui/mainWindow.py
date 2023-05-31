@@ -112,6 +112,11 @@ class MainWindow(QMainWindow):
 
 
         self.pullingSetupButton.released.connect(self.callSetupDialog)
+        self.xvInput.valueChanged.connect(self.setXv)
+        self.xaInput.valueChanged.connect(self.setXa)
+        self.xdInput.valueChanged.connect(self.setXd)
+        self.LvInput.valueChanged.connect(self.setLv)
+        self.LaInput.valueChanged.connect(self.setLa)
 
     def callSetupDialog(self):
         setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw)
@@ -119,4 +124,15 @@ class MainWindow(QMainWindow):
             self.r0 = setupWindow.r0
             self.rw = setupWindow.rw
             self.lw = setupWindow.lw
+    def setXv(self, xv):
+        self.xv = xv
+    def setXa(self, xa):
+        self.xa = xa
+    def setXd(self, xd):
+        self.xd = xd
+
+    def setLv(self, Lv):
+        self.Lv = Lv
+    def setLa(self, La):
+        self.La = La
 
