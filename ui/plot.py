@@ -25,3 +25,5 @@ class Plot(FigureCanvasQTAgg):
             self.axes.set_xlabel(xlabel=self.xlabel)
         if self.ylabel is not None:
             self.axes.set_ylabel(ylabel=self.ylabel)
+        
+        self.draw_idle()
