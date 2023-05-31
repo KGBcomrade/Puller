@@ -1,6 +1,4 @@
 import sys
-from sys import path
-path += ['~/Documents/prg/newPuller/ui']
 import asyncio
 import qasync
 
