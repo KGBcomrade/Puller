@@ -3,6 +3,8 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVB
      QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
+from ui import Plot
+
 MTSButtonText = 'Начальная позиция'
 burnerSetupButtonText = 'Подвод горелки'
 HHOGenButtonStartText = 'Включить подачу смеси'
@@ -58,8 +60,6 @@ class MainWindow(QMainWindow):
 
         xPlotSideLayout = QGridLayout()
         LPlotSideLayout = QGridLayout()
-        xPlotLayout.addLayout(xPlotSideLayout)
-        LPlotLayout.addLayout(LPlotSideLayout)
 
         # side buttons
         self.MTSButton = QPushButton(MTSButtonText)
@@ -80,13 +80,15 @@ class MainWindow(QMainWindow):
         progressBarLayout.addWidget(self.startButton)
 
         # x plot
-        # TODO x plot
+        self.xPlot = Plot(ylabel='$x$, mm')
         self.xvInput = QDoubleSpinBox()
         self.xvInput.setValue(self.xv)
         self.xaInput = QDoubleSpinBox()
         self.xaInput.setValue(self.xa)
         self.xdInput = QDoubleSpinBox()
         self.xdInput.setValue(self.xd)
+        xPlotLayout.addWidget(self.xPlot)
+        xPlotLayout.addLayout(xPlotSideLayout)
         xPlotSideLayout.addWidget(QLabel('v='), 0, 0, alignment=Qt.AlignmentFlag.AlignRight)
         xPlotSideLayout.addWidget(self.xvInput, 0, 1)
         xPlotSideLayout.addWidget(QLabel('мм/с'), 0, 2)
@@ -98,12 +100,14 @@ class MainWindow(QMainWindow):
         xPlotSideLayout.addWidget(QLabel('мм/с²'), 2, 2)
         
         # L plot
-        # TODO L plot
+        self.LPlot = Plot(ylabel='$L$, mm')
         self.LvInput = QDoubleSpinBox()
         self.LvInput.setValue(self.Lv)
         self.LaInput = QDoubleSpinBox()
         self.LaInput.setValue(self.La)
         self.pullingSetupButton = QPushButton(pullingSetupButtonText)
+        LPlotLayout.addWidget(self.LPlot)
+        LPlotLayout.addLayout(LPlotSideLayout)
         LPlotSideLayout.addWidget(QLabel('v='), 0, 0, alignment=Qt.AlignmentFlag.AlignRight)
         LPlotSideLayout.addWidget(self.LvInput, 0, 1)
         LPlotSideLayout.addWidget(QLabel('мм/с'), 0, 2)
