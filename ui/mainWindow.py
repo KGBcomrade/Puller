@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVB
      QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
-from ui import Plot
+from ui import Plot, SetupWindow
 
 MTSButtonText = 'Начальная позиция'
 burnerSetupButtonText = 'Подвод горелки'
@@ -109,4 +109,11 @@ class MainWindow(QMainWindow):
         LPlotSideLayout.addWidget(self.pullingSetupButton)
         self.LaInput.setFixedWidth(180)
         LPlotFrame.setMinimumHeight(280)
+
+
+        self.pullingSetupButton.released.connect(self.callSetupDialog)
+
+    def callSetupDialog(self):
+        setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw)
+        setupWindow.exec()
 
