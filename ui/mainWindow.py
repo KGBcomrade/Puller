@@ -1,6 +1,6 @@
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox
+     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 MTSButtonText = 'Начальная позиция'
@@ -35,17 +35,27 @@ class MainWindow(QMainWindow):
         widget.setLayout(mainLayout)
         self.setCentralWidget(widget)
         
+        sideButtonFrame = QFrame()
+        # sideButtonFrame.setFrameShape(QFrame.Shape.Panel)
+        sideButtonFrame.setStyleSheet('background-color: rgb(120, 188, 255);')
         sideButtonLayout = QVBoxLayout()
         progressLayout = QVBoxLayout()
-        mainLayout.addLayout(sideButtonLayout)
+        mainLayout.addWidget(sideButtonFrame)
+        sideButtonFrame.setLayout(sideButtonLayout)
         mainLayout.addLayout(progressLayout)
         
         progressBarLayout = QHBoxLayout()
+        xPlotFrame = QFrame()
+        LPLotFrame = QFrame()
+        xPlotFrame.setFrameShape(QFrame.Shape.Panel)
+        LPLotFrame.setFrameShape(QFrame.Shape.Panel)
         xPlotLayout = QHBoxLayout()
         LPlotLayout = QHBoxLayout()
+        xPlotFrame.setLayout(xPlotLayout)
+        LPLotFrame.setLayout(LPlotLayout)
         progressLayout.addLayout(progressBarLayout)
-        progressLayout.addLayout(xPlotLayout)
-        progressLayout.addLayout(LPlotLayout)
+        progressLayout.addWidget(xPlotFrame)
+        progressLayout.addWidget(LPLotFrame)
 
         xPlotSideLayout = QGridLayout()
         LPlotSideLayout = QGridLayout()
