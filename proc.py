@@ -62,7 +62,7 @@ async def HHOOff():
 async def ignite():
     # warning
     warning = QMessageBox(QMessageBox.Icon.Warning, 'Внимание!', 'Убедись, что поток смеси достиг 21% на РРГ и нажми ОК', 
-                          QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes)
+                          QMessageBox.StandardButton.No | QMessageBox.StandardButton.Ok)
     if warning.exec() == QMessageBox.StandardButton.No:
         return -1
     
