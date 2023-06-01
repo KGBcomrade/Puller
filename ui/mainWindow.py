@@ -5,6 +5,7 @@ from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 from ui import Plot, SetupWindow
 
+homingButtonText = 'Поиск нуля'
 MTSButtonText = 'Начальная позиция'
 burnerSetupButtonText = 'Подвод горелки'
 HHOGenButtonStartText = 'Включить подачу смеси'
@@ -62,10 +63,12 @@ class MainWindow(QMainWindow):
         LPlotSideLayout = QVBoxLayout()
 
         # side buttons
+        self.homingButton = QPushButton(homingButtonText)
         self.MTSButton = QPushButton(MTSButtonText)
         self.burnerSetupButton = QPushButton(burnerSetupButtonText)
         self.HHOGenButton = QPushButton(HHOGenButtonStartText)
         self.ignitionButton = QPushButton(ignitionButtonStartText)
+        sideButtonLayout.addWidget(self.homingButton)
         sideButtonLayout.addWidget(self.MTSButton)
         sideButtonLayout.addWidget(self.burnerSetupButton)
         sideButtonLayout.addWidget(self.HHOGenButton)
