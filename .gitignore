@@ -3,3 +3,4 @@ powers/*
 applTaper_21.10.py
 ui/__pycache__
 __pycache__
+hardware/devices.py
