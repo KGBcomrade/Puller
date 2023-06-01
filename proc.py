@@ -1,11 +1,12 @@
 from ui import BurnerSetupWindow
 from PyQt6.QtWidgets import QMessageBox
-import asyncio, qasync
+import asyncio
 
 lock = asyncio.Lock()
 
 async def _waitWindow(message: str, proc):
     waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди...', message, QMessageBox.StandardButton.NoButton)
+    waitWindow.setStandardButtons(QMessageBox.StandardButton.NoButton)
     waitWindow.show()
     await proc()
     waitWindow.accept()
