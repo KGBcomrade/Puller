@@ -1,9 +1,14 @@
+import typing
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
      QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 from ui import Plot, SetupWindow
+import proc
+
+import asyncio
+from qasync import asyncSlot
 
 homingButtonText = 'Поиск нуля'
 MTSButtonText = 'Начальная позиция'
@@ -17,8 +22,10 @@ startButtonStopText = 'Стоп'
 pullingSetupButtonText = 'Настройка растяжки...'
 
 class MainWindow(QMainWindow):
-    def __init__(self) -> None:
+    def __init__(self):
+        print('aye1')
         super().__init__()
+        print('aye2')
 
         # pulling parameters
         self.r0 = 125 / 2
@@ -120,6 +127,19 @@ class MainWindow(QMainWindow):
         self.xdInput.valueChanged.connect(self.setXd)
         self.LvInput.valueChanged.connect(self.setLv)
         self.LaInput.valueChanged.connect(self.setLa)
+        
+        self.ignitionButton.setEnabled(False)
+
+        self.homingButton.released.connect(self.callHoming)
+        self.MTSButton.released.connect(self.callMTS)
+        self.burnerSetupButton.released.connect(self.callBurnerSetup)
+        self.HHOGenButton.released.connect(self.callHHOOn)
+        self.ignitionButton.released.connect(self.callIgnition)
+
+    def _setMovementEnabled(self, enabled: bool):
+        self.homingButton.setEnabled(enabled)
+        self.MTSButton.setEnabled(enabled)
+        self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
         setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw)
@@ -127,6 +147,71 @@ class MainWindow(QMainWindow):
             self.r0 = setupWindow.r0
             self.rw = setupWindow.rw
             self.lw = setupWindow.lw
+
+    @asyncSlot()
+    async def callMTS(self):
+        self._setMovementEnabled(False)
+        await proc.MTS()
+        self._setMovementEnabled(True)
+
+    @asyncSlot()
+    async def callHoming(self):
+        self._setMovementEnabled(False)
+        await proc.homing()
+        self._setMovementEnabled(True)
+
+    @asyncSlot()
+    async def callBurnerSetup(self):
+        self._setMovementEnabled(False)
+        await proc.burnerSetup()
+        self._setMovementEnabled(True)
+
+    @asyncSlot()
+    async def callHHOOn(self):
+        self.HHOGenButton.setText(HHOGenButtonStopText)
+        self.HHOGenButton.released.disconnect()
+        self.HHOGenButton.released.connect(self.callHHOOff) 
+        
+        await proc.HHOOn()
+
+        self.ignitionButton.setEnabled(True)
+
+    @asyncSlot()
+    async def callHHOOff(self):
+        self.HHOGenButton.setText(HHOGenButtonStartText)
+        self.HHOGenButton.released.disconnect()
+        self.HHOGenButton.released.connect(self.callHHOOn)
+        
+        self.ignitionButton.setEnabled(False)
+
+        await proc.HHOOff()
+
+    @asyncSlot()
+    async def callIgnition(self):
+
+        self.HHOGenButton.setEnabled(False)
+        self._setMovementEnabled(False)
+       
+        if not (await proc.ignite()):
+            self.ignitionButton.setText(ignitionButtonStopText)
+            self.ignitionButton.released.disconnect()
+            self.ignitionButton.released.connect(self.callExtinguish) 
+        else:
+            self.HHOGenButton.setEnabled(True)
+            self._setMovementEnabled(True)
+
+
+    @asyncSlot()
+    async def callExtinguish(self):
+        self.ignitionButton.setText(ignitionButtonStartText)
+        self.ignitionButton.released.disconnect()
+        self.ignitionButton.released.connect(self.callIgnition)
+
+        await proc.extinguish()
+
+        self.HHOGenButton.setEnabled(True)
+        self._setMovementEnabled(True)
+        
     def setXv(self, xv):
         self.xv = xv
     def setXa(self, xa):
@@ -138,4 +223,3 @@ class MainWindow(QMainWindow):
         self.Lv = Lv
     def setLa(self, La):
         self.La = La
-

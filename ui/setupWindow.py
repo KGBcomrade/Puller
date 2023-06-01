@@ -65,3 +65,4 @@ class SetupWindow(QDialog):
     def updateLw(self, lw):
         self.lw = lw
         self.updatePlots()
+    

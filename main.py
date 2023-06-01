@@ -8,6 +8,7 @@ from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 from ui import MainWindow
 
+
 app = QApplication(sys.argv)
 
 loop = qasync.QEventLoop(app)
