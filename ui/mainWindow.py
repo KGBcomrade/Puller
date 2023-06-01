@@ -23,9 +23,7 @@ pullingSetupButtonText = 'Настройка растяжки...'
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        print('aye1')
         super().__init__()
-        print('aye2')
 
         # pulling parameters
         self.r0 = 125 / 2
