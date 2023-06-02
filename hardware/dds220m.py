@@ -3,7 +3,6 @@ import codecs
 import time
 import ftd2xx
 import ftd2xx.defines as constants
-from StepMotorSupply import DP831A
 
 def com(q):
     ed, _ = codecs.escape_decode(q, 'hex')    #Перевод в удобоваримый для контроллера формат bytes с одним slash. (https://www.py4u.net/discuss/165846)
