@@ -1,3 +1,10 @@
+from ctypes import *
+import os
+import re
+import sys
+import tempfile
+import urllib
+
 try: 
 	from pyximc import *
 except ImportError as err:
@@ -201,3 +208,43 @@ def standExit():
 	# lib.close_device(byref(cast(device_id1, POINTER(c_int))))
 	# lib.close_device(byref(cast(device_id2, POINTER(c_int))))
 	sys.exit()
+
+def getDevices():
+    # This is device search and enumeration with probing. It gives more information about devices.
+    probe_flags = EnumerateFlags.ENUMERATE_PROBE + EnumerateFlags.ENUMERATE_NETWORK
+    enum_hints = b"addr="
+    devenum = lib.enumerate_devices(probe_flags, enum_hints)
+    dev_count = lib.get_device_count(devenum)
+    devNames = [lib.get_device_name(devenum, i) for i in range(dev_count)]
+
+
+    # ???
+    SetCalibr = calibration_t()
+    SetCalibr.A = 0.00125
+    SetCalibr.MicrostepMode = 9
+
+    for i in range(dev_count):
+        if type(devNames[i]) is str:
+            devNames[i] = devNames[i].encode()
+		    
+    devIds = [lib.open_device(devName) for devName in devNames]
+
+    positions, uPositions = [], []
+    for dev in devIds:
+        set_microstep_mode_256(dev)
+        pos, uPos = get_position(dev)
+        positions.append(pos)
+        uPositions.append(uPos)
+        # set_accel(dev, 900)
+        # set_decel(dev, 900)
+        # set_speed(dev, 1000)
+        # settings = home_settings_calb_t()
+        # #TODO make home settings functions
+        # lib.get_home_settings_calb(dev, byref(settings), SetCalibr)
+        # settings.FastHome = .8
+        # settings.SlowHome = .8
+        # lib.set_home_settings_calb(dev, byref(settings), SetCalibr)
+    
+    return devIds, positions, uPositions
+    
+	    
