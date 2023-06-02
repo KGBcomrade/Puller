@@ -88,11 +88,12 @@ class DDS220M:
             await asyncio.sleep(interval)
 
 
-    async def home(self):
+    async def home(self, interval=.1, lock=True):
         self.drive.write(com('\\x43\\x04\\x01\\x00\\x21\\x01')) # MOVE_HOME
         self.drive.write(b'\x11\x00\x00\x00\x21\x01') # HW_START_UPDATEMSGS
 
-        await self._waitForStop(.1)
+        if lock:
+            await self._waitForStop(interval)
 
     async def moveTo(self, position, interval=.1, lock=True):
         self.drive.write(MOVE_ABSolute_220(position))
