@@ -9,8 +9,30 @@ def com(q):
     ed, _ = codecs.escape_decode(q, 'hex')    #Перевод в удобоваримый для контроллера формат bytes с одним slash. (https://www.py4u.net/discuss/165846)
     return ed
 
+def SET_VELPARAMS_220(a, v):
+	v = round(v*134218)
+	v = (v).to_bytes(4, byteorder='little', signed=True)            
+	
+	a = round(a*13.744)
+	a = (a).to_bytes(4, byteorder='little', signed=True)                                  
+
+	e =b'\x13\x04\x0E\x00\xa1\x01\x01\x00\x00\x00\x00\x00' + a + v
+	return e  
+
+def MOVE_RELATIVE_220(d):
+	d = round(d*20000)
+	d = (d).to_bytes(4, byteorder='little', signed=True)
+	e = b'\x48\x04\x06\x00\xa1\x01\x01\x00' + d
+	return e
+
+def MOVE_ABSolute_220(d):
+	d = round(d*20000)
+	d = (d).to_bytes(4, byteorder='little', signed=True)
+	e = b'\x53\x04\x06\x00\xa1\x01\x01\x00' + d
+	return e
+
 class DDS220M:
-    def __init__(self, address = b'73851530') -> None:
+    def __init__(self, speed = 5, accel = 25, address = b'73851530') -> None:
         self.drive = ftd2xx.openEx(address) 
         self.drive.resetDevice()
         self.drive.resetPort()
@@ -34,6 +56,20 @@ class DDS220M:
         time.sleep(0.2)
 
         self.drive.write(b'\x40\x04\x0E\x00\xa1\x01\x01\x00\x00\x00\x00\x00\x11\x11\x11\x00\x00\x00\x00\x00' ) # HOMEPARAMS
+
+        self.speed = speed
+        self.accel = accel
+
+        self.drive.write(SET_VELPARAMS_220(self.accel, self.speed))
+
+    def setSpeed(self, speed):
+        self.speed = speed
+        self.drive.write(SET_VELPARAMS_220(self.accel, self.speed))
+    
+    def setAccel(self, accel):
+        self.accel = accel
+        self.drive.write(SET_VELPARAMS_220(self.accel, self.speed))
+
 
     async def _waitForStop(self, interval):
         x = 0
