@@ -29,3 +29,17 @@ class VControl:
         self.rigol.say(f':CURR {rigol_i3}')
         self.rigol.say(f':VOLT {rigol_v3}')
         time.sleep(.05)
+
+    def setHHOGenerationEnabled(self, enabled):
+        command = 'ON' if enabled else 'OFF'
+        self.rigol.say(f':OUTP CH2,{command}')
+
+    async def ignite(self, interval = 1):
+        self.rigol.say(':OUTP CH1,ON')
+        await asyncio.sleep(interval)
+        self.rigol.say(':OUTP CH1,OFF')
+
+    async def extinguish(self, interval=1):
+        self.rigol.say(':OUTP CH3,ON')
+        await asyncio.sleep(interval)
+        self.rigol.say(':OUTP CH3,OFF')
