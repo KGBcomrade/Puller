@@ -93,4 +93,8 @@ class DDS220M:
         self.drive.write(b'\x11\x00\x00\x00\x21\x01') # HW_START_UPDATEMSGS
 
         await self._waitForStop(.1)
-  
+
+    async def moveTo(self, position, interval=.1, lock=True):
+        self.drive.write(MOVE_ABSolute_220(position))
+        if lock:
+            await self._waitForStop(interval)         
