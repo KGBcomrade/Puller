@@ -51,4 +51,10 @@ class DDS220M:
                             break
             await asyncio.sleep(interval)
 
+
+    async def home(self):
+        self.drive.write(com('\\x43\\x04\\x01\\x00\\x21\\x01')) # MOVE_HOME
+        self.drive.write(b'\x11\x00\x00\x00\x21\x01') # HW_START_UPDATEMSGS
+
+        await self._waitForStop(.1)
   
