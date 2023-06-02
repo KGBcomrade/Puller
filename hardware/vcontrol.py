@@ -1,5 +1,6 @@
 from StepMotorSupply import DP831A
 import time
+import asyncio
 
 
 rigol_i1 = 0.1 	# Rigol
@@ -17,14 +18,14 @@ class VControl:
         time.sleep(.1)
         # Ignition
         self.rigol.say(':INST CH1')
-        self.rigol.say(f'CURR {rigol_i1}')
-        self.rigol.say(f'VOLT {rigol_v1}')
+        self.rigol.say(f':CURR {rigol_i1}')
+        self.rigol.say(f':VOLT {rigol_v1}')
         # HHO generator
         self.rigol.say(':INST CH2')
-        self.rigol.say(f'CURR {rigol_i2}')
-        self.rigol.say(f'VOLT {rigol_v2}')
+        self.rigol.say(f':CURR {rigol_i2}')
+        self.rigol.say(f':VOLT {rigol_v2}')
         # Extinguishing
         self.rigol.say(':INST CH3')
-        self.rigol.say(f'CURR {rigol_i3}')
-        self.rigol.say(f'VOLT {rigol_v3}')
+        self.rigol.say(f':CURR {rigol_i3}')
+        self.rigol.say(f':VOLT {rigol_v3}')
         time.sleep(.05)
