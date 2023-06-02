@@ -99,3 +99,8 @@ class DDS220M:
         self.drive.write(MOVE_ABSolute_220(position))
         if lock:
             await self._waitForStop(interval)         
+
+    async def moveBy(self, distance, interval=.1, lock=True):
+        self.drive.move(MOVE_RELATIVE_220(distance))
+        if lock:
+            await self._waitForStop(interval)
