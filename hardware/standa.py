@@ -245,12 +245,12 @@ class StandaMotor:
         set_decel(self.id, self.decel)
 
     async def moveTo(self, position):
-        async with self.lock():
-            lib.command_move_to_calb(self.id, c_float(position), SetCalibr)
+        async with self.lock:
+            lib.command_move_calb(self.id, c_float(position), SetCalibr)
             lib.command_wait_for_stop(self.id, waitInterval) 
 
-    async def home(self, position):
-        async with self.lock():
+    async def home(self):
+        async with self.lock:
             lib.command_homezero(self.id)
             lib.command_wait_for_stop(self.id, waitInterval)
         
