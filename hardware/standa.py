@@ -4,6 +4,7 @@ import re
 import sys
 import tempfile
 import urllib
+import asyncio
 
 try: 
     from pyximc import *
@@ -223,6 +224,8 @@ class StandaMotor:
         self.speed = get_speed
         self.accel = accel
         self.decel = decel
+
+        self.lock = asyncio.Lock()
         
         set_microstep_mode_256(devId)
         set_speed(devId, speed)
@@ -241,13 +244,15 @@ class StandaMotor:
         self.decel = decel
         set_decel(self.id, self.decel)
 
-    def moveTo(self, position):
-        lib.command_move_to_calb(self.id, c_float(position), SetCalibr)
-        lib.command_wait_for_stop(self.id, waitInterval) 
+    async def moveTo(self, position):
+        async with self.lock():
+            lib.command_move_to_calb(self.id, c_float(position), SetCalibr)
+            lib.command_wait_for_stop(self.id, waitInterval) 
 
-    def home(self, position):
-        lib.command_homezero(self.id)
-        lib.command_wait_for_stop(self.id, waitInterval)
+    async def home(self, position):
+        async with self.lock():
+            lib.command_homezero(self.id)
+            lib.command_wait_for_stop(self.id, waitInterval)
         
         
 
