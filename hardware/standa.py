@@ -214,6 +214,8 @@ SetCalibr = calibration_t()
 SetCalibr.A = 0.00125
 SetCalibr.MicrostepMode = 9
 
+waitInterval = 100
+
 class StandaMotor:
     def __init__(self, devId, speed=1, accel=900, decel=900):
         self.id = devId
@@ -241,11 +243,11 @@ class StandaMotor:
 
     def moveTo(self, position):
         lib.command_move_to_calb(self.id, c_float(position), SetCalibr)
-        lib.command_wait_for_stop(self.id, 100) 
+        lib.command_wait_for_stop(self.id, waitInterval) 
 
     def home(self, position):
         lib.command_homezero(self.id)
-        lib.command_wait_for_stop(self.id, 100)
+        lib.command_wait_for_stop(self.id, waitInterval)
         
         
 
