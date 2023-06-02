@@ -257,7 +257,7 @@ class StandaMotor:
         
         
 
-def getDevices():
+def initDevices():
     # This is device search and enumeration with probing. It gives more information about devices.
     if lib.set_bindy_key(pathes.key_path.encode('utf-8')) != Result.Ok:
         raise SystemError('Failed to set bindy key')
