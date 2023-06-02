@@ -242,6 +242,10 @@ class StandaMotor:
     def moveTo(self, position):
         lib.command_move_to_calb(self.id, c_float(position), SetCalibr)
         lib.command_wait_for_stop(self.id, 100) 
+
+    def home(self, position):
+        lib.command_homezero(self.id)
+        lib.command_wait_for_stop(self.id, 100)
         
         
 
