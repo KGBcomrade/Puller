@@ -100,6 +100,6 @@ class DDS220M:
             await self._waitForStop(interval)         
 
     async def moveBy(self, distance, interval=.1, lock=True):
-        self.drive.move(MOVE_RELATIVE_220(distance))
+        self.drive.write(MOVE_RELATIVE_220(distance))
         if lock:
             await self._waitForStop(interval)
