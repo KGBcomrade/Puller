@@ -5,6 +5,7 @@ import sys
 import tempfile
 import urllib
 import asyncio
+import pathes
 
 try: 
     from pyximc import *
@@ -258,6 +259,8 @@ class StandaMotor:
 
 def getDevices():
     # This is device search and enumeration with probing. It gives more information about devices.
+    if lib.set_bindy_key(pathes.key_path.encode('utf-8')) != Result.Ok:
+        raise SystemError('Failed to set bindy key')
     probe_flags = EnumerateFlags.ENUMERATE_PROBE + EnumerateFlags.ENUMERATE_NETWORK
     enum_hints = b"addr="
     devenum = lib.enumerate_devices(probe_flags, enum_hints)
