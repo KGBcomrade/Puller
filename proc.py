@@ -102,13 +102,9 @@ async def burnerSetup():
     await _waitWindow('Горелка отводится назад...', _burnerBackward)
 
 async def HHOOn():
-    print('HHO On')
-    pass
-
+    vControl.setHHOGenerationEnabled(True)
 async def HHOOff():
-    print('HHO Off')
-    pass
-
+    vControl.setHHOGenerationEnables(False)
 async def ignite():
     # warning
     warning = QMessageBox(QMessageBox.Icon.Warning, 'Внимание!', 'Убедись, что поток смеси достиг 21% на РРГ и нажми ОК', 
@@ -117,18 +113,20 @@ async def ignite():
         return -1
     
     # ignition
+    await vControl.ignite()
     repeatition = QMessageBox(QMessageBox.Icon.Question, 'Повторить?', 'Повторить поджиг?', 
                               QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes)
     while True:
-        pass # TODO add ignition
+        await vControl.ignite()
         if repeatition.exec() == QMessageBox.StandardButton.No: # check if ignited
             break
 
 
 async def extinguish():
+    await vControl.extinguish()
     repeatition = QMessageBox(QMessageBox.Icon.Question, 'Повторить?', 'Повторить тушение?', 
                               QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes)
     while True:
-        pass # TODO add extinguishing
+        await vControl.extinguish()
         if repeatition.exec() == QMessageBox.StandardButton.No: # check if extinguished
             break   
