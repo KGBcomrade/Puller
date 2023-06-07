@@ -226,3 +226,10 @@ class MainWindow(QMainWindow):
         self.Lv = Lv
     def setLa(self, La):
         self.La = La
+
+    def updateIndicators(self, ts, xs, Ls, r):
+        self.xPlot.plot(ts, xs)
+        self.LPlot.plot(ts, Ls)
+
+        self.progressText.setText(f'{r} → {self.rw}')
+        self.progressBar.setValue(round(100 - (r - self.rw) / (self.r0 - self.rw) * 100))
