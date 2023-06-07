@@ -76,14 +76,7 @@ async def homing():
             return -1
         
         # homing
-        waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди', 'Выполняется поиск нуля...', QMessageBox.StandardButton.NoButton)
-        waitWindow.show()
-
         await _waitWindow('Поиск нуля...', _homing)
-
-
-        waitWindow.accept()
-
 
     return 0
 
