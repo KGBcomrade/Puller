@@ -138,7 +138,7 @@ async def extinguish():
 def _getX():
     xr0 = pullingMotor1_0 + pullingMotor2_0
     xr = pullingMotor1.getPosition() + pullingMotor2.getPosition()
-    return xr - xr0
+    return xr0 - xr
 
 async def _mainMotorRun(Lx, Rx, xMax, updater):
     turn = 1
