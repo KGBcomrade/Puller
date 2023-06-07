@@ -37,6 +37,8 @@ class MainWindow(QMainWindow):
         self.Lv = 8 # Thorlabs velocity
         self.La = 20 # Thorlabs acceleration
 
+        self.burnerPullingPos = 36.8
+
         # layouts
         mainLayout = QHBoxLayout()
         widget = QWidget()
@@ -164,7 +166,7 @@ class MainWindow(QMainWindow):
     @asyncSlot()
     async def callBurnerSetup(self):
         self._setMovementEnabled(False)
-        await proc.burnerSetup()
+        self.burnerPullingPos = await proc.burnerSetup(self.burnerPullingPos)
         self._setMovementEnabled(True)
 
     @asyncSlot()

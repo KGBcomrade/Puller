@@ -83,7 +83,9 @@ async def homing():
 async def MTS():
     await _waitWindow('Свдиг подвижек на начальные позиции...', _MTS)
 
-async def burnerSetup():
+async def burnerSetup(burnerPullingPos = 36.8):
+    global burnerMotor1
+    burnerMotor1 = burnerPullingPos
     # wait until move under the camera
     await _waitWindow('Горелка подводится под камеру...', _burnerForward)
     
@@ -94,6 +96,8 @@ async def burnerSetup():
     # wait until move back
     # await WaitWindow.create('Горелка отводится назад...')
     await _waitWindow('Горелка отводится назад...', _burnerBackward)
+    
+    return setupWindow.position
 
 async def HHOOn():
     vControl.setHHOGenerationEnabled(True)
