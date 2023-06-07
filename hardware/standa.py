@@ -245,7 +245,7 @@ class StandaMotor:
         self.decel = decel
         set_decel(self.id, self.decel)
 
-    def moveTo(self, position):
+    def moveToS(self, position):
         lib.command_move_calb(self.id, c_float(position), SetCalibr)
         lib.command_wait_for_stop(self.id, waitInterval) 
 
