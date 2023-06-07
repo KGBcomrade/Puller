@@ -136,6 +136,8 @@ class MainWindow(QMainWindow):
         self.HHOGenButton.released.connect(self.callHHOOn)
         self.ignitionButton.released.connect(self.callIgnition)
 
+        self.startButton.released.connect(self.callRun)
+
         #proc init
         proc.initDevices()
 
@@ -214,6 +216,10 @@ class MainWindow(QMainWindow):
 
         self.HHOGenButton.setEnabled(True)
         self._setMovementEnabled(True)
+
+    @asyncSlot()
+    async def callRun(self):
+        await proc.run(self, self.rw, self.lw, self.r0)
         
     def setXv(self, xv):
         self.xv = xv
