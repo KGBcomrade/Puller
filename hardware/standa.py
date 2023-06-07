@@ -219,7 +219,7 @@ SetCalibr.MicrostepMode = 9
 waitInterval = 100
 
 class StandaMotor:
-    def __init__(self, devId, speed=1, accel=900, decel=900):
+    def __init__(self, devId, speed=900, accel=900, decel=900):
         self.id = devId
         self.pos, self.uPos = get_position(devId)
         self.speed = get_speed

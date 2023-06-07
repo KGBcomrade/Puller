@@ -33,8 +33,8 @@ def initDevices():
     ids = initStandaMotors()
     if len(ids) < 3:
         raise RuntimeError('Certain standa motors undetected')
-    pullingMotor1 = StandaMotor(ids[0])
-    pullingMotor2 = StandaMotor(ids[2])
+    pullingMotor1 = StandaMotor(ids[0], speed=100)
+    pullingMotor2 = StandaMotor(ids[2], speed=100)
     burnerMotor = StandaMotor(ids[1])
 
     vControl = VControl()
