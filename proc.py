@@ -140,7 +140,7 @@ def _getX():
     xr = pullingMotor1.getPosition() + pullingMotor2.getPosition()
     return xr - xr0
 
-async def _mainMotorRun(Lx, xMax):
+async def _mainMotorRun(Lx, Rx, xMax, updater):
     turn = 1
     while True:
         x = _getX()
@@ -150,6 +150,7 @@ async def _mainMotorRun(Lx, xMax):
         ts.append(time())
         xs.append(x)
         Ls.append(yTarget * turn)
+        updater(ts, xs, Ls, Rx(x))
         await mainMotor.moveTo(yTarget)
         turn *= -1
 
@@ -157,13 +158,13 @@ async def _pullerMotorRun(xMax):
     await asyncio.gather(pullingMotor1.moveTo(pullingMotor1_0 + xMax / 2),
                          pullingMotor2.moveTo(pullingMotor2_0 + xMax / 2))
 
-async def run(rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
+async def run(win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
     Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
 
     await burnerMotor.moveTo(burnerMotor1) # Подвод горелки
     t0 = time() # Время начала прогрева
 
-    mainMotorTask = asyncio.create_task(_mainMotorRun(Lx, xMax))
+    mainMotorTask = asyncio.create_task(_mainMotorRun(Lx, Rx, xMax, win.updateIndicators))
     while time() - t0 < tWarmen:
         await asyncio.sleep(0)
     
