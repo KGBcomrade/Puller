@@ -14,6 +14,11 @@ burnerMotor = None
 vControl = None
 powerPlot = None
 
+mainMotor0 = 14.4
+burnerMotor0 = 10
+pullingMotor1_0 = 0
+pullingMotor2_0 = 0
+
 async def initDevices():
     mainMotor = DDS220M()
     ids = initStandaMotors()
@@ -44,6 +49,12 @@ async def _homing():
     await burnerMotor.home()
     await asyncio.gather(mainMotor.home(), pullingMotor1.home(), pullingMotor2.home())
 
+async def _MTS():
+    await burnerMotor.moveTo(burnerMotor0)
+    await asyncio.gather(mainMotor.moveTo(mainMotor0), 
+                         pullingMotor1.moveTo(pullingMotor1_0), 
+                         pullingMotor2.moveTo(pullingMotor2_0))
+
 async def homing():
     # warning
     async with lock:
@@ -65,7 +76,7 @@ async def homing():
     return 0
 
 async def MTS():
-    await _waitWindow('Свдиг подвижек на начальные позиции...', simLongProc)
+    await _waitWindow('Свдиг подвижек на начальные позиции...', _MTS)
 
 async def burnerSetup():
     # wait until move under the camera
