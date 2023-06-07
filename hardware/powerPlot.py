@@ -3,7 +3,7 @@ import os
 import asyncio
 
 import numpy as np
-from devices import DSO_X2002A
+from .devices import DSO_X2002A
 
 class PowerPlot:
     def __init__(self, address = 'USB0::0x0957::0x179B::MY54491022::INSTR') -> None:
