@@ -16,10 +16,12 @@ powerPlot = None
 
 mainMotor0 = 14.4
 burnerMotor0 = 10
+burnerMotor1 = 36.8
 pullingMotor1_0 = 0
 pullingMotor2_0 = 0
 
-async def initDevices():
+async def initDevices(burnerMotor1 = 36.8):
+    burnerMotor1 = 36.8
     mainMotor = DDS220M()
     ids = initStandaMotors()
     if len(ids) < 3:
@@ -55,6 +57,15 @@ async def _MTS():
                          pullingMotor1.moveTo(pullingMotor1_0), 
                          pullingMotor2.moveTo(pullingMotor2_0))
 
+async def _burnerForward():
+    await burnerMotor.moveTo(burnerMotor1)
+
+async def _burnerBackward():
+    await burnerMotor.moveTo(burnerMotor0)
+
+def _moveBurner(pos):
+    asyncio.run(burnerMotor.moveTo(pos))
+
 async def homing():
     # warning
     async with lock:
@@ -80,16 +91,15 @@ async def MTS():
 
 async def burnerSetup():
     # wait until move under the camera
-    # await WaitWindow.create('Горелка подводится под камеру...')
-    await _waitWindow('Горелка подводится под камеру...', simLongProc)
+    await _waitWindow('Горелка подводится под камеру...', _burnerForward)
     
     # setup
-    setupWindow = BurnerSetupWindow(0)
+    setupWindow = BurnerSetupWindow(burnerMotor1, _moveBurner)
     setupWindow.exec()
 
     # wait until move back
     # await WaitWindow.create('Горелка отводится назад...')
-    await _waitWindow('Горелка отводится назад...', simLongProc)
+    await _waitWindow('Горелка отводится назад...', _burnerBackward)
 
 async def HHOOn():
     print('HHO On')
