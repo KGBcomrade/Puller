@@ -249,6 +249,9 @@ class StandaMotor:
         lib.command_move_calb(self.id, c_float(position), SetCalibr)
         lib.command_wait_for_stop(self.id, waitInterval) 
 
+    def getPosition(self):
+        return get_position_calb(self.id)
+
     async def moveTo(self, position):
         async with self.lock:
             lib.command_move_calb(self.id, c_float(position), SetCalibr)
