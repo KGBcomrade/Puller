@@ -20,8 +20,9 @@ burnerMotor1 = 36.8
 pullingMotor1_0 = 0
 pullingMotor2_0 = 0
 
-def initDevices(burnerMotor1 = 36.8):
-    burnerMotor1 = 36.8
+def initDevices(burnerMotor1Pos = 36.8):
+    global mainMotor, burnerMotor, pullingMotor1, pullingMotor2, vControl, powerPlot, burnerMotor1
+    burnerMotor1 = burnerMotor1Pos
     mainMotor = DDS220M()
     ids = initStandaMotors()
     if len(ids) < 3:
