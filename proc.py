@@ -88,7 +88,7 @@ async def burnerSetup():
     await _waitWindow('Горелка подводится под камеру...', _burnerForward)
     
     # setup
-    setupWindow = BurnerSetupWindow(burnerMotor1, _moveBurner)
+    setupWindow = BurnerSetupWindow(burnerMotor1, burnerMotor.moveToS)
     setupWindow.exec()
 
     # wait until move back
