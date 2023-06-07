@@ -98,7 +98,7 @@ async def burnerSetup():
 async def HHOOn():
     vControl.setHHOGenerationEnabled(True)
 async def HHOOff():
-    vControl.setHHOGenerationEnables(False)
+    vControl.setHHOGenerationEnabled(False)
 async def ignite():
     # warning
     warning = QMessageBox(QMessageBox.Icon.Warning, 'Внимание!', 'Убедись, что поток смеси достиг 21% на РРГ и нажми ОК', 
