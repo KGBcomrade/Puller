@@ -5,7 +5,7 @@ import sys
 import tempfile
 import urllib
 import asyncio
-import pathes
+from . import pathes
 
 try: 
     from pyximc import *
