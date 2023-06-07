@@ -20,7 +20,7 @@ burnerMotor1 = 36.8
 pullingMotor1_0 = 0
 pullingMotor2_0 = 0
 
-async def initDevices(burnerMotor1 = 36.8):
+def initDevices(burnerMotor1 = 36.8):
     burnerMotor1 = 36.8
     mainMotor = DDS220M()
     ids = initStandaMotors()
