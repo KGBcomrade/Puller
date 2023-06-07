@@ -134,6 +134,9 @@ class MainWindow(QMainWindow):
         self.HHOGenButton.released.connect(self.callHHOOn)
         self.ignitionButton.released.connect(self.callIgnition)
 
+        #proc init
+        proc.initDevices()
+
     def _setMovementEnabled(self, enabled: bool):
         self.homingButton.setEnabled(enabled)
         self.MTSButton.setEnabled(enabled)
