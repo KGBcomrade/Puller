@@ -2,7 +2,30 @@ from ui import BurnerSetupWindow
 from PyQt6.QtWidgets import QMessageBox
 import asyncio
 
+from hardware import DDS220M, PowerPlot, StandaMotor, VControl
+from hardware.standa import initDevices as initStandaMotors
+
 lock = asyncio.Lock()
+
+mainMotor = None
+pullingMotor1 = None
+pullingMotor2 = None
+burnerMotor = None
+vControl = None
+powerPlot = None
+
+async def initDevices():
+    mainMotor = DDS220M()
+    ids = initStandaMotors()
+    if len(ids) < 3:
+        raise RuntimeError('Certain standa motors undetected')
+    pullingMotor1 = StandaMotor(ids[0])
+    pullingMotor2 = StandaMotor(ids[2])
+    burnerMotor = StandaMotor(ids[1])
+
+    vControl = VControl()
+    powerPlot = PowerPlot()
+
 
 async def _waitWindow(message: str, proc):
     waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди...', message, QMessageBox.StandardButton.NoButton)
@@ -16,6 +39,10 @@ async def simLongProc():
 
 async def simShortProc():
     await asyncio.sleep(.2)
+    
+async def _homing():
+    await burnerMotor.home()
+    await asyncio.gather(mainMotor.home(), pullingMotor1.home(), pullingMotor2.home())
 
 async def homing():
     # warning
@@ -26,11 +53,13 @@ async def homing():
             return -1
         
         # homing
-        await _waitWindow('Выполняется поиск нуля...', simLongProc)
-        # waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди', 'Выполняется поиск нуля...', QMessageBox.StandardButton.NoButton)
-        # waitWindow.show()
-        # await asyncio.sleep(2)
-        # waitWindow.accept()
+        waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди', 'Выполняется поиск нуля...', QMessageBox.StandardButton.NoButton)
+        waitWindow.show()
+
+        await _waitWindow('Поиск нуля...', _homing)
+
+
+        waitWindow.accept()
 
 
     return 0
