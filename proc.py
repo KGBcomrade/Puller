@@ -22,6 +22,7 @@ burnerMotor0 = 10
 burnerMotor1 = 36.8
 pullingMotor1_0 = 0
 pullingMotor2_0 = 0
+stretch = 0.001 # мм, шаг ручного растяжения
 
 ts = []
 xs = []
@@ -73,6 +74,12 @@ async def _burnerBackward():
 def _moveBurner(pos):
     asyncio.run(burnerMotor.moveTo(pos))
 
+def _stretch():
+    pullingMotor1.moveByS(-stretch)
+    pullingMotor2.moveByS(-stretch)
+    pullingMotor1.waitForStop()
+    pullingMotor2.waitForStop()
+
 async def homing():
     # warning
     async with lock:
@@ -96,7 +103,7 @@ async def burnerSetup(burnerPullingPos = 36.8):
     await _waitWindow('Горелка подводится под камеру...', _burnerForward)
     
     # setup
-    setupWindow = BurnerSetupWindow(burnerMotor1, burnerMotor.moveToS)
+    setupWindow = BurnerSetupWindow(burnerMotor1, _stretch, burnerMotor.moveToS)
     setupWindow.exec()
 
     # wait until move back

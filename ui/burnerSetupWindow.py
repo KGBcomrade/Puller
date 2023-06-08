@@ -16,7 +16,7 @@ def getDoubleValidator():
     return validator
 
 class BurnerSetupWindow(QDialog):
-    def __init__(self, position: typing.SupportsFloat,  movementFunction: typing.Callable= simulateMovement, 
+    def __init__(self, position: typing.SupportsFloat, stretchFunction: typing.Callable, movementFunction: typing.Callable= simulateMovement, 
                  step: typing.SupportsFloat = 0.01) -> None:
         super().__init__()
         self.setWindowTitle('Настройка подвода горелки')
@@ -41,6 +41,9 @@ class BurnerSetupWindow(QDialog):
         inputLayout.addWidget(self.downButton)
         mainLayout.addLayout(inputLayout)
 
+        self.stretchButton = QPushButton('Растянуть на шаг')
+        mainLayout.addWidget(self.stretchButton)
+
         self.okButton = QPushButton('Ok')
         mainLayout.addWidget(self.okButton)
 
@@ -53,6 +56,11 @@ class BurnerSetupWindow(QDialog):
         self.upButton.setEnabled(enabled)
         self.downButton.setEnabled(enabled)
         self.okButton.setEnabled(enabled)
+
+    def _stretch(self):
+        self.stretchButton.setEnabled(False)
+        self._stretch()
+        self.stretchButton.setEnabled(True)
 
     def _move(self):
         self._setButtonsEnabled(False)
