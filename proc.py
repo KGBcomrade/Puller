@@ -156,7 +156,8 @@ async def _mainMotorRun(Lx, xMax):
         if x >= xMax:
             break
         yTarget = Lx(x) / 2 * turn + mainMotorStartPos
-        await mainMotor.moveTo(yTarget)
+        await mainMotor.moveTo(yTarget, lock=False)
+        await mainMotor.waitForStop(yTarget)
         turn *= -1
 
 async def _plotter(Lx, Rx, xMax, updater):
