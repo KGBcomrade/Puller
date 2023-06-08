@@ -188,8 +188,19 @@ async def run(win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
     plotterTask = asyncio.create_task(_plotter(Lx, Rx, xMax, win.updateIndicators))
     while time() - t0 < tWarmen:
         await asyncio.sleep(0)
+    pullerMotorTask = asyncio.create_task(_pullerMotorRun(xMax))
     
-    await _pullerMotorRun(xMax)
+    while True:
+        await asyncio.sleep(0)
+        if win.stopFlag:
+            pullerMotorTask.cancel()
+            pullingMotor1.softStop()
+            pullingMotor2.softStop()
+            break
+
+        if pullerMotorTask.done():
+            break
+
     mainMotorTask.cancel()
     plotterTask.cancel()
 

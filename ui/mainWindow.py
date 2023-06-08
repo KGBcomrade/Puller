@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
 
         self.burnerPullingPos = 36.8
 
+        self.stopFlag = False
+
         # layouts
         mainLayout = QHBoxLayout()
         widget = QWidget()
@@ -219,7 +221,14 @@ class MainWindow(QMainWindow):
 
     @asyncSlot()
     async def callRun(self):
+        self.startButton.setText(startButtonStopText)
+        self.startButton.released.disconnect()
+        self.startButton.released.connect(self.callStop)
         await proc.run(self, self.rw, self.lw, self.r0)
+
+    def callStop(self):
+        self.startButton.setEnabled(False)
+        self.stopFlag = True
         
     def setXv(self, xv):
         self.xv = xv
