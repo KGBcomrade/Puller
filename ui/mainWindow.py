@@ -224,7 +224,7 @@ class MainWindow(QMainWindow):
     def setXv(self, xv):
         self.xv = xv
         proc.pullingMotor1.setSpeed(self.xv)
-        proc.pullingMotor2.setSpeed(self.xa)
+        proc.pullingMotor2.setSpeed(self.xv)
 
     def setXa(self, xa):
         self.xa = xa
