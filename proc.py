@@ -174,8 +174,8 @@ async def _plotter(Lx, Rx, xMax, updater):
         await asyncio.sleep(.5)
 
 async def _pullerMotorRun(xMax):
-    await asyncio.gather(pullingMotor1.moveTo(pullingMotor1StartPos + xMax / 2),
-                         pullingMotor2.moveTo(pullingMotor2StartPos + xMax / 2))
+    await asyncio.gather(pullingMotor1.moveTo(pullingMotor1StartPos - xMax / 2),
+                         pullingMotor2.moveTo(pullingMotor2StartPos - xMax / 2))
 
 async def run(win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
     Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
