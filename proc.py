@@ -153,10 +153,10 @@ async def _mainMotorRun(Lx, Rx, xMax, updater):
         x = _getX()
         if x >= xMax:
             break
-        yTarget = Lx(x) * turn
+        yTarget = Lx(x) / 2 * turn + mainMotor0
         ts.append(time())
         xs.append(x)
-        Ls.append(yTarget * turn)
+        Ls.append(Lx(x))
         updater(ts, xs, Ls, Rx(x))
         await mainMotor.moveTo(yTarget)
         turn *= -1
