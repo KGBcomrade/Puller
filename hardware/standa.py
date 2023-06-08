@@ -195,6 +195,9 @@ class StandaMotor:
         async with self.lock:
             lib.command_homezero(self.id)
             await self._waitForStopAsync()
+
+    def softStop(self):
+        lib.command_sstp(self.id)
         
         
 
