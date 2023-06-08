@@ -17,11 +17,11 @@ burnerMotor = None
 vControl = None
 powerPlot = None
 
-mainMotor0 = 14.4
-burnerMotor0 = 10
-burnerMotor1 = 36.8
-pullingMotor1_0 = 0
-pullingMotor2_0 = 0
+mainMotorStartPos = 14.4
+burnerMotorStartPos = 10
+burnerMotorWorkPos = 36.8
+pullingMotor1StartPos = 0
+pullingMotor2StartPos = 0
 stretch = 0.001 # мм, шаг ручного растяжения
 
 ts = []
@@ -60,16 +60,16 @@ async def _homing():
     await asyncio.gather(mainMotor.home(), pullingMotor1.home(), pullingMotor2.home())
 
 async def _MTS():
-    await burnerMotor.moveTo(burnerMotor0)
-    await asyncio.gather(mainMotor.moveTo(mainMotor0), 
-                         pullingMotor1.moveTo(pullingMotor1_0), 
-                         pullingMotor2.moveTo(pullingMotor2_0))
+    await burnerMotor.moveTo(burnerMotorStartPos)
+    await asyncio.gather(mainMotor.moveTo(mainMotorStartPos), 
+                         pullingMotor1.moveTo(pullingMotor1StartPos), 
+                         pullingMotor2.moveTo(pullingMotor2StartPos))
 
 async def _burnerForward():
-    await burnerMotor.moveTo(burnerMotor1)
+    await burnerMotor.moveTo(burnerMotorWorkPos)
 
 async def _burnerBackward():
-    await burnerMotor.moveTo(burnerMotor0)
+    await burnerMotor.moveTo(burnerMotorStartPos)
 
 def _moveBurner(pos):
     asyncio.run(burnerMotor.moveTo(pos))
@@ -97,13 +97,13 @@ async def MTS():
     await _waitWindow('Свдиг подвижек на начальные позиции...', _MTS)
 
 async def burnerSetup(burnerPullingPos = 36.8):
-    global burnerMotor1
-    burnerMotor1 = burnerPullingPos
+    global burnerMotorWorkPos
+    burnerMotorWorkPos = burnerPullingPos
     # wait until move under the camera
     await _waitWindow('Горелка подводится под камеру...', _burnerForward)
     
     # setup
-    setupWindow = BurnerSetupWindow(burnerMotor1, _stretch, burnerMotor.moveToS)
+    setupWindow = BurnerSetupWindow(burnerMotorWorkPos, _stretch, burnerMotor.moveToS)
     setupWindow.exec()
 
     # wait until move back
@@ -143,7 +143,7 @@ async def extinguish():
             break   
 
 def _getX():
-    xr0 = pullingMotor1_0 + pullingMotor2_0
+    xr0 = pullingMotor1StartPos + pullingMotor2StartPos
     xr = pullingMotor1.getPosition() + pullingMotor2.getPosition()
     return xr0 - xr
 
@@ -153,7 +153,7 @@ async def _mainMotorRun(Lx, xMax):
         x = _getX()
         if x >= xMax:
             break
-        yTarget = Lx(x) / 2 * turn + mainMotor0
+        yTarget = Lx(x) / 2 * turn + mainMotorStartPos
         await mainMotor.moveTo(yTarget)
         turn *= -1
 
@@ -172,13 +172,13 @@ async def _plotter(Lx, Rx, xMax, updater):
         await asyncio.sleep(.5)
 
 async def _pullerMotorRun(xMax):
-    await asyncio.gather(pullingMotor1.moveTo(pullingMotor1_0 + xMax / 2),
-                         pullingMotor2.moveTo(pullingMotor2_0 + xMax / 2))
+    await asyncio.gather(pullingMotor1.moveTo(pullingMotor1StartPos + xMax / 2),
+                         pullingMotor2.moveTo(pullingMotor2StartPos + xMax / 2))
 
 async def run(win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
     Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
 
-    await burnerMotor.moveTo(burnerMotor1) # Подвод горелки
+    await burnerMotor.moveTo(burnerMotorWorkPos) # Подвод горелки
     t0 = time() # Время начала прогрева
 
     mainMotorTask = asyncio.create_task(_mainMotorRun(Lx, xMax))
