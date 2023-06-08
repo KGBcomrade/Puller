@@ -252,15 +252,23 @@ class StandaMotor:
     def getPosition(self):
         return get_position_calb(self.id)
 
+    async def _waitForStopAsync(self):
+        status = status_t()
+        while True:
+            await asyncio.wait(waitInterval)
+            lib.get_status(self.id, byref(status))
+            if status.MoveSts & MoveState.MOVE_STATE_MOVING == 0:
+                break
+
     async def moveTo(self, position):
         async with self.lock:
             lib.command_move_calb(self.id, c_float(position), SetCalibr)
-            lib.command_wait_for_stop(self.id, waitInterval) 
+            await self._waitForStopAsync()
 
     async def home(self):
         async with self.lock:
             lib.command_homezero(self.id)
-            lib.command_wait_for_stop(self.id, waitInterval)
+            await self._waitForStopAsync()
         
         
 
