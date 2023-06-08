@@ -261,7 +261,7 @@ class StandaMotor:
     async def _waitForStopAsync(self):
         status = status_t()
         while True:
-            await asyncio.wait(waitInterval)
+            await asyncio.sleep(waitInterval / 1000)
             lib.get_status(self.id, byref(status))
             if status.MoveSts & MoveState.MOVE_STATE_MOVING == 0:
                 break
