@@ -223,15 +223,26 @@ class MainWindow(QMainWindow):
         
     def setXv(self, xv):
         self.xv = xv
+        proc.pullingMotor1.setSpeed(self.xv)
+        proc.pullingMotor2.setSpeed(self.xa)
+
     def setXa(self, xa):
         self.xa = xa
+        proc.pullingMotor1.setAccel(self.xa)
+        proc.pullingMotor2.setAccel(self.xa)
+
     def setXd(self, xd):
         self.xd = xd
+        proc.pullingMotor1.setDecel(self.xd)
+        proc.pullingMotor2.setDecel(self.xd)
 
     def setLv(self, Lv):
         self.Lv = Lv
+        proc.mainMotor.setSpeed(self.Lv)
+
     def setLa(self, La):
         self.La = La
+        proc.mainMotor.setAccel(self.La)
 
     def updateIndicators(self, ts, xs, Ls, r):
         self.xPlot.plot(ts, xs)
