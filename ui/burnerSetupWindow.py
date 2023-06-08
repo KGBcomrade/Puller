@@ -22,6 +22,7 @@ class BurnerSetupWindow(QDialog):
         self.setWindowTitle('Настройка подвода горелки')
 
         self.position = position
+        self._stretchFunction = stretchFunction
         self._movementFunction = movementFunction
         self.step = step
 
@@ -51,6 +52,7 @@ class BurnerSetupWindow(QDialog):
         self.upButton.released.connect(self._increasePosition)
         self.downButton.released.connect(self._decreasePosition)
         self.positionIntput.returnPressed.connect(self._onPositionChanged)
+        self.stretchButton.released.connect(self._stretch)
 
     def _setButtonsEnabled(self, enabled: bool):
         self.upButton.setEnabled(enabled)
@@ -59,7 +61,7 @@ class BurnerSetupWindow(QDialog):
 
     def _stretch(self):
         self.stretchButton.setEnabled(False)
-        self._stretch()
+        self._stretchFunction()
         self.stretchButton.setEnabled(True)
 
     def _move(self):
