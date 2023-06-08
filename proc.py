@@ -1,5 +1,5 @@
 from time import time
-from ui import BurnerSetupWindow
+from ui import BurnerSetupWindow, FinishWindow
 from PyQt6.QtWidgets import QMessageBox
 import asyncio
 
@@ -18,7 +18,9 @@ vControl = None
 powerPlot = None
 
 mainMotorStartPos = 14.4
+mainMotorEndPos = 214
 burnerMotorStartPos = 10
+burnerMotorExtPos = burnerMotorStartPos + 10
 burnerMotorWorkPos = 36.8
 pullingMotor1StartPos = 0
 pullingMotor2StartPos = 0
@@ -190,4 +192,19 @@ async def run(win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
     mainMotorTask.cancel()
     plotterTask.cancel()
 
-    
+    await burnerMotor.moveTo(burnerMotorExtPos)
+    await win.callExtinguish()
+
+    finishWindow = FinishWindow(_stretch)
+    finishWindow.exec()
+
+    finishTasks = [asyncio.create_task(burnerMotor.moveTo(burnerMotorStartPos))]
+
+    if finishWindow.moveCheckBox.isChecked():
+        finishTasks.append(asyncio.create_task(mainMotor.moveTo(mainMotorEndPos)))
+
+    if finishWindow.saveCheckBox.isChecked():
+        #TODO add saving task
+        pass
+
+    asyncio.gather(*finishTasks)
