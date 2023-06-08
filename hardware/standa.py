@@ -59,37 +59,19 @@ def status(device_id):
         print("Status.Iusb: " + repr(x_status.Iusb))
         print("Status.Flags: " + repr(hex(x_status.Flags)))
 
-# def com_get_position_calb(device_id,SetCalibr):
-#     # print("\nRead position")
-#     x_pos = get_position_calb_t()
-#     result = lib.get_position(device_id, byref(x_pos),SetCalibr)
-#     print("Result: " + repr(result))
-#     print(x_pos.Position)
-#     return x_pos.Position
-
 def get_position_calb(device_id):
-    print("\nRead position")
     x_pos = get_position_t()
-    result = lib.get_position(device_id, byref(x_pos))
-    print("Result: " + repr(result))
-    if result == Result.Ok:
-        print("Position: {0} steps, {1} microsteps".format(x_pos.Position, x_pos.uPosition))        
+    lib.get_position(device_id, byref(x_pos))
     return 0.00125*(x_pos.Position +  x_pos.uPosition/pow(2,9-1))   
 
 def left(device_id):
-    print("\nMoving left")
-    result = lib.command_left(device_id)
-    print("Result: " + repr(result))
+    lib.command_left(device_id)
 
 def move(device_id, distance, udistance):
-    print("\nGoing to {0} steps, {1} microsteps".format(distance, udistance))
-    result = lib.command_move(device_id, distance, udistance)
-    print("Result: " + repr(result))
+    lib.command_move(device_id, distance, udistance)
 
 def wait_for_stop(device_id, interval):
-    print("\nWaiting for stop")
-    result = lib.command_wait_for_stop(device_id, interval)
-    print("Result: " + repr(result))
+    lib.command_wait_for_stop(device_id, interval)
 
 def serial(device_id):
     print("\nReading serial")
@@ -99,116 +81,53 @@ def serial(device_id):
         print("Serial: " + repr(x_serial.value))
 
 def get_speed(device_id)        :
-    print("\nGet speed")
-    # Create move settings structure
     mvst = move_settings_t()
-    # Get current move settings from controller
-    result = lib.get_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))    
+    lib.get_move_settings(device_id, byref(mvst))
     
     return mvst.Speed
         
 def get_position(device_id):
-    print("\nRead position")
     x_pos = get_position_t()
-    result = lib.get_position(device_id, byref(x_pos))
-    print("Result: " + repr(result))
-    if result == Result.Ok:
-        print("Position: {0} steps, {1} microsteps".format(x_pos.Position, x_pos.uPosition))
+    lib.get_position(device_id, byref(x_pos))
     return x_pos.Position, x_pos.uPosition
 
 def set_speed(device_id, speed):
-    print("\nSet speed")
-    # Create move settings structure
     mvst = move_settings_t()
-    # Get current move settings from controller
-    result = lib.get_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))
-    print("The speed was equal to {0}. We will change it to {1}".format(mvst.Speed, speed))
-    # Change current speed
+    lib.get_move_settings(device_id, byref(mvst))
     mvst.Speed = int(speed)
-    # Write new move settings to controller
-    result = lib.set_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Write command result: " + repr(result))    
+    lib.set_move_settings(device_id, byref(mvst))
 
 def set_microstep_mode_256(device_id):
-    print("\nSet microstep mode to 256")
-    # Create engine settings structure
     eng = engine_settings_t()
-    # Get current engine settings from controller
-    result = lib.get_engine_settings(device_id, byref(eng))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))
-    # Change MicrostepMode parameter to MICROSTEP_MODE_FRAC_256
-    # (use MICROSTEP_MODE_FRAC_128, MICROSTEP_MODE_FRAC_64 ... for other microstep modes)
+    lib.get_engine_settings(device_id, byref(eng))
     eng.MicrostepMode = MicrostepMode.MICROSTEP_MODE_FRAC_256
-    # Write new engine settings to controller
-    result = lib.set_engine_settings(device_id, byref(eng))
-    # Print command return status. It will be 0 if all is OK
-    print("Write command result: " + repr(result))    
+    lib.set_engine_settings(device_id, byref(eng))
 
 def get_accel(device_id):
-    print("\nGet accel")
-    # Create move settings structure
     mvst = move_settings_t()
-    # Get current move settings from controller
-    result = lib.get_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))    
+    lib.get_move_settings(device_id, byref(mvst))
     
     return mvst.Accel
 
 def get_decel(device_id):
-    print("\nGet decel")
-    # Create move settings structure
     mvst = move_settings_t()
-    # Get current move settings from controller
-    result = lib.get_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))    
+    lib.get_move_settings(device_id, byref(mvst))
     
     return mvst.Decel
 
 def set_accel(device_id, accel):
-    print("\nSet speed")
-    # Create move settings structure
     mvst = move_settings_t()
-    # Get current move settings from controller
-    result = lib.get_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))
-    print("The accel. rate was equal to {0}. We will change it to {1}".format(mvst.Accel, accel))
-    # Change current speed
+    lib.get_move_settings(device_id, byref(mvst))
     mvst.Accel = int(accel)
-    # Write new move settings to controller
-    result = lib.set_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Write command result: " + repr(result)) 
+    lib.set_move_settings(device_id, byref(mvst))
 
 def set_decel(device_id, decel):
-    print("\nSet speed")
-    # Create move settings structure
     mvst = move_settings_t()
-    # Get current move settings from controller
-    result = lib.get_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Read command result: " + repr(result))
-    print("The decel. rate was equal to {0}. We will change it to {1}".format(mvst.Decel, decel))
-    # Change current speed
+    lib.get_move_settings(device_id, byref(mvst))
     mvst.Decel = int(decel)
-    # Write new move settings to controller
-    result = lib.set_move_settings(device_id, byref(mvst))
-    # Print command return status. It will be 0 if all is OK
-    print("Write command result: " + repr(result))  
+    lib.set_move_settings(device_id, byref(mvst))
 
 def standExit():
-    # global lib
-    # lib.close_device(byref(cast(device_id0, POINTER(c_int))))
-    # lib.close_device(byref(cast(device_id1, POINTER(c_int))))
-    # lib.close_device(byref(cast(device_id2, POINTER(c_int))))
     sys.exit()
 
 
