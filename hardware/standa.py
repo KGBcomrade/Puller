@@ -179,6 +179,7 @@ class StandaMotor:
 
     async def _waitForStopAsync(self):
         status = status_t()
+        await asyncio.sleep(4 * waitInterval / 1000)
         while True:
             await asyncio.sleep(waitInterval / 1000)
             lib.get_status(self.id, byref(status))
