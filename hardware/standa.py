@@ -30,7 +30,7 @@ except OSError as err:
         print(err)
         print ("Can't load libximc library. Please add all shared libraries to the appropriate places. It is decribed in detail in developers' documentation. On Linux make sure you installed libximc-dev package.\nmake sure that the architecture of the system and the interpreter is the same")
     exit()
-    
+
 def info(device_id):
     print("\nGet device info")
     x_device_information = device_information_t()
@@ -244,6 +244,12 @@ class StandaMotor:
     def setDecel(self, decel):
         self.decel = decel
         set_decel(self.id, self.decel)
+
+    def moveByS(self, dp):
+        lib.command_movr_calb(self.id, c_float(dp), SetCalibr)
+
+    def waitForStop(self):
+        lib.command_wait_for_stop(self.id, waitInterval)
 
     def moveToS(self, position):
         lib.command_move_calb(self.id, c_float(position), SetCalibr)
