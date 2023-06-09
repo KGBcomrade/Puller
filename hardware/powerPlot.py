@@ -51,11 +51,11 @@ class PowerPlot:
         names = os.listdir(os.path.join(pathDat,folderName))
 
         for e in names:
-            if os.path.exists(os.path.join(fullname,"".join([str(u),".csv"]))):
+            if os.path.exists(os.path.join(fullname, f'power_{u}.csv')):
                 u += 1
             else: break
 
-        name = os.path.join(fullname,"".join([str(u),".csv"]))
+        name = os.path.join(fullname, f'power_{u}.csv')
         self.osc.conn.write(':WAVeform:DATA?')
         await asyncio.sleep(5)
         raw_data = self.osc.conn.read_raw()
@@ -84,3 +84,6 @@ class PowerPlot:
                 # time_val = x_origin + (i * x_increment)
                 # voltage = ((listData[i] - y_reference) * y_increment) + y_origin
                 f.write("%E, %f\n" % (X_waveform[i], listData[i]))
+
+
+        return u
