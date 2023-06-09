@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVB
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 from ui import Plot, SetupWindow
-import proc
+from proc import Proc
 
 import asyncio
 from qasync import asyncSlot
@@ -141,7 +141,7 @@ class MainWindow(QMainWindow):
         self.startButton.released.connect(self.callRun)
 
         #proc init
-        proc.initDevices()
+        self.proc = Proc()
 
     def _setMovementEnabled(self, enabled: bool):
         self.homingButton.setEnabled(enabled)
@@ -158,19 +158,19 @@ class MainWindow(QMainWindow):
     @asyncSlot()
     async def callMTS(self):
         self._setMovementEnabled(False)
-        await proc.MTS()
+        await self.proc.MTS()
         self._setMovementEnabled(True)
 
     @asyncSlot()
     async def callHoming(self):
         self._setMovementEnabled(False)
-        await proc.homing()
+        await self.proc.homing()
         self._setMovementEnabled(True)
 
     @asyncSlot()
     async def callBurnerSetup(self):
         self._setMovementEnabled(False)
-        self.burnerPullingPos = await proc.burnerSetup(self.burnerPullingPos)
+        self.burnerPullingPos = await self.proc.burnerSetup(self.burnerPullingPos)
         self._setMovementEnabled(True)
 
     @asyncSlot()
@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
         self.HHOGenButton.released.disconnect()
         self.HHOGenButton.released.connect(self.callHHOOff) 
         
-        await proc.HHOOn()
+        await self.proc.HHOOn()
 
         self.ignitionButton.setEnabled(True)
 
@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
         
         self.ignitionButton.setEnabled(False)
 
-        await proc.HHOOff()
+        await self.proc.HHOOff()
 
     @asyncSlot()
     async def callIgnition(self):
@@ -199,7 +199,7 @@ class MainWindow(QMainWindow):
         self.HHOGenButton.setEnabled(False)
         self._setMovementEnabled(False)
        
-        if not (await proc.ignite()):
+        if not (await self.proc.ignite()):
             self.ignitionButton.setText(ignitionButtonStopText)
             self.ignitionButton.released.disconnect()
             self.ignitionButton.released.connect(self.callExtinguish) 
@@ -214,7 +214,7 @@ class MainWindow(QMainWindow):
         self.ignitionButton.released.disconnect()
         self.ignitionButton.released.connect(self.callIgnition)
 
-        await proc.extinguish()
+        await self.proc.extinguish()
 
         self.HHOGenButton.setEnabled(True)
         self._setMovementEnabled(True)
@@ -224,7 +224,7 @@ class MainWindow(QMainWindow):
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
-        await proc.run(self, self.rw, self.lw, self.r0)
+        await self.proc.run(self, self.rw, self.lw, self.r0)
 
     def callStop(self):
         self.startButton.setEnabled(False)
@@ -232,26 +232,26 @@ class MainWindow(QMainWindow):
         
     def setXv(self, xv):
         self.xv = xv
-        proc.pullingMotor1.setSpeed(self.xv)
-        proc.pullingMotor2.setSpeed(self.xv)
+        self.proc.pullingMotor1.setSpeed(self.xv)
+        self.proc.pullingMotor2.setSpeed(self.xv)
 
     def setXa(self, xa):
         self.xa = xa
-        proc.pullingMotor1.setAccel(self.xa)
-        proc.pullingMotor2.setAccel(self.xa)
+        self.proc.pullingMotor1.setAccel(self.xa)
+        self.proc.pullingMotor2.setAccel(self.xa)
 
     def setXd(self, xd):
         self.xd = xd
-        proc.pullingMotor1.setDecel(self.xd)
-        proc.pullingMotor2.setDecel(self.xd)
+        self.proc.pullingMotor1.setDecel(self.xd)
+        self.proc.pullingMotor2.setDecel(self.xd)
 
     def setLv(self, Lv):
         self.Lv = Lv
-        proc.mainMotor.setSpeed(self.Lv)
+        self.proc.mainMotor.setSpeed(self.Lv)
 
     def setLa(self, La):
         self.La = La
-        proc.mainMotor.setAccel(self.La)
+        self.proc.mainMotor.setAccel(self.La)
 
     def updateIndicators(self, ts, xs, Ls, r):
         self.xPlot.plot(ts, xs)
