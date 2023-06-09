@@ -5,3 +5,6 @@ ui/__pycache__
 __pycache__
 hardware/devices.py
 pyximc.py
+cert.crt
+keys.env
+StepMotorSupply.py
