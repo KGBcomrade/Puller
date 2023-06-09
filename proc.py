@@ -4,12 +4,17 @@ from ui import BurnerSetupWindow, FinishWindow
 from PyQt6.QtWidgets import QMessageBox
 import asyncio
 import pandas as pd
+import numpy as np
 
 from hardware import DDS220M, PowerPlot, StandaMotor, VControl
 from hardware.standa import initDevices as initStandaMotors
 
 from misc import getLx
 from pathes import save_path
+
+from sacred.observers import MongoObserver
+from sacred import Experiment
+import dotenv
 
 class Proc:
     def __init__(self) -> None:
@@ -166,6 +171,36 @@ class Proc:
         await asyncio.gather(self.pullingMotor1.moveTo(self.pullingMotor1StartPos - xMax / 2),
                             self.pullingMotor2.moveTo(self.pullingMotor2StartPos - xMax / 2))
 
+    def _upload(self, num):
+        ex = Experiment('pulling_g')
+        dotenv.load_dotenv('keys.env')
+        url = 'mongodb://{user}:{pw}@{host}:{port}/?replicaSet={rs}&authSource={auth_src}'.format(
+            user=os.environ['mango_username'],
+            pw=os.environ['mango_password'],
+            host=os.environ['mango_host'],
+            port=os.environ['mango_port'],
+            rs='rs01',
+            auth_src=os.environ['mango_database'])
+
+        ex.observers.append(MongoObserver(url, tslCAFile='cert.crt', db_name=os.environ['mango_database']))
+
+        @ex.automain
+        def _push(_run):
+            for _, d in self.data.iterrows():
+                for n, v in d.items():
+                    _run.log_scalar(n, v)
+            power = np.genfromtxt(os.path.join(save_path, f'power_{num}.csv', delimeter=','))
+            power[:, 1] += -power[:, 1].min() + self.tStart
+
+            for tp in power:
+                _run.log_scalar('t_power', tp[0])
+                _run.log_scalar('power', tp[1])
+            
+
+
+        ex.run()
+                
+
 
     async def run(self, win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
         Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
@@ -209,6 +244,9 @@ class Proc:
         if finishWindow.saveCheckBox.isChecked():
             num = await asyncio.create_task(self.powerPlot.save(save_path))
             self.data.to_csv(os.path.join(save_path, f'movement_{num}'.csv))
-            
+
+            if finishWindow.mongoDBCheckBox.isChecked():
+                self._upload(num)
+
 
         asyncio.gather(*finishTasks)
