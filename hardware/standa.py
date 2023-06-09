@@ -6,7 +6,7 @@ import tempfile
 import urllib
 import asyncio
 from . import pathes
-from .motor import Motor
+from .motor import Motor, MotorTempSpeed
 
 try: 
     from pyximc import *
@@ -138,6 +138,20 @@ SetCalibr.MicrostepMode = 9
 
 waitInterval = 100
 
+class StandaMotorTempSpeed(MotorTempSpeed):
+    def __init__(self, motor, speed, accel, decel):
+        super().__init__(motor, speed, accel)
+        self.tdecel = decel
+        self.pdecel = motor.decel
+
+    def __enter__(self):
+        super().__enter__()
+        self.motor.setDecel(self.tdecel)
+
+    def __exit__(self, *exc):
+        super().__exit__(self, *exc)
+        self.motor.setDecel(self.pdecel)
+
 class StandaMotor(Motor):
     def __init__(self, devId, speed=900, accel=900, decel=900):
         self.id = devId
@@ -149,6 +163,9 @@ class StandaMotor(Motor):
         set_microstep_mode_256(devId)
         super().__init__(speed=speed, accel=accel)
         set_decel(devId, decel)
+
+    def tempSpeed(self, speed, accel, decel=None):
+        return StandaMotorTempSpeed(self, speed, accel, accel if decel is None else decel)
 
     def setSpeed(self, speed):
         super().setSpeed(speed)
