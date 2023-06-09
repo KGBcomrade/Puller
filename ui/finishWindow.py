@@ -14,17 +14,25 @@ class FinishWindow(QDialog):
         self.setLayout(mainLayout)
 
         self.saveCheckBox = QCheckBox('Сохранить данные')
+        self.mongoDBCheckBox = QCheckBox('Загрузить в MongoDB')
+        self.mongoDBCheckBox.setEnabled(False)
         self.moveCheckBox = QCheckBox('Сместить раму вправо')
         self.stretchButton = QPushButton('Доп. растяжка')
         self.exitButton = QPushButton('ОК')
         
         mainLayout.addWidget(self.saveCheckBox)
+        mainLayout.addWidget(self.mongoDBCheckBox)
         mainLayout.addWidget(self.moveCheckBox)
         mainLayout.addWidget(self.stretchButton)
         mainLayout.addWidget(self.exitButton)
 
+        self.saveCheckBox.stateChanged.connect(self._onSaveCheckChanged)
         self.stretchButton.released.connect(self._stretch)
         self.exitButton.released.connect(self.accept)
+
+    def _onSaveCheckChanged(self):
+        self.mongoDBCheckBox.setChecked(False)
+        self.mongoDBCheckBox.setEnabled(self.saveCheckBox.isChecked())
 
     def _setButtonsEnabled(self, enabled):
         self.stretchButton.setEnabled(enabled)
