@@ -1,6 +1,22 @@
 from abc import ABC, abstractclassmethod
 import asyncio
 
+class MotorTempSpeed:
+    def __init__(self, motor, speed, accel):
+        self.motor = motor
+        self.tspeed = speed
+        self.taccel = accel
+        self.pspeed = motor.speed
+        self.paccel = motor.accel
+
+    def __enter__(self):
+        self.motor.setSpeed(self.tspeed)
+        self.motor.setAccel(self.taccel)
+    
+    def __exit__(self, *exc):
+        self.motor.setSpeed(self.pspeed)
+        self.motor.setAccel(self.accel)
+
 class Motor:
     def __init__(self, speed, accel):
         self.speed = speed
@@ -16,6 +32,9 @@ class Motor:
     
     def setAccel(self, accel):
         self.accel = accel
+
+    def tempSpeed(self, speed, accel):
+        return MotorTempSpeed(self, speed, accel)
 
     @abstractclassmethod
     async def moveBy(self, dp, interval, lock):
