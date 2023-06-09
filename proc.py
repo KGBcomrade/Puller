@@ -54,14 +54,16 @@ class Proc:
         waitWindow.accept()
 
     async def _homing(self):
-        await self.burnerMotor.home()
-        await asyncio.gather(self.mainMotor.home(), self.pullingMotor1.home(), self.pullingMotor2.home())
+        with self.mainMotor.tempSpeed(16, 20), self.pullingMotor1.tempSpeed(2000, 900), self.pullingMotor2.tempSpeed(2000, 900):
+            await self.burnerMotor.home()
+            await asyncio.gather(self.mainMotor.home(), self.pullingMotor1.home(), self.pullingMotor2.home())
 
     async def _MTS(self):
-        await self.burnerMotor.moveTo(self.burnerMotorStartPos)
-        await asyncio.gather(self.mainMotor.moveTo(self.mainMotorStartPos), 
-                            self.pullingMotor1.moveTo(self.pullingMotor1StartPos), 
-                            self.pullingMotor2.moveTo(self.pullingMotor2StartPos))
+        with self.mainMotor.tempSpeed(16, 20), self.pullingMotor1.tempSpeed(2000, 900), self.pullingMotor2.tempSpeed(2000, 900):
+            await self.burnerMotor.moveTo(self.burnerMotorStartPos)
+            await asyncio.gather(self.mainMotor.moveTo(self.mainMotorStartPos), 
+                                self.pullingMotor1.moveTo(self.pullingMotor1StartPos), 
+                                self.pullingMotor2.moveTo(self.pullingMotor2StartPos))
 
     async def _burnerForward(self):
         await self.burnerMotor.moveTo(burnerMotorWorkPos)
