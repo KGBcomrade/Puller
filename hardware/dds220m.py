@@ -4,6 +4,8 @@ import time
 import ftd2xx
 import ftd2xx.defines as constants
 
+from .motor import Motor
+
 def com(q):
     ed, _ = codecs.escape_decode(q, 'hex')    #Перевод в удобоваримый для контроллера формат bytes с одним slash. (https://www.py4u.net/discuss/165846)
     return ed
@@ -30,7 +32,7 @@ def MOVE_ABSolute_220(d):
     e = b'\x53\x04\x06\x00\xa1\x01\x01\x00' + d
     return e
 
-class DDS220M:
+class DDS220M(Motor):
     def __init__(self, speed = 5, accel = 25, address = b'73851530') -> None:
         self.drive = ftd2xx.openEx(address) 
         self.drive.resetDevice()
@@ -56,17 +58,14 @@ class DDS220M:
 
         self.drive.write(b'\x40\x04\x0E\x00\xa1\x01\x01\x00\x00\x00\x00\x00\x11\x11\x11\x00\x00\x00\x00\x00' ) # HOMEPARAMS
 
-        self.speed = speed
-        self.accel = accel
-
-        self.drive.write(SET_VELPARAMS_220(self.accel, self.speed))
+        super().__init__(speed=speed, accel=accel)
 
     def setSpeed(self, speed):
-        self.speed = speed
+        super().setSpeed(speed)
         self.drive.write(SET_VELPARAMS_220(self.accel, self.speed))
     
     def setAccel(self, accel):
-        self.accel = accel
+        super().setAccel(accel)
         self.drive.write(SET_VELPARAMS_220(self.accel, self.speed))
 
 
@@ -111,7 +110,7 @@ class DDS220M:
         if lock:
             await self._waitForStop(interval)         
 
-    async def moveBy(self, distance, interval=.1, lock=True):
-        self.drive.write(MOVE_RELATIVE_220(distance))
+    async def moveBy(self, dp, interval=.1, lock=True):
+        self.drive.write(MOVE_RELATIVE_220(dp))
         if lock:
             await self._waitForStop(interval)

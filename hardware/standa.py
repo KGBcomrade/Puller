@@ -6,6 +6,7 @@ import tempfile
 import urllib
 import asyncio
 from . import pathes
+from .motor import Motor
 
 try: 
     from pyximc import *
@@ -137,27 +138,24 @@ SetCalibr.MicrostepMode = 9
 
 waitInterval = 100
 
-class StandaMotor:
+class StandaMotor(Motor):
     def __init__(self, devId, speed=900, accel=900, decel=900):
+        super().__init__(speed=speed, accel=accel)
         self.id = devId
         self.pos, self.uPos = get_position(devId)
-        self.speed = get_speed
-        self.accel = accel
         self.decel = decel
 
         self.lock = asyncio.Lock()
         
         set_microstep_mode_256(devId)
-        set_speed(devId, speed)
-        set_accel(devId, accel)
         set_decel(devId, decel)
 
     def setSpeed(self, speed):
-        self.speed = speed
+        super().setSpeed(speed)
         set_speed(self.id, self.speed)
     
     def setAccel(self, accel):
-        self.accel = accel
+        super().setAccel(accel)
         set_accel(self.id, self.accel)
 
     def setDecel(self, decel):
@@ -177,24 +175,32 @@ class StandaMotor:
     def getPosition(self):
         return get_position_calb(self.id)
 
-    async def _waitForStopAsync(self):
+    async def _waitForStopAsync(self, interval=.1):
         status = status_t()
-        await asyncio.sleep(4 * waitInterval / 1000)
+        await asyncio.sleep(4 * interval)
         while True:
-            await asyncio.sleep(waitInterval / 1000)
+            await asyncio.sleep(interval)
             lib.get_status(self.id, byref(status))
             if status.MoveSts & MoveState.MOVE_STATE_MOVING == 0:
                 break
 
-    async def moveTo(self, position):
+    async def moveTo(self, position, interval=.1, lock=True):
         async with self.lock:
             lib.command_move_calb(self.id, c_float(position), SetCalibr)
-            await self._waitForStopAsync()
+            if lock:
+                await self._waitForStopAsync(interval)
 
-    async def home(self):
+    async def moveBy(self, dp, interval=.1, lock=True):
+        async with self.lock:
+            lib.command_movr_calb(self.id, c_float(dp), SetCalibr)
+            if lock:
+                await self._waitForStopAsync(interval)
+
+    async def home(self, interval=.1, lock=True):
         async with self.lock:
             lib.command_homezero(self.id)
-            await self._waitForStopAsync()
+            if lock:
+                await self._waitForStopAsync(interval)
 
     def softStop(self):
         lib.command_sstp(self.id)
