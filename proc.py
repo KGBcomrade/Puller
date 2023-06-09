@@ -17,6 +17,11 @@ from sacred.observers import MongoObserver
 from sacred import Experiment
 import dotenv
 
+mainMotorTempSpeed = 16
+mainMotorTempAccel = 20
+pullingMotorTempSpeed = 3000
+pullingMotorTempAccel = 900
+
 class Proc:
     def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
         self.lock = asyncio.Lock()
@@ -54,7 +59,9 @@ class Proc:
         waitWindow.accept()
 
     async def _homing(self):
-        with self.mainMotor.tempSpeed(16, 20), self.pullingMotor1.tempSpeed(2000, 900), self.pullingMotor2.tempSpeed(2000, 900):
+        with self.mainMotor.tempSpeed(mainMotorTempSpeed, mainMotorTempAccel), \
+            self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel), \
+                self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel):
             await self.burnerMotor.home()
             await asyncio.gather(self.mainMotor.home(), self.pullingMotor1.home(), self.pullingMotor2.home())
 
@@ -192,7 +199,7 @@ class Proc:
                     _run.log_scalar(n, v)
             power = np.genfromtxt(os.path.join(save_path, str(datetime.date.today()), f'power_{num}.csv'), delimiter=',')
             power[:, 1] += -power[:, 1].min() + self.tStart
-            
+
             for tp in power:
                 _run.log_scalar('t_power', tp[0])
                 _run.log_scalar('power', tp[1])
