@@ -36,6 +36,8 @@ class Proc:
         self.vControl = VControl()
         self.powerPlot = PowerPlot()
 
+        self.tStart = 0
+
 
     async def _waitWindow(message: str, proc):
         waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди...', message, QMessageBox.StandardButton.NoButton)
@@ -169,11 +171,11 @@ class Proc:
         Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
 
         await self.burnerMotor.moveTo(burnerMotorWorkPos) # Подвод горелки
-        t0 = time() # Время начала прогрева
-
+        self.powerPlot.run()
+        self.tStart = time() # Время начала прогрева
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
-        while time() - t0 < tWarmen:
+        while time() - self.tStart < tWarmen:
             await asyncio.sleep(0)
         pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax))
         
@@ -193,6 +195,8 @@ class Proc:
 
         await self.burnerMotor.moveTo(self.burnerMotorExtPos)
         await win.callExtinguish()
+
+        self.powerPlot.stop()
 
         finishWindow = FinishWindow(self._stretch)
         finishWindow.exec()
