@@ -1,12 +1,15 @@
 from time import time
+import os
 from ui import BurnerSetupWindow, FinishWindow
 from PyQt6.QtWidgets import QMessageBox
 import asyncio
+import pandas as pd
 
 from hardware import DDS220M, PowerPlot, StandaMotor, VControl
 from hardware.standa import initDevices as initStandaMotors
 
 from misc import getLx
+from pathes import save_path
 
 class Proc:
     def __init__(self) -> None:
@@ -21,9 +24,7 @@ class Proc:
         self.pullingMotor2StartPos = 0
         self.stretch = 0.001 # мм, шаг ручного растяжения
 
-        self.ts = []
-        self.xs = []
-        self.Ls = []
+        self.data = pd.DataFrame({'t': [], 'x': [], 'L': []})
 
         self.mainMotor = DDS220M()
         ids = initStandaMotors()
@@ -155,17 +156,16 @@ class Proc:
             if x >= xMax:
                 break
 
-            self.ts.append(time())
-            self.xs.append(x)
-            self.Ls.append(Lx(x))
+            self.data.iloc[len(self.data)] = [time(), x, Lx(x)]
 
-            updater(self.ts, self.xs, self.Ls, Rx(x))
+            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x))
             
             await asyncio.sleep(.5)
 
     async def _pullerMotorRun(self, xMax):
         await asyncio.gather(self.pullingMotor1.moveTo(self.pullingMotor1StartPos - xMax / 2),
                             self.pullingMotor2.moveTo(self.pullingMotor2StartPos - xMax / 2))
+
 
     async def run(self, win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
         Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
@@ -207,7 +207,8 @@ class Proc:
             finishTasks.append(asyncio.create_task(self.mainMotor.moveTo(self.mainMotorEndPos)))
 
         if finishWindow.saveCheckBox.isChecked():
-            #TODO add saving task
-            pass
+            num = await asyncio.create_task(self.powerPlot.save(save_path))
+            self.data.to_csv(os.path.join(save_path, f'movement_{num}'.csv))
+            
 
         asyncio.gather(*finishTasks)
