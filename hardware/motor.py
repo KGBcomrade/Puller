@@ -15,7 +15,7 @@ class MotorTempSpeed:
     
     def __exit__(self, *exc):
         self.motor.setSpeed(self.pspeed)
-        self.motor.setAccel(self.accel)
+        self.motor.setAccel(self.paccel)
 
 class Motor:
     def __init__(self, speed, accel):

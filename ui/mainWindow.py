@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         self.xvInput.setRange(1e-5, 2000)
         self.xaInput = QDoubleSpinBox(decimals=5, prefix='a=', suffix=' мм/с²')
         self.xaInput.setValue(self.xa)
-        self.xvInput.setRange(1e-5, 2000)
+        self.xaInput.setRange(1e-5, 2000)
         self.xdInput = QDoubleSpinBox(decimals=5, prefix='d=', suffix=' мм/с²')
         self.xdInput.setValue(self.xd)
         self.xdInput.setRange(1e-5, 2000)

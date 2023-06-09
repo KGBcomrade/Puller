@@ -140,7 +140,6 @@ waitInterval = 100
 
 class StandaMotor(Motor):
     def __init__(self, devId, speed=900, accel=900, decel=900):
-        super().__init__(speed=speed, accel=accel)
         self.id = devId
         self.pos, self.uPos = get_position(devId)
         self.decel = decel
@@ -148,6 +147,7 @@ class StandaMotor(Motor):
         self.lock = asyncio.Lock()
         
         set_microstep_mode_256(devId)
+        super().__init__(speed=speed, accel=accel)
         set_decel(devId, decel)
 
     def setSpeed(self, speed):
