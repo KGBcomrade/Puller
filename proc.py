@@ -5,12 +5,13 @@ from PyQt6.QtWidgets import QMessageBox
 import asyncio
 import pandas as pd
 import numpy as np
+import datetime
 
 from hardware import DDS220M, PowerPlot, StandaMotor, VControl
 from hardware.standa import initDevices as initStandaMotors
 
 from misc import getLx
-from pathes import save_path
+from hardware.pathes import save_path
 
 from sacred.observers import MongoObserver
 from sacred import Experiment
@@ -91,7 +92,7 @@ class Proc:
         return 0
 
     async def MTS(self):
-        await self._waitWindow('Свдиг подвижек на начальные позиции...', self._MTS)
+        await Proc._waitWindow('Свдиг подвижек на начальные позиции...', self._MTS)
 
     async def burnerSetup(self, burnerPullingPos = 36.8):
         global burnerMotorWorkPos
@@ -160,9 +161,7 @@ class Proc:
             x = self._getX()
             if x >= xMax:
                 break
-
-            self.data.iloc[len(self.data)] = [time(), x, Lx(x)]
-
+            self.data.loc[len(self.data) + 1] = [time(), x, Lx(x).item()]
             updater(self.data['t'], self.data['x'], self.data['L'], Rx(x))
             
             await asyncio.sleep(.5)
@@ -182,16 +181,16 @@ class Proc:
             rs='rs01',
             auth_src=os.environ['mango_database'])
 
-        ex.observers.append(MongoObserver(url, tslCAFile='cert.crt', db_name=os.environ['mango_database']))
+        ex.observers.append(MongoObserver(url, tlsCAFile='cert.crt', db_name=os.environ['mango_database']))
 
         @ex.automain
         def _push(_run):
             for _, d in self.data.iterrows():
                 for n, v in d.items():
                     _run.log_scalar(n, v)
-            power = np.genfromtxt(os.path.join(save_path, f'power_{num}.csv', delimeter=','))
+            power = np.genfromtxt(os.path.join(save_path, str(datetime.date.today()), f'power_{num}.csv'), delimiter=',')
             power[:, 1] += -power[:, 1].min() + self.tStart
-
+            
             for tp in power:
                 _run.log_scalar('t_power', tp[0])
                 _run.log_scalar('power', tp[1])
@@ -205,7 +204,7 @@ class Proc:
     async def run(self, win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
         Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
 
-        await self.burnerMotor.moveTo(burnerMotorWorkPos) # Подвод горелки
+        await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.powerPlot.run()
         self.tStart = time() # Время начала прогрева
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
@@ -243,7 +242,7 @@ class Proc:
 
         if finishWindow.saveCheckBox.isChecked():
             num = await asyncio.create_task(self.powerPlot.save(save_path))
-            self.data.to_csv(os.path.join(save_path, f'movement_{num}'.csv))
+            self.data.to_csv(os.path.join(save_path, str(datetime.date.today()), f'movement_{num}.csv'))
 
             if finishWindow.mongoDBCheckBox.isChecked():
                 self._upload(num)
