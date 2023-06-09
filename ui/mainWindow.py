@@ -141,7 +141,7 @@ class MainWindow(QMainWindow):
         self.startButton.released.connect(self.callRun)
 
         #proc init
-        self.proc = Proc()
+        self.proc = Proc(self.Lv, self.La, self.xv, self.xa, self.xd)
 
     def _setMovementEnabled(self, enabled: bool):
         self.homingButton.setEnabled(enabled)

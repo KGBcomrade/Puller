@@ -18,7 +18,7 @@ from sacred import Experiment
 import dotenv
 
 class Proc:
-    def __init__(self) -> None:
+    def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
         self.lock = asyncio.Lock()
 
         self.mainMotorStartPos = 14.4
@@ -32,12 +32,12 @@ class Proc:
 
         self.data = pd.DataFrame({'t': [], 'x': [], 'L': []})
 
-        self.mainMotor = DDS220M()
+        self.mainMotor = DDS220M(speed=mainMotorSpeed, accel=mainMotorAccel)
         ids = initStandaMotors()
         if len(ids) < 3:
             raise RuntimeError('Certain standa motors undetected')
-        self.pullingMotor1 = StandaMotor(ids[0], speed=100)
-        self.pullingMotor2 = StandaMotor(ids[2], speed=100)
+        self.pullingMotor1 = StandaMotor(ids[0], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
+        self.pullingMotor2 = StandaMotor(ids[2], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
         self.burnerMotor = StandaMotor(ids[1])
 
         self.vControl = VControl()
