@@ -163,7 +163,7 @@ class Proc:
             x = self._getX()
             if x >= xMax:
                 break
-            self.data.loc[len(self.data) + 1] = [time(), x, Lx(x).item()]
+            self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
             updater(self.data['t'], self.data['x'], self.data['L'], Rx(x))
             
             await asyncio.sleep(.5)
