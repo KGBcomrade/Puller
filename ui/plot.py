@@ -13,17 +13,25 @@ class Plot(FigureCanvasQTAgg):
         super(FigureCanvasQTAgg, self).__init__(fig)
         self.xlabel = xlabel
         self.ylabel = ylabel
+        self.line = None
         
         
 
     def plot(self, x, y):
-        self.axes.clear()
-        self.axes.plot(x, y)
-        self.axes.grid()
-        
-        if self.xlabel is not None:
-            self.axes.set_xlabel(xlabel=self.xlabel)
-        if self.ylabel is not None:
-            self.axes.set_ylabel(ylabel=self.ylabel)
-        
+        if self.line is None:
+            [self.line] = self.axes.plot(x, y)
+            self.axes.grid()
+
+            if self.xlabel is not None:
+                self.axes.set_xlabel(xlabel=self.xlabel)
+            if self.ylabel is not None:
+                self.axes.set_ylabel(ylabel=self.ylabel)
+
+        else:
+            self.line.set_xdata(x)
+            self.line.set_ydata(y)
+
+            self.axes.relim()
+            self.axes.autoscale_view()
+
         self.draw_idle()
