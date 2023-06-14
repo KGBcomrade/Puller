@@ -73,7 +73,7 @@ class Proc:
                                 self.pullingMotor2.moveTo(self.pullingMotor2StartPos))
 
     async def _burnerForward(self):
-        await self.burnerMotor.moveTo(burnerMotorWorkPos)
+        await self.burnerMotor.moveTo(self.burnerMotorWorkPos)
 
     async def _burnerBackward(self):
         await self.burnerMotor.moveTo(self.burnerMotorStartPos)
@@ -104,14 +104,14 @@ class Proc:
         await Proc._waitWindow('Свдиг подвижек на начальные позиции...', self._MTS)
 
     async def burnerSetup(self, burnerPullingPos = 36.8):
-        global burnerMotorWorkPos
-        burnerMotorWorkPos = burnerPullingPos
+        self.burnerMotorWorkPos = burnerPullingPos
         # wait until move under the camera
         await Proc._waitWindow('Горелка подводится под камеру...', self._burnerForward)
         
         # setup
-        setupWindow = BurnerSetupWindow(burnerMotorWorkPos, self._stretch, self.burnerMotor.moveToS)
+        setupWindow = BurnerSetupWindow(self.burnerMotorWorkPos, self._stretch, self.burnerMotor.moveToS)
         setupWindow.exec()
+        self.burnerMotorWorkPos = setupWindow.position
 
         # wait until move back
         # await WaitWindow.create('Горелка отводится назад...')
