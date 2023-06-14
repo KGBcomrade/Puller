@@ -81,7 +81,7 @@ def serial(device_id):
     if result == Result.Ok:
         print("Serial: " + repr(x_serial.value))
 
-def get_speed(device_id)        :
+def get_speed(device_id):
     mvst = move_settings_t()
     lib.get_move_settings(device_id, byref(mvst))
     
@@ -93,10 +93,10 @@ def get_position(device_id):
     return x_pos.Position, x_pos.uPosition
 
 def set_speed(device_id, speed):
-    mvst = move_settings_t()
-    lib.get_move_settings(device_id, byref(mvst))
-    mvst.Speed = int(speed)
-    lib.set_move_settings(device_id, byref(mvst))
+    mvst = move_settings_calb_t()
+    lib.get_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
+    mvst.Speed = speed
+    lib.set_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
 
 def set_microstep_mode_256(device_id):
     eng = engine_settings_t()
@@ -117,16 +117,16 @@ def get_decel(device_id):
     return mvst.Decel
 
 def set_accel(device_id, accel):
-    mvst = move_settings_t()
-    lib.get_move_settings(device_id, byref(mvst))
-    mvst.Accel = int(accel)
-    lib.set_move_settings(device_id, byref(mvst))
+    mvst = move_settings_calb_t()
+    lib.get_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
+    mvst.Accel = accel
+    lib.set_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
 
 def set_decel(device_id, decel):
-    mvst = move_settings_t()
-    lib.get_move_settings(device_id, byref(mvst))
-    mvst.Decel = int(decel)
-    lib.set_move_settings(device_id, byref(mvst))
+    mvst = move_settings_calb_t()
+    lib.get_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
+    mvst.Decel = decel
+    lib.set_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
 
 def standExit():
     sys.exit()
@@ -153,7 +153,7 @@ class StandaMotorTempSpeed(MotorTempSpeed):
         self.motor.setDecel(self.pdecel)
 
 class StandaMotor(Motor):
-    def __init__(self, devId, speed=900, accel=900, decel=900):
+    def __init__(self, devId, speed=1, accel=1, decel=1):
         self.id = devId
         self.pos, self.uPos = get_position(devId)
         self.decel = decel
