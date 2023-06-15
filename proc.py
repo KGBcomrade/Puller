@@ -238,6 +238,7 @@ class Proc:
 
         await self.burnerMotor.moveTo(self.burnerMotorExtPos)
         await win.callExtinguish()
+        await win.callHHOOff()
 
         self.powerPlot.stop()
 
