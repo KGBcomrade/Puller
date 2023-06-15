@@ -19,7 +19,7 @@ import dotenv
 
 mainMotorTempSpeed = 16
 mainMotorTempAccel = 20
-pullingMotorTempSpeed = 2
+pullingMotorTempSpeed = 1.5
 pullingMotorTempAccel = 1
 
 class Proc:
