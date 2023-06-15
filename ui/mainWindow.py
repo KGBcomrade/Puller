@@ -1,7 +1,8 @@
 import typing
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
+     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame, \
+     QMessageBox
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 from ui import Plot, SetupWindow
@@ -224,6 +225,10 @@ class MainWindow(QMainWindow):
 
     @asyncSlot()
     async def callRun(self):
+        warning = QMessageBox(QMessageBox.Icon.Warning, 'Внимание', 'Крышка камеры закрыта?', 
+                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if warning.exec() == QMessageBox.StandardButton.No:
+            return
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
