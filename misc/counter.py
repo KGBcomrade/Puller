@@ -2,6 +2,8 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz
 
+radius, thetas = np.genfromtxt('misc/theta.csv')
+
 def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R
     от удлиннения волокна x. Также возвращает итоговое удлиннение волокна x_max
@@ -24,12 +26,6 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=1):
         return np.array(list(map(fun, x)))
 
     lw = lw - Ltorch
-    radius = np.linspace(0, 62.5, 14)
-    thetas = np.array([
-        97.9162688, 97.9162688, 36.01154809, 22.44529847, 16.77319816,
-        14.08756338, 13.28444282, 14.76885344, 19.37716274, 27.14935304,
-        37.4940508, 49.76789206, 63.43683519, 78.09095269
-    ]) 
     Theta = interp1d(radius, thetas, kind='cubic')
     r = np.arange(rw, r0, dr)
     dz = Map(lambda x: 1 / float(Theta(x)), r)
