@@ -198,7 +198,7 @@ class Proc:
                 for n, v in d.items():
                     _run.log_scalar(n, v)
             power = np.genfromtxt(os.path.join(save_path, str(datetime.date.today()), f'power_{num}.csv'), delimiter=',')
-            power[:, 1] += -power[:, 1].min() + self.tStart
+            power[:, 0] += -power[:, 0].min() + self.tStart
 
             for tp in power:
                 _run.log_scalar('t_power', tp[0])
