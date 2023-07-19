@@ -220,7 +220,7 @@ class Proc:
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < tWarmen:
             await asyncio.sleep(0)
-        pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax))
+        pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1 + self.pullingMotor1.accel / self.pullingMotor1.decel)))
         
         while True:
             await asyncio.sleep(0)
@@ -228,6 +228,9 @@ class Proc:
                 pullerMotorTask.cancel()
                 self.pullingMotor1.softStop()
                 self.pullingMotor2.softStop()
+                break
+
+            if self.pullingMotor1.getPosition() >= xMax:
                 break
 
             if pullerMotorTask.done():
