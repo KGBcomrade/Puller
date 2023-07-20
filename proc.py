@@ -236,10 +236,14 @@ class Proc:
             if pullerMotorTask.done():
                 break
 
+        returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
+
+        await asyncio.sleep(1)        
+
         mainMotorTask.cancel()
         plotterTask.cancel()
-
-        await self.burnerMotor.moveTo(self.burnerMotorExtPos)
+        
+        await returnTask
         await win.callExtinguish()
         await win.callHHOOff()
 
