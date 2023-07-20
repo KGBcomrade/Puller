@@ -159,7 +159,7 @@ class Proc:
         while True:
             x = self._getX()
             if x >= xMax:
-                break
+                x = xMax
             yTarget = Lx(x) / 2 * turn + self.mainMotorStartPos
             await self.mainMotor.moveTo(yTarget, lock=False)
             await self.mainMotor.waitForStop(yTarget)
@@ -238,7 +238,7 @@ class Proc:
 
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
 
-        await asyncio.sleep(1)        
+        await asyncio.sleep(3) 
 
         mainMotorTask.cancel()
         plotterTask.cancel()
