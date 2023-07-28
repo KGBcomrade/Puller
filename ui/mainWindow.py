@@ -28,17 +28,17 @@ class MainWindow(QMainWindow):
 
         # pulling parameters
         self.r0 = 125 / 2
-        self.rw = 10
+        self.rw = 20
         self.lw = 15
 
-        self.xv = 3 # Standa velocity
-        self.xa = .05 # Standa acceleration
-        self.xd = .4 # Standa deceleraion
+        self.xv = .04 # Standa velocity
+        self.xa = 1 # Standa acceleration
+        self.xd = 1 # Standa deceleraion
 
         self.Lv = 5 # Thorlabs velocity
         self.La = 30 # Thorlabs acceleration
 
-        self.burnerPullingPos = 36.8
+        self.burnerPullingPos = 36.3
 
         self.stopFlag = False
 
@@ -115,8 +115,10 @@ class MainWindow(QMainWindow):
         self.LPlot = Plot(ylabel='$L$, mm')
         self.LvInput = QDoubleSpinBox(decimals=5, prefix='v=', suffix=' мм/с')
         self.LvInput.setValue(self.Lv)
+        self.LvInput.setRange(1, 50)
         self.LaInput = QDoubleSpinBox(decimals=5, prefix='a=', suffix=' мм/с²')
         self.LaInput.setValue(self.La)
+        self.LaInput.setRange(1, 2000)
         self.pullingSetupButton = QPushButton(pullingSetupButtonText)
         LPlotLayout.addWidget(self.LPlot)
         LPlotLayout.addLayout(LPlotSideLayout)
@@ -232,7 +234,7 @@ class MainWindow(QMainWindow):
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
-        await self.proc.run(self, self.rw, self.lw, self.r0)
+        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=1)
 
     def callStop(self):
         self.startButton.setEnabled(False)
