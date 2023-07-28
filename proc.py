@@ -50,6 +50,8 @@ class Proc:
 
         self.tStart = 0
 
+        self.plotEvent = asyncio.Event()
+
 
     async def _waitWindow(message: str, proc):
         waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди...', message, QMessageBox.StandardButton.NoButton)
@@ -164,6 +166,8 @@ class Proc:
             await self.mainMotor.moveTo(yTarget, lock=False)
             await self.mainMotor.waitForStop(yTarget)
             turn *= -1
+            
+            self.plotEvent.set()
 
     async def _plotter(self, Lx, Rx, xMax, updater):
         while True:
@@ -173,7 +177,8 @@ class Proc:
             self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
             updater(self.data['t'], self.data['x'], self.data['L'], Rx(x))
             
-            await asyncio.sleep(.5)
+            await self.plotEvent.wait()
+            self.plotEvent.clear()
 
     async def _pullerMotorRun(self, xMax):
         await asyncio.gather(self.pullingMotor1.moveTo(self.pullingMotor1StartPos - xMax / 2),
@@ -217,7 +222,7 @@ class Proc:
         self.powerPlot.run()
         self.tStart = time() # Время начала прогрева
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
-        # plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
+        plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < tWarmen:
             await asyncio.sleep(0)
         pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1)))
@@ -241,7 +246,7 @@ class Proc:
         await asyncio.sleep(1) 
 
         mainMotorTask.cancel()
-        # plotterTask.cancel()
+        plotterTask.cancel()
         
         await returnTask
         await win.callExtinguish()
