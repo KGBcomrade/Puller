@@ -43,7 +43,7 @@ class Proc:
             raise RuntimeError('Certain standa motors undetected')
         self.pullingMotor1 = StandaMotor(ids[0], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
         self.pullingMotor2 = StandaMotor(ids[2], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
-        self.burnerMotor = StandaMotor(ids[1])
+        self.burnerMotor = StandaMotor(ids[1], speed=1.5)
 
         self.vControl = VControl()
         self.powerPlot = PowerPlot()
@@ -217,11 +217,11 @@ class Proc:
         self.powerPlot.run()
         self.tStart = time() # Время начала прогрева
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
-        plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
+        # plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < tWarmen:
             await asyncio.sleep(0)
-        pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1 + self.pullingMotor1.accel / self.pullingMotor1.decel)))
-        
+        pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1)))
+
         while True:
             await asyncio.sleep(0)
             if win.stopFlag:
@@ -230,7 +230,7 @@ class Proc:
                 self.pullingMotor2.softStop()
                 break
 
-            if self.pullingMotor1.getPosition() >= xMax:
+            if self.pullingMotor1.getPosition() >= xMax/2:
                 break
 
             if pullerMotorTask.done():
@@ -238,10 +238,10 @@ class Proc:
 
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
 
-        await asyncio.sleep(3) 
+        await asyncio.sleep(1) 
 
         mainMotorTask.cancel()
-        plotterTask.cancel()
+        # plotterTask.cancel()
         
         await returnTask
         await win.callExtinguish()
