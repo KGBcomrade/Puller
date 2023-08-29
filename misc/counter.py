@@ -28,7 +28,8 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=1):
     lw = lw - Ltorch
     Theta = interp1d(radius, thetas, kind='cubic')
     r = np.arange(rw, r0, dr)
-    dz = Map(lambda x: 1 / float(Theta(x)), r)
+    rMin = radius.min()
+    dz = Map(lambda x: 1 / float(Theta(x) if x >= rMin else Theta(rMin)), r)
     z = integr(dz, r)
     z = z[-1] - z
     inte = integr((r**2), z)
@@ -41,8 +42,7 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=1):
     R_x = interp1d(x, r, kind='cubic')
     L_x = interp1d(x, L, kind='cubic')
     xMax = x[0]
-    rMin = radius.min()
     
-    dz = np.array(list(map(lambda x: 1 / float(Theta(x) if r >= rMin else Theta(rMin)), r)))
+    dz = np.array(list(map(lambda x: 1 / float(Theta(x)), r)))
     z = np.hstack((0, cumtrapz(dz, r)))
     return L_x, R_x, xMax, z, r
