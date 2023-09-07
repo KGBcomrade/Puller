@@ -252,10 +252,10 @@ class Proc:
         await win.callExtinguish()
         await win.callHHOOff()
 
-        self.powerPlot.stop()
-
         finishWindow = FinishWindow(self._stretch)
         finishWindow.exec()
+
+        self.powerPlot.stop()
 
         finishTasks = [asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorStartPos))]
 
