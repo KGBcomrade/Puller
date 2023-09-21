@@ -68,7 +68,9 @@ class Proc:
             await asyncio.gather(self.mainMotor.home(), self.pullingMotor1.home(), self.pullingMotor2.home())
 
     async def _MTS(self):
-        with self.mainMotor.tempSpeed(16, 20), self.pullingMotor1.tempSpeed(2000, 900), self.pullingMotor2.tempSpeed(2000, 900):
+        with self.mainMotor.tempSpeed(mainMotorTempSpeed, mainMotorTempAccel), \
+            self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel), \
+            self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel):
             await self.burnerMotor.moveTo(self.burnerMotorStartPos)
             await asyncio.gather(self.mainMotor.moveTo(self.mainMotorStartPos), 
                                 self.pullingMotor1.moveTo(self.pullingMotor1StartPos), 
