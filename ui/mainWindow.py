@@ -28,17 +28,17 @@ class MainWindow(QMainWindow):
 
         # pulling parameters
         self.r0 = 125 / 2
-        self.rw = 20
+        self.rw = 25
         self.lw = 15
 
-        self.xv = .06 # Standa velocity
+        self.xv = .03 # Standa velocity
         self.xa = 1 # Standa acceleration
         self.xd = 1 # Standa deceleraion
 
         self.Lv = 3 # Thorlabs velocity
         self.La = 30 # Thorlabs acceleration
 
-        self.burnerPullingPos = 35.88
+        self.burnerPullingPos = 36.45
 
         self.stopFlag = False
 
