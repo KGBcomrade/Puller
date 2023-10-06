@@ -214,6 +214,11 @@ class Proc:
 
 
         ex.run()
+
+
+    async def _delayedPPStart(self, delay=0):
+        await asyncio.sleep(delay)
+        self.powerPlot.run()
                 
 
 
@@ -221,7 +226,7 @@ class Proc:
         Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
 
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
-        self.powerPlot.run()
+        ppTask = asyncio.create_task(self._delayedPPStart(tWarmen))
         self.tStart = time() # Время начала прогрева
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
