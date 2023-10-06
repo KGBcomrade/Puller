@@ -19,8 +19,8 @@ import dotenv
 
 mainMotorTempSpeed = 16
 mainMotorTempAccel = 20
-pullingMotorTempSpeed = .6
-pullingMotorTempAccel = .1
+pullingMotorTempSpeed = 3
+pullingMotorTempAccel = 1
 
 class Proc:
     def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
