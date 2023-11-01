@@ -113,12 +113,12 @@ class MainWindow(QMainWindow):
         
         # L plot
         self.LPlot = Plot(ylabel='$L$, mm')
-        self.LvInput = QDoubleSpinBox(decimals=5, prefix='v=', suffix=' мм/с')
+        self.LvInput = QDoubleSpinBox(decimals=2, prefix='v=', suffix=' мм/с')
         self.LvInput.setValue(self.Lv)
-        self.LvInput.setRange(1, 50)
-        self.LaInput = QDoubleSpinBox(decimals=5, prefix='a=', suffix=' мм/с²')
+        self.LvInput.setRange(1, 300)
+        self.LaInput = QDoubleSpinBox(decimals=2, prefix='a=', suffix=' мм/с²')
         self.LaInput.setValue(self.La)
-        self.LaInput.setRange(1, 2000)
+        self.LaInput.setRange(1, 5000)
         self.pullingSetupButton = QPushButton(pullingSetupButtonText)
         LPlotLayout.addWidget(self.LPlot)
         LPlotLayout.addLayout(LPlotSideLayout)
