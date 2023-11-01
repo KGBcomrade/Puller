@@ -28,7 +28,7 @@ class Proc:
 
         self.mainMotorStartPos = 14.4
         self.mainMotorEndPos = 214
-        self.burnerMotorStartPos = 10
+        self.burnerMotorStartPos = 6
         self.burnerMotorExtPos = self.burnerMotorStartPos + 10
         self.burnerMotorWorkPos = 36.8
         self.pullingMotor1StartPos = 0
