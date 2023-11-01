@@ -29,16 +29,16 @@ class MainWindow(QMainWindow):
         # pulling parameters
         self.r0 = 125 / 2
         self.rw = 25
-        self.lw = 15
+        self.lw = 25
 
         self.xv = .03 # Standa velocity
         self.xa = 1 # Standa acceleration
         self.xd = 1 # Standa deceleraion
 
-        self.Lv = 3 # Thorlabs velocity
-        self.La = 30 # Thorlabs acceleration
+        self.Lv = 5 # Thorlabs velocity
+        self.La = 300 # Thorlabs acceleration
 
-        self.burnerPullingPos = 36.45
+        self.burnerPullingPos = 36.28
 
         self.stopFlag = False
 
@@ -234,7 +234,7 @@ class MainWindow(QMainWindow):
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
-        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=35)
+        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=70)
 
     def callStop(self):
         self.startButton.setEnabled(False)
