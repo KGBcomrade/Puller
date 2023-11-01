@@ -43,6 +43,6 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=1):
     L_x = interp1d(x, L, kind='cubic')
     xMax = x[0]
     
-    dz = np.array(list(map(lambda x: 1 / float(Theta(x)), r)))
+    dz = np.array(list(map(lambda x: 1 / float(Theta(x) if x >= rMin else Theta(rMin)), r)))
     z = np.hstack((0, cumtrapz(dz, r)))
     return L_x, R_x, xMax, z, r
