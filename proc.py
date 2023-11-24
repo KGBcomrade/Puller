@@ -177,7 +177,7 @@ class Proc:
             if x >= xMax:
                 break
             self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
-            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x))
+            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax)
             
             await self.plotEvent.wait()
             self.plotEvent.clear()

@@ -263,9 +263,9 @@ class MainWindow(QMainWindow):
         self.La = La
         self.proc.mainMotor.setAccel(self.La)
 
-    def updateIndicators(self, ts, xs, Ls, r):
+    def updateIndicators(self, ts, xs, Ls, r, p):
         self.xPlot.plot(ts, xs)
         self.LPlot.plot(ts, Ls)
 
         self.progressText.setText(f'{r} → {self.rw}')
-        self.progressBar.setValue(round(100 - (r - self.rw) / (self.r0 - self.rw) * 100))
+        self.progressBar.setValue(p)
