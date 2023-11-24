@@ -222,8 +222,8 @@ class Proc:
                 
 
 
-    async def run(self, win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0):
-        Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr)
+    async def run(self, win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0, k=1):
+        Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr, k=k)
 
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         ppTask = asyncio.create_task(self._delayedPPStart(tWarmen))

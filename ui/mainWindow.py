@@ -236,7 +236,7 @@ class MainWindow(QMainWindow):
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
-        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=70)
+        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=70, k=self.k)
 
     def callStop(self):
         self.startButton.setEnabled(False)
