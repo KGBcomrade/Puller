@@ -9,17 +9,22 @@ from ui import Plot
 from misc import getLx
 
 class SetupWindow(QDialog):
-    def __init__(self, r0 = 62.5, rw = 10, lw = 30) -> None:
+    def __init__(self, r0 = 62.5, rw = 10, lw = 30, k = 7) -> None:
         super().__init__()
 
         self.rw = rw
         self.lw = lw
         self.r0 = r0
+        self.k = k
 
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
         mainLayout.addLayout(inputsLayout)
 
+        self.kInput = QDoubleSpinBox(prefix='𝚯/=')
+        self.kInput.setMaximum(20)
+        self.kInput.setMinimum(.1)
+        self.kInput.setValue(self.k)
         self.r0Input = QDoubleSpinBox(prefix='r0=', suffix=' мкм')
         self.r0Input.setMaximum(62.5)
         self.r0Input.setValue(r0)
@@ -27,6 +32,7 @@ class SetupWindow(QDialog):
         self.rwInput.setValue(rw)
         self.lwInput = QDoubleSpinBox(prefix='lw=', suffix=' мм')
         self.lwInput.setValue(lw)
+        inputsLayout.addWidget(self.kInput)
         inputsLayout.addWidget(self.r0Input)
         inputsLayout.addWidget(self.rwInput)
         inputsLayout.addWidget(self.lwInput)
@@ -39,6 +45,7 @@ class SetupWindow(QDialog):
         mainLayout.addWidget(self.LPlot)
         mainLayout.addWidget(self.rPlot)
 
+        self.kInput.valueChanged.connect(self.updateK)
         self.r0Input.valueChanged.connect(self.updateR0)
         self.rwInput.valueChanged.connect(self.updateRw)
         self.lwInput.valueChanged.connect(self.updateLw)
@@ -51,11 +58,14 @@ class SetupWindow(QDialog):
         self.setLayout(mainLayout)
 
     def updatePlots(self):
-        Lx, Rx, xMax, _, _ = getLx(r0=self.r0, lw=self.lw, rw=self.rw)
+        Lx, Rx, xMax, _, _ = getLx(r0=self.r0, lw=self.lw, rw=self.rw, k=self.k)
         x = np.linspace(0, xMax, 100)
         self.LPlot.plot(x, Lx(x))
         self.rPlot.plot(x, Rx(x))
 
+    def updateK(self, k):
+        self.k = k
+        self.updatePlots()
     def updateR0(self, r0):
         self.r0 = r0
         self.updatePlots()

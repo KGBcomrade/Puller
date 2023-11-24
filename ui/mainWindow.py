@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         # pulling parameters
+        self.k = 7
         self.r0 = 125 / 2
         self.rw = 25
         self.lw = 25
@@ -155,8 +156,9 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
-        setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw)
+        setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw, k = self.k)
         if setupWindow.exec():
+            self.k = setupWindow.k
             self.r0 = setupWindow.r0
             self.rw = setupWindow.rw
             self.lw = setupWindow.lw
