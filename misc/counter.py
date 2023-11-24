@@ -26,7 +26,7 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
         return np.array(list(map(fun, x)))
 
     lw = lw - Ltorch
-    Theta = interp1d(radius, thetas, kind='cubic')
+    Theta = interp1d(radius, thetas / 7, kind='cubic')
     r = np.arange(rw, r0, dr)
     rMin = radius.min()
     dz = Map(lambda x: 1 / float(Theta(x) if x >= rMin else Theta(rMin)), r)
