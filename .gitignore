@@ -8,3 +8,4 @@ pyximc.py
 cert.crt
 keys.env
 StepMotorSupply.py
+misc/__pycache__
