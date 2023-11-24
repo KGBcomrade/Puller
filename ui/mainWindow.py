@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         self.lw = 25
 
         self.tW = 45
+        self.dr = .1
 
         self.xv = .03 # Standa velocity
         self.xa = 1 # Standa acceleration
@@ -158,13 +159,14 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
-        setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, tW=self.tW)
+        setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, tW=self.tW, dr=self.dr)
         if setupWindow.exec():
             self.k = setupWindow.k
             self.r0 = setupWindow.r0
             self.rw = setupWindow.rw
             self.lw = setupWindow.lw
             self.tW = setupWindow.tW
+            self.dr = setupWindow.dr
 
     @asyncSlot()
     async def callMTS(self):
@@ -239,7 +241,7 @@ class MainWindow(QMainWindow):
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
-        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=self.tW, k=self.k)
+        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=self.tW, k=self.k, dr=self.dr)
 
     def callStop(self):
         self.startButton.setEnabled(False)

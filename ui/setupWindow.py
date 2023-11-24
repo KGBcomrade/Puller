@@ -9,7 +9,7 @@ from ui import Plot
 from misc import getLx
 
 class SetupWindow(QDialog):
-    def __init__(self, r0 = 62.5, rw = 10, lw = 30, k = 7, tW = 0) -> None:
+    def __init__(self, r0 = 62.5, rw = 10, lw = 30, k = 7, tW = 0, dr=.1) -> None:
         super().__init__()
 
         self.rw = rw
@@ -17,6 +17,7 @@ class SetupWindow(QDialog):
         self.r0 = r0
         self.k = k
         self.tW = tW
+        self.dr = dr
 
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
@@ -37,11 +38,16 @@ class SetupWindow(QDialog):
         self.tWInput.setMinimum(0)
         self.tWInput.setMaximum(500)
         self.tWInput.setValue(self.tW)
+        self.drInput = QDoubleSpinBox(prefix='dr=')
+        self.drInput.setMaximum(2)
+        self.drInput.setMinimum(.001)
+        self.drInput.setValue(self.dr)
         inputsLayout.addWidget(self.kInput)
         inputsLayout.addWidget(self.r0Input)
         inputsLayout.addWidget(self.rwInput)
         inputsLayout.addWidget(self.lwInput)
         inputsLayout.addWidget(self.tWInput)
+        inputsLayout.addWidget(self.drInput)
         
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         inputsLayout.addWidget(self.buttonBox)
@@ -56,6 +62,7 @@ class SetupWindow(QDialog):
         self.rwInput.valueChanged.connect(self.updateRw)
         self.lwInput.valueChanged.connect(self.updateLw)
         self.tWInput.valueChanged.connect(self.updateTW)
+        self.drInput.valueChanged.connect(self.updateDr)
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -84,5 +91,8 @@ class SetupWindow(QDialog):
         self.updatePlots()
     def updateTW(self, tW):
         self.tW = tW
+        self.updatePlots()
+    def updateDr(self, dr):
+        self.dr = dr
         self.updatePlots()
     
