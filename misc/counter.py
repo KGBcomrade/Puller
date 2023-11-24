@@ -4,7 +4,7 @@ from scipy.integrate import cumtrapz
 
 radius, thetas = np.genfromtxt('misc/theta.csv')
 
-def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
+def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1, k=1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R
     от удлиннения волокна x. Также возвращает итоговое удлиннение волокна x_max
     Расчёт основан на предельных углах из статьи:
@@ -17,6 +17,7 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
         lw (float, optional): длина перетяжки мм. Defaults to 30.
         rw (float, optional): радиус перетяжки. Defaults to 20.
         dr (float, optional): точность расчёта (должно быть меньше rw). Defaults to 1.
+        k (float, optional): фактор деления предельных углов. Defaults to 1.
     '''
     def integr(y, x):
         inte = np.hstack((0, cumtrapz(y, x)))
@@ -26,7 +27,7 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
         return np.array(list(map(fun, x)))
 
     lw = lw - Ltorch
-    Theta = interp1d(radius, thetas / 7, kind='cubic')
+    Theta = interp1d(radius, thetas / k, kind='cubic')
     r = np.arange(rw, r0, dr)
     rMin = radius.min()
     dz = Map(lambda x: 1 / float(Theta(x) if x >= rMin else Theta(rMin)), r)
