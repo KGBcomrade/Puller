@@ -9,13 +9,14 @@ from ui import Plot
 from misc import getLx
 
 class SetupWindow(QDialog):
-    def __init__(self, r0 = 62.5, rw = 10, lw = 30, k = 7) -> None:
+    def __init__(self, r0 = 62.5, rw = 10, lw = 30, k = 7, tW = 0) -> None:
         super().__init__()
 
         self.rw = rw
         self.lw = lw
         self.r0 = r0
         self.k = k
+        self.tW = tW
 
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
@@ -32,10 +33,15 @@ class SetupWindow(QDialog):
         self.rwInput.setValue(rw)
         self.lwInput = QDoubleSpinBox(prefix='lw=', suffix=' мм')
         self.lwInput.setValue(lw)
+        self.tWInput = QDoubleSpinBox(prefix='tW=', suffix='с')
+        self.tWInput.setMinimum(0)
+        self.tWInput.setMaximum(500)
+        self.tWInput.setValue(self.tW)
         inputsLayout.addWidget(self.kInput)
         inputsLayout.addWidget(self.r0Input)
         inputsLayout.addWidget(self.rwInput)
         inputsLayout.addWidget(self.lwInput)
+        inputsLayout.addWidget(self.tWInput)
         
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         inputsLayout.addWidget(self.buttonBox)
@@ -49,6 +55,7 @@ class SetupWindow(QDialog):
         self.r0Input.valueChanged.connect(self.updateR0)
         self.rwInput.valueChanged.connect(self.updateRw)
         self.lwInput.valueChanged.connect(self.updateLw)
+        self.tWInput.valueChanged.connect(self.updateTW)
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -74,5 +81,8 @@ class SetupWindow(QDialog):
         self.updatePlots()
     def updateLw(self, lw):
         self.lw = lw
+        self.updatePlots()
+    def updateTW(self, tW):
+        self.tW = tW
         self.updatePlots()
     
