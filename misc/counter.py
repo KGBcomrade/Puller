@@ -4,7 +4,7 @@ from scipy.integrate import cumtrapz
 
 radius, thetas = np.genfromtxt('misc/theta.csv')
 
-def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=1):
+def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R
     от удлиннения волокна x. Также возвращает итоговое удлиннение волокна x_max
     Расчёт основан на предельных углах из статьи:
