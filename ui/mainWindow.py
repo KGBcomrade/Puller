@@ -52,13 +52,13 @@ class MainWindow(QMainWindow):
         self.stopFlag = False
 
         # toolbar
-        toolBar = self.addToolBar('Settings')
+        self.toolBar = self.addToolBar('Settings')
         self.newAction = QAction(newSettingsText)
         self.saveAction = QAction(saveSettingsText)
         self.settingsList = QComboBox()
-        toolBar.addAction(self.newAction)
-        toolBar.addAction(self.saveAction)
-        toolBar.addWidget(self.settingsList)
+        self.toolBar.addAction(self.newAction)
+        self.toolBar.addAction(self.saveAction)
+        self.toolBar.addWidget(self.settingsList)
         # layouts
         mainLayout = QHBoxLayout()
         widget = QWidget()
@@ -264,9 +264,11 @@ class MainWindow(QMainWindow):
         self.startButton.setText(startButtonStopText)
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
+        self.toolBar.setEnabled(False)
         await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=self.tW, k=self.k, dr=self.dr)
 
     def callStop(self):
+        self.toolBar.setEnabled(True)
         self.startButton.setEnabled(False)
         self.stopFlag = True
         
