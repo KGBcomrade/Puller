@@ -278,3 +278,4 @@ class Proc:
 
 
         asyncio.gather(*finishTasks)
+        win.callStop()
