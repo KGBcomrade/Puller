@@ -2,11 +2,13 @@ import typing
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
      QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame, \
-     QMessageBox
+     QMessageBox, QToolBar, QComboBox, QInputDialog
+from PyQt6.QtGui import QAction
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
 from ui import Plot, SetupWindow
 from proc import Proc
+from misc import SettingsLoader
 
 import asyncio
 from qasync import asyncSlot
@@ -21,6 +23,9 @@ ignitionButtonStopText = 'Потушить пламя'
 startButtonStartText = 'Запуск'
 startButtonStopText = 'Стоп'
 pullingSetupButtonText = 'Настройка растяжки...'
+
+newSettingsText = 'Новые настройки'
+saveSettingsText = 'Сохранить'
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -46,6 +51,14 @@ class MainWindow(QMainWindow):
 
         self.stopFlag = False
 
+        # toolbar
+        toolBar = self.addToolBar('Settings')
+        self.newAction = QAction(newSettingsText)
+        self.saveAction = QAction(saveSettingsText)
+        self.settingsList = QComboBox()
+        toolBar.addAction(self.newAction)
+        toolBar.addAction(self.saveAction)
+        toolBar.addWidget(self.settingsList)
         # layouts
         mainLayout = QHBoxLayout()
         widget = QWidget()
@@ -147,6 +160,16 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.released.connect(self.callBurnerSetup)
         self.HHOGenButton.released.connect(self.callHHOOn)
         self.ignitionButton.released.connect(self.callIgnition)
+
+
+        # settings
+        self.settingsLoader = SettingsLoader()
+        self.settingsList.addItems(self.settingsLoader.getNames())
+        self.settingsList.textActivated.connect(self.loadSettings)
+        self.settingsList.setCurrentText(self.settingsLoader.last)
+        self.loadSettings(self.settingsLoader.last)
+        self.newAction.triggered.connect(self.newSettings)
+        self.saveAction.triggered.connect(self.saveSettings)
 
         self.startButton.released.connect(self.callRun)
 
@@ -276,3 +299,22 @@ class MainWindow(QMainWindow):
 
         self.progressText.setText(f'{r} → {self.rw}')
         self.progressBar.setValue(p)
+
+
+    def loadSettings(self, name):
+        self.k, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La = self.settingsLoader.load(name)
+        self.xvInput.setValue(self.xv)
+        self.xaInput.setValue(self.xa)
+        self.xdInput.setValue(self.xd)
+        self.LvInput.setValue(self.Lv)
+        self.LaInput.setValue(self.La)
+
+    def newSettings(self):
+        name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
+        if name and ok:
+            self.settingsLoader.save(name, self.k, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La)
+            self.settingsList.addItem(name)
+            self.settingsList.setCurrentText(name)
+            self.loadSettings(name)
+    def saveSettings(self):
+        self.settingsLoader.save(self.settingsList.currentText(), self.k, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La)
