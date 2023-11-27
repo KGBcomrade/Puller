@@ -18,12 +18,14 @@ class SettingsLoader:
                                 'xa': .003,
                                 'xd': .4,
                                 'Lv': 8,
-                                'La': 20}}}
+                                'La': 20,
+                                'tW': 45,
+                                'dr': .1}}}
         self.last = s['last']
         self.s = s['settings']
 
     def _returnSettings(dictr):
-        return dictr['k'], dictr['r0'], dictr['rw'], dictr['lw'], dictr['xv'], dictr['xa'], dictr['xd'], dictr['Lv'], dictr['La']
+        return dictr['k'], dictr['r0'], dictr['rw'], dictr['lw'], dictr['xv'], dictr['xa'], dictr['xd'], dictr['Lv'], dictr['La'], dictr['tW'], dictr['dr']
 
     def getLast(self):
         return SettingsLoader._returnSettings(self.s[self.last])
@@ -42,7 +44,7 @@ class SettingsLoader:
         self._save()     
         return SettingsLoader._returnSettings(self.s[name])
 
-    def save(self, name, k, r0, rw, lw, xv, xa, xd, Lv, La):
-        self.s[name] = {'k': k, 'r0': r0, 'rw': rw, 'lw': lw, 'xv': xv, 'xa': xa, 'xd': xd, 'Lv': Lv, 'La': La}
+    def save(self, name, k, r0, rw, lw, xv, xa, xd, Lv, La, tW, dr):
+        self.s[name] = {'k': k, 'r0': r0, 'rw': rw, 'lw': lw, 'xv': xv, 'xa': xa, 'xd': xd, 'Lv': Lv, 'La': La, 'tW': tW, 'dr': dr}
         self._save() 
 
