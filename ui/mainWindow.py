@@ -184,8 +184,9 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
-        setupWindow = SetupWindow(r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, tW=self.tW, dr=self.dr)
+        setupWindow = SetupWindow(omegaType=self.omegaType, r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, tW=self.tW, dr=self.dr)
         if setupWindow.exec():
+            self.omegaType = setupWindow.omegaType
             self.k = setupWindow.k
             self.r0 = setupWindow.r0
             self.rw = setupWindow.rw

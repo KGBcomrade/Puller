@@ -11,7 +11,7 @@ def getROmega(omegaType, k):
     if omegaType == 'theta':
         return radius, thetas / k
     elif omegaType == 'const':
-        return np.linspace(1e-3, 125, 100), np.ones(100) * k
+        return np.linspace(1e-3, 125, 100), np.ones(100) * k * 1e-3
 
 def getLx(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R

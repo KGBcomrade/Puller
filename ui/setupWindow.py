@@ -30,8 +30,8 @@ class SetupWindow(QDialog):
         self.omegaTypesCB.setCurrentText(self.omegaType)
 
         self.kInput = QDoubleSpinBox(prefix='𝚯/=')
-        self.kInput.setMaximum(20)
-        self.kInput.setMinimum(.1)
+        self.kInput.setMaximum(2000)
+        self.kInput.setMinimum(.01)
         self.kInput.setValue(self.k)
         self.r0Input = QDoubleSpinBox(prefix='r0=', suffix=' мкм')
         self.r0Input.setMaximum(62.5)
@@ -75,6 +75,7 @@ class SetupWindow(QDialog):
         self.buttonBox.rejected.connect(self.reject)
 
         self.updatePlots()
+        self.updateOmegaType(self.omegaType)
         
         self.setLayout(mainLayout)
 
@@ -87,6 +88,14 @@ class SetupWindow(QDialog):
 
     def updateOmegaType(self, omegaType):
         self.omegaType = omegaType
+
+        if self.omegaType == 'const':
+            self.kInput.setPrefix('Ω=')
+            self.kInput.setSuffix('mrad')
+        elif self.omegaType == 'theta':
+            self.kInput.setPrefix('𝚯/=')
+            self.kInput.setSuffix('')
+
         self.updatePlots()
     def updateK(self, k):
         self.k = k
