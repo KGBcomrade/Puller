@@ -9,7 +9,7 @@ from . import pathes
 from .motor import Motor, MotorTempSpeed
 
 try: 
-    from pyximc import *
+    from libximc import *
 except ImportError as err:
     print ("Can't import pyximc module. The most probable reason is that you changed the relative location of the Python.py and pyximc.py files. See developers' documentation for details.")
     exit()
@@ -226,8 +226,8 @@ class StandaMotor(Motor):
 
 def initDevices():
     # This is device search and enumeration with probing. It gives more information about devices.
-    if lib.set_bindy_key(pathes.key_path.encode('utf-8')) != Result.Ok:
-        raise SystemError('Failed to set bindy key')
+    # if lib.set_bindy_key(pathes.key_path.encode('utf-8')) != Result.Ok:
+        # raise SystemError('Failed to set bindy key')
     probe_flags = EnumerateFlags.ENUMERATE_PROBE + EnumerateFlags.ENUMERATE_NETWORK
     enum_hints = b"addr="
     devenum = lib.enumerate_devices(probe_flags, enum_hints)
