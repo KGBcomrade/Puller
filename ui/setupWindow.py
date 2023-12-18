@@ -1,17 +1,18 @@
 import typing
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
+     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame, QComboBox
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 import numpy as np
 
 from ui import Plot
-from misc import getLx
+from misc import getLx, omegaTypes, getROmega
 
 class SetupWindow(QDialog):
-    def __init__(self, r0 = 62.5, rw = 10, lw = 30, k = 7, tW = 0, dr=.1) -> None:
+    def __init__(self, omegaType = 'theta', r0 = 62.5, rw = 10, lw = 30, k = 7, tW = 0, dr=.1) -> None:
         super().__init__()
 
+        self.omegaType = omegaType
         self.rw = rw
         self.lw = lw
         self.r0 = r0
@@ -22,6 +23,11 @@ class SetupWindow(QDialog):
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
         mainLayout.addLayout(inputsLayout)
+
+        self.omegaTypesCB = QComboBox()
+        self.omegaTypesCB.addItems(omegaTypes)
+        self.omegaTypesCB.textActivated.connect(self.updateOmegaType)
+        self.omegaTypesCB.setCurrentText(self.omegaType)
 
         self.kInput = QDoubleSpinBox(prefix='𝚯/=')
         self.kInput.setMaximum(20)
@@ -42,6 +48,7 @@ class SetupWindow(QDialog):
         self.drInput.setMaximum(2)
         self.drInput.setMinimum(.001)
         self.drInput.setValue(self.dr)
+        inputsLayout.addWidget(self.omegaTypesCB)
         inputsLayout.addWidget(self.kInput)
         inputsLayout.addWidget(self.r0Input)
         inputsLayout.addWidget(self.rwInput)
@@ -77,6 +84,9 @@ class SetupWindow(QDialog):
         self.LPlot.plot(x, Lx(x))
         self.rPlot.plot(x, Rx(x))
 
+    def updateOmegaType(self, omegaType):
+        self.omegaType = omegaType
+        self.updatePlots()
     def updateK(self, k):
         self.k = k
         self.updatePlots()

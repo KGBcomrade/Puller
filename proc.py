@@ -10,7 +10,7 @@ import datetime
 from hardware import DDS220M, PowerPlot, StandaMotor, VControl
 from hardware.standa import initDevices as initStandaMotors
 
-from misc import getLx
+from misc import getLx, getROmega
 from hardware.pathes import save_path
 
 from sacred.observers import MongoObserver
@@ -222,8 +222,9 @@ class Proc:
                 
 
 
-    async def run(self, win, rw=20, lw=30, r0=62.5, dr=1, tWarmen=0, k=1):
-        Lx, Rx, xMax, _, _ = getLx(r0=r0, rw=rw, lw=lw, dr=dr, k=k)
+    async def run(self, win, omegaType='theta', rw=20, lw=30, r0=62.5, dr=1, tWarmen=0, k=1):
+        r, omega = getROmega(omegaType, k)
+        Lx, Rx, xMax, _, _ = getLx(r, omega, r0=r0, rw=rw, lw=lw, dr=dr)
 
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         ppTask = asyncio.create_task(self._delayedPPStart(tWarmen))

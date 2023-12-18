@@ -4,7 +4,16 @@ from scipy.integrate import cumtrapz
 
 radius, thetas = np.genfromtxt('misc/theta.csv')
 
-def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1, k=1):
+omegaTypes = ['theta', 'const']
+
+def getROmega(omegaType, k):
+    assert omegaType in omegaTypes
+    if omegaType == 'theta':
+        return radius, thetas / k
+    elif omegaType == 'const':
+        return np.linspace(1e-3, 125, 100), np.ones(100) * k
+
+def getLx(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R
     от удлиннения волокна x. Также возвращает итоговое удлиннение волокна x_max
     Расчёт основан на предельных углах из статьи:
@@ -27,7 +36,7 @@ def getLx(r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1, k=1):
         return np.array(list(map(fun, x)))
 
     lw = lw - Ltorch
-    Theta = interp1d(radius, thetas / k, kind='cubic')
+    Theta = interp1d(radius, omegas, kind='cubic')
     r = np.arange(rw, r0, dr)
     rMin = radius.min()
     dz = Map(lambda x: 1 / float(Theta(x) if x >= rMin else Theta(rMin)), r)
