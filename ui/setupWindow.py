@@ -79,7 +79,8 @@ class SetupWindow(QDialog):
         self.setLayout(mainLayout)
 
     def updatePlots(self):
-        Lx, Rx, xMax, _, _ = getLx(r0=self.r0, lw=self.lw, rw=self.rw, k=self.k)
+        r, omega = getROmega(self.omegaType, self.k)
+        Lx, Rx, xMax, _, _ = getLx(r, omega, r0=self.r0, lw=self.lw, rw=self.rw)
         x = np.linspace(0, xMax, 100)
         self.LPlot.plot(x, Lx(x))
         self.rPlot.plot(x, Rx(x))
