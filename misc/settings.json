@@ -1,1 +1,1 @@
-{"last": "Sensor", "settings": {"Sensor": {"k": 7, "r0": 62.5, "rw": 25, "lw": 15, "xv": 0.03, "xa": 1, "xd": 1, "Lv": 5, "La": 300, "tW": 45, "dr": 0.1}}}
+{"last": "Sensor", "settings": {"Sensor": {"omegaType": "theta", "k": 7, "r0": 62.5, "rw": 25, "lw": 15, "xv": 0.03, "xa": 1, "xd": 1, "Lv": 5, "La": 300, "tW": 45, "dr": 0.1}}}
