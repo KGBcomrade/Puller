@@ -1,1 +1,1 @@
-save_path = 'D:\\TrustSoftware\\5 Oscill\\Waveforms'
+save_path = 'C:\\Users\\server\\Desktop\\PPlots'
