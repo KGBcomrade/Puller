@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         self.Lv = 5 # Thorlabs velocity
         self.La = 300 # Thorlabs acceleration
 
-        self.burnerPullingPos = 36.28
+        self.burnerPullingPos = 36.55
 
         self.stopFlag = False
 
