@@ -4,14 +4,20 @@ from scipy.integrate import cumtrapz
 
 radius, thetas = np.genfromtxt('misc/theta.csv')
 
-omegaTypes = ['theta', 'const']
+omegaTypes = ['theta', 'const', 'nano']
 
 def getROmega(omegaType, k):
     assert omegaType in omegaTypes
     if omegaType == 'theta':
         return radius, thetas / k
     elif omegaType == 'const':
-        return np.linspace(1e-3, 125, 100), np.ones(100) * k * 1e-3
+        return np.linspace(1e-4, 125, 100), np.ones(100) * k
+    elif omegaType == 'nano':
+        r = np.linspace(1e-4, 125, 100)
+        L0 = 2
+        #TODO refactoring
+        omegas = (r) ** (2 * -k + 1) / L0 / (62.5 ** (2 * -k)) / (1 + k)
+        return r, omegas
 
 def getLx(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R

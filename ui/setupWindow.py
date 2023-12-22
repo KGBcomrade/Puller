@@ -95,6 +95,9 @@ class SetupWindow(QDialog):
         elif self.omegaType == 'theta':
             self.kInput.setPrefix('𝚯/=')
             self.kInput.setSuffix('')
+        elif self.omegaType == 'nano':
+            self.kInput.setPrefix('α=-')
+            self.kInput.setSuffix('')
 
         self.updatePlots()
     def updateK(self, k):
