@@ -11,9 +11,9 @@ def getROmega(omegaType, k):
     if omegaType == 'theta':
         return radius, thetas / k
     elif omegaType == 'const':
-        return np.linspace(1e-4, 125, 100), np.ones(100) * k
+        return np.linspace(1e-4, 62.5, 100), np.ones(100) * k
     elif omegaType == 'nano':
-        r = np.linspace(1e-4, 125, 100)
+        r = np.linspace(1e-4, 62.5, 100)
         L0 = 2
         #TODO refactoring
         omegas = (r) ** (2 * -k + 1) / L0 / (62.5 ** (2 * -k)) / (1 + k)
