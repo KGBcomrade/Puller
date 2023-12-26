@@ -188,7 +188,7 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
-        setupWindow = SetupWindow(omegaType=self.omegaType, r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, tW=self.tW, dr=self.dr)
+        setupWindow = SetupWindow(omegaType=self.omegaType, r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, tW=self.tW, dr=self.dr)
         if setupWindow.exec():
             self.omegaType = setupWindow.omegaType
             self.k = setupWindow.k
@@ -276,7 +276,7 @@ class MainWindow(QMainWindow):
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
         self.toolBar.setEnabled(False)
-        await self.proc.run(self, self.omegaType, self.r0, tWarmen=self.tW, lw=self.lw, rw=self.rw, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, dr=self.dr)
+        await self.proc.run(self, self.omegaType, self.r0, tWarmen=self.tW, lw=self.lw, rw=self.rw, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, k=self.k, dr=self.dr)
 
     def callStop(self):
         self.toolBar.setEnabled(True)
