@@ -34,6 +34,10 @@ class MainWindow(QMainWindow):
         # pulling parameters
         self.omegaType = 'theta'
         self.k = 7
+        self.omega = 6.2
+        self.x = 10
+        self.L0 = 2
+        self.alpha = -0.01
         self.r0 = 125 / 2
         self.rw = 25
         self.lw = 25
@@ -188,6 +192,10 @@ class MainWindow(QMainWindow):
         if setupWindow.exec():
             self.omegaType = setupWindow.omegaType
             self.k = setupWindow.k
+            self.omega = setupWindow.omega
+            self.x = setupWindow.x
+            self.L0 = setupWindow.L0
+            self.alpha = setupWindow.alpha
             self.r0 = setupWindow.r0
             self.rw = setupWindow.rw
             self.lw = setupWindow.lw
@@ -268,7 +276,7 @@ class MainWindow(QMainWindow):
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
         self.toolBar.setEnabled(False)
-        await self.proc.run(self, self.rw, self.lw, self.r0, tWarmen=self.tW, k=self.k, dr=self.dr)
+        await self.proc.run(self, self.omegaType, self.r0, tWarmen=self.tW, lw=self.lw, rw=self.rw, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, k=self.k, dr=self.dr)
 
     def callStop(self):
         self.toolBar.setEnabled(True)
