@@ -89,6 +89,10 @@ class SetupWindow(QDialog):
         mainLayout.addWidget(self.rPlot)
 
         self.kInput.valueChanged.connect(self.updateK)
+        self.omegaInput.valueChanged.connect(self.updateOmega)
+        self.xInput.valueChanged.connect(self.updateX)
+        self.L0Input.valueChanged.connect(self.updateL0)
+        self.alphaInput.valueChanged.connect(self.updateAlpha)
         self.r0Input.valueChanged.connect(self.updateR0)
         self.rwInput.valueChanged.connect(self.updateRw)
         self.lwInput.valueChanged.connect(self.updateLw)
@@ -126,6 +130,18 @@ class SetupWindow(QDialog):
         self.updatePlots()
     def updateK(self, k):
         self.k = k
+        self.updatePlots()
+    def updateOmega(self, omega):
+        self.omega = omega
+        self.updatePlots()
+    def updateX(self, x):
+        self.x = x
+        self.updatePlots()
+    def updateL0(self, L0):
+        self.L0 = L0
+        self.updatePlots()
+    def updateAlpha(self, alpha):
+        self.alpha = alpha
         self.updatePlots()
     def updateR0(self, r0):
         self.r0 = r0
