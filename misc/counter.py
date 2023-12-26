@@ -6,20 +6,7 @@ radius, thetas = np.genfromtxt('misc/theta.csv')
 
 omegaTypes = ['theta', 'const', 'nano']
 
-def getROmega(omegaType, k):
-    assert omegaType in omegaTypes
-    if omegaType == 'theta':
-        return radius, thetas / k
-    elif omegaType == 'const':
-        return np.linspace(1e-4, 62.5, 100), np.ones(100) * k
-    elif omegaType == 'nano':
-        r = np.linspace(1e-4, 62.5, 100)
-        L0 = 2
-        #TODO refactoring
-        omegas = (r) ** (2 * -k + 1) / L0 / (62.5 ** (2 * -k)) / (1 + k)
-        return r, omegas
-
-def getLx(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
+def getLxAdiab(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R
     от удлиннения волокна x. Также возвращает итоговое удлиннение волокна x_max
     Расчёт основан на предельных углах из статьи:
@@ -62,3 +49,22 @@ def getLx(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     dz = np.array(list(map(lambda x: 1 / float(Theta(x) if x >= rMin else Theta(rMin)), r)))
     z = np.hstack((0, cumtrapz(dz, r)))
     return L_x, R_x, xMax, z, r
+
+def getLx(type: str, r0=62.5, Ltorch=.49, **kwargs):
+    assert type in omegaTypes
+    if type == 'theta':
+        return getLxAdiab(radius, thetas / kwargs['k'], r0, Ltorch, kwargs['lw'], kwargs['rw'], kwargs['dr'])
+    elif type == 'const':
+        return getLxAdiab(np.linspace(1e-4, r0, 100), np.ones(100) * kwargs['omega'], r0, Ltorch, kwargs['lw'], kwargs['rw'], kwargs['dr'])
+    elif type == 'nano':
+        x = np.linspace(0, kwargs['x'], 10)
+        L = np.linspace(kwargs['L0'], kwargs['L0'] + kwargs['alpha'] * kwargs['x'], 10)
+        r = r0 * (kwargs['L0'] / L) ** (1 / 2 / kwargs['alpha'])
+        
+        z = (1 - kwargs['alpha']) / 2 * x
+        
+        L_x = interp1d(x, L, kind='cubic')
+        R_x = interp1d(x, r, kind='cubic')
+        R_z = R_x(z)
+
+        return L_x, R_x, kwargs['x'], z, R_z
