@@ -276,7 +276,7 @@ class MainWindow(QMainWindow):
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
         self.toolBar.setEnabled(False)
-        await self.proc.run(self, self.omegaType, self.r0, tWarmen=self.tW, lw=self.lw, rw=self.rw, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, k=self.k, dr=self.dr)
+        await self.proc.run(self, self.omegaType, self.r0, tWarmen=self.tW, lw=self.lw, rw=self.rw, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, dr=self.dr)
 
     def callStop(self):
         self.toolBar.setEnabled(True)
