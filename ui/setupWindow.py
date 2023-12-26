@@ -9,16 +9,20 @@ from ui import Plot
 from misc import getLx, omegaTypes, getROmega
 
 class SetupWindow(QDialog):
-    def __init__(self, omegaType = 'theta', r0 = 62.5, rw = 10, lw = 30, k = 7, tW = 0, dr=.1) -> None:
+    def __init__(self, omegaType = 'theta', r0 = 62.5, **kwargs) -> None:
         super().__init__()
 
         self.omegaType = omegaType
-        self.rw = rw
-        self.lw = lw
+        self.rw = kwargs['rw']
+        self.lw = kwargs['lw']
         self.r0 = r0
-        self.k = k
-        self.tW = tW
-        self.dr = dr
+        self.k = kwargs['k']
+        self.tW = kwargs['tW']
+        self.dr = kwargs['dr']
+        self.omega = kwargs['omega']
+        self.x = kwargs['x']
+        self.L0 = kwargs['L0']
+        self.alpha = kwargs['alpha']
 
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
@@ -30,16 +34,32 @@ class SetupWindow(QDialog):
         self.omegaTypesCB.setCurrentText(self.omegaType)
 
         self.kInput = QDoubleSpinBox(prefix='𝚯/=')
-        self.kInput.setMaximum(2000)
+        self.kInput.setMaximum(20)
         self.kInput.setMinimum(.01)
         self.kInput.setValue(self.k)
+        self.omegaInput = QDoubleSpinBox(prefix='Ω=', suffix='мрад')
+        self.omegaInput.setMinimum(.01)
+        self.omegaInput.setMaximum(100)
+        self.omegaInput.setValue(self.omega)
+        self.xInput = QDoubleSpinBox(prefix='x=', suffix='мм')
+        self.xInput.setMinimum(1)
+        self.xInput.setMaximum(100)
+        self.xInput.setValue(self.x)
+        self.L0Input = QDoubleSpinBox(prefix='L₀=', suffix='мм')
+        self.L0Input.setMinimum(0)
+        self.L0Input.setMaximum(10)
+        self.L0Input.setValue(self.L0)
+        self.alphaInput = QDoubleSpinBox(prefix='α=')
+        self.alphaInput.setMinimum(-1)
+        self.alphaInput.setMaximum(1)
+        self.alphaInput.setValue(self.alpha)
         self.r0Input = QDoubleSpinBox(prefix='r0=', suffix=' мкм')
         self.r0Input.setMaximum(62.5)
         self.r0Input.setValue(r0)
         self.rwInput = QDoubleSpinBox(prefix='rw=', suffix=' мкм')
-        self.rwInput.setValue(rw)
+        self.rwInput.setValue(self.rw)
         self.lwInput = QDoubleSpinBox(prefix='lw=', suffix=' мм')
-        self.lwInput.setValue(lw)
+        self.lwInput.setValue(self.lw)
         self.tWInput = QDoubleSpinBox(prefix='tW=', suffix='с')
         self.tWInput.setMinimum(0)
         self.tWInput.setMaximum(500)
@@ -50,6 +70,10 @@ class SetupWindow(QDialog):
         self.drInput.setValue(self.dr)
         inputsLayout.addWidget(self.omegaTypesCB)
         inputsLayout.addWidget(self.kInput)
+        inputsLayout.addWidget(self.omegaInput)
+        inputsLayout.addWidget(self.xInput)
+        inputsLayout.addWidget(self.L0Input)
+        inputsLayout.addWidget(self.alphaInput)
         inputsLayout.addWidget(self.r0Input)
         inputsLayout.addWidget(self.rwInput)
         inputsLayout.addWidget(self.lwInput)
@@ -74,30 +98,30 @@ class SetupWindow(QDialog):
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
+        self.altInputs = [self.kInput, self.omegaInput, self.xInput, self.L0Input, self.alphaInput, self.lwInput, self.rwInput, self.drInput]
+        self.altInputsMap = {
+            'theta': [self.kInput, self.lwInput, self.rwInput, self.drInput],
+            'const': [self.omegaInput, self.lwInput, self.rwInput, self.drInput],
+            'nano': [self.xInput, self.L0Input, self.alphaInput]
+        }
+
         self.updatePlots()
         self.updateOmegaType(self.omegaType)
         
         self.setLayout(mainLayout)
 
     def updatePlots(self):
-        r, omega = getROmega(self.omegaType, self.k)
-        Lx, Rx, xMax, _, _ = getLx(r, omega, r0=self.r0, lw=self.lw, rw=self.rw, dr=self.dr)
+        Lx, Rx, xMax, _, _ = getLx(self.omegaType, r0=self.r0, lw=self.lw, rw=self.rw, dr=self.dr, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha)
         x = np.linspace(0, xMax, 100)
         self.LPlot.plot(x, Lx(x))
         self.rPlot.plot(x, Rx(x))
 
     def updateOmegaType(self, omegaType):
         self.omegaType = omegaType
-
-        if self.omegaType == 'const':
-            self.kInput.setPrefix('Ω=')
-            self.kInput.setSuffix('mrad')
-        elif self.omegaType == 'theta':
-            self.kInput.setPrefix('𝚯/=')
-            self.kInput.setSuffix('')
-        elif self.omegaType == 'nano':
-            self.kInput.setPrefix('α=-')
-            self.kInput.setSuffix('')
+        for w in self.altInputs:
+            w.hide()
+        for w in self.altInputsMap[omegaType]:
+            w.show()
 
         self.updatePlots()
     def updateK(self, k):
