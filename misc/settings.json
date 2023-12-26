@@ -1,1 +1,1 @@
-{"last": "Sensor", "settings": {"Sensor": {"omegaType": "theta", "k": 7, "r0": 62.5, "rw": 25, "lw": 15, "xv": 0.03, "xa": 1, "xd": 1, "Lv": 5, "La": 300, "tW": 45, "dr": 0.1}}}
+{"last": "Sensor", "settings": {"Sensor": {"omegaType": "theta", "k": 7, "r0": 62.5, "rw": 25, "lw": 15, "xv": 0.03, "xa": 1, "xd": 1, "Lv": 3.0, "La": 300, "tW": 45, "dr": 0.1}, "Nano": {"omegaType": "nano", "k": 0.01, "r0": 62.5, "rw": 0.25, "lw": 2.28, "xv": 1.4, "xa": 0.003, "xd": 0.05, "Lv": 3.0, "La": 300, "tW": 15.0, "dr": 0.01}}}
