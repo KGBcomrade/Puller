@@ -122,6 +122,7 @@ class MainWindow(QMainWindow):
         self.xaInput = QDoubleSpinBox(decimals=5, prefix='a=', suffix=' мм/с²')
         self.xaInput.setValue(self.xa)
         self.xaInput.setRange(1e-5, 2000)
+        self.xaInput.setSingleStep(.001)
         self.xdInput = QDoubleSpinBox(decimals=5, prefix='d=', suffix=' мм/с²')
         self.xdInput.setValue(self.xd)
         self.xdInput.setRange(1e-5, 2000)
@@ -315,7 +316,7 @@ class MainWindow(QMainWindow):
 
 
     def loadSettings(self, name):
-        self.omegaType, self.k, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr = self.settingsLoader.load(name)
+        self.omegaType, self.k, self.omega, self.x, self.L0, self.alpha, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr = self.settingsLoader.load(name)
         self.xvInput.setValue(self.xv)
         self.xaInput.setValue(self.xa)
         self.xdInput.setValue(self.xd)
@@ -325,9 +326,9 @@ class MainWindow(QMainWindow):
     def newSettings(self):
         name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
         if name and ok:
-            self.settingsLoader.save(name, self.omegaType, self.k, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr)
+            self.settingsLoader.save(name, omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr)
             self.settingsList.addItem(name)
             self.settingsList.setCurrentText(name)
             self.loadSettings(name)
     def saveSettings(self):
-        self.settingsLoader.save(self.settingsList.currentText(), self.omegaType, self.k, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr)
+        self.settingsLoader.save(self.settingsList.currentText(), omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr)
