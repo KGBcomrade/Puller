@@ -12,6 +12,10 @@ class SettingsLoader:
                 'settings': {
                     'default': {'omegaType': 'theta',
                                 'k': 7,
+                                'omega': 6.2,
+                                'x': 12,
+                                'L0': 2,
+                                'alpha': -0.01,
                                 'r0': 62.5,
                                 'rw': 25,
                                 'lw': 15,
@@ -26,7 +30,7 @@ class SettingsLoader:
         self.s = s['settings']
 
     def _returnSettings(dictr):
-        return dictr['omegaType'], dictr['k'], dictr['r0'], dictr['rw'], dictr['lw'], dictr['xv'], dictr['xa'], dictr['xd'], dictr['Lv'], dictr['La'], dictr['tW'], dictr['dr']
+        return dictr['omegaType'], dictr.get('k', 7), dictr.get('omega', 6.2), dictr.get('x', 12), dictr.get('L0', 2), dictr.get('alpha', -0.01), dictr['r0'], dictr['rw'], dictr['lw'], dictr['xv'], dictr['xa'], dictr['xd'], dictr['Lv'], dictr['La'], dictr['tW'], dictr['dr']
 
     def getLast(self):
         return SettingsLoader._returnSettings(self.s[self.last])
@@ -45,7 +49,7 @@ class SettingsLoader:
         self._save()     
         return SettingsLoader._returnSettings(self.s[name])
 
-    def save(self, name, omegaType, k, r0, rw, lw, xv, xa, xd, Lv, La, tW, dr):
-        self.s[name] = {'omegaType': omegaType, 'k': k, 'r0': r0, 'rw': rw, 'lw': lw, 'xv': xv, 'xa': xa, 'xd': xd, 'Lv': Lv, 'La': La, 'tW': tW, 'dr': dr}
+    def save(self, name, **kwargs):
+        self.s[name] = kwargs
         self._save() 
 
