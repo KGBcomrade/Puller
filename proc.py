@@ -250,7 +250,7 @@ class Proc:
 
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
 
-        await asyncio.sleep(1) 
+        await asyncio.sleep(6) 
 
         mainMotorTask.cancel()
         plotterTask.cancel()
