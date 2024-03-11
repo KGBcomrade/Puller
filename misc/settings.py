@@ -43,7 +43,7 @@ class SettingsLoader:
     def _save(self):
         s = {'last': self.last, 'settings': self.s}
         with open(filePath, 'w') as f:
-            json.dump(s, f)
+            json.dump(s, f, indent=4)
     
     def load(self, name):
         self.last = name
