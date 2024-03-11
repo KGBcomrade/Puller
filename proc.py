@@ -160,13 +160,15 @@ class Proc:
 
     async def _moveApart(self, motors, coord):
         tasks = []
-        if motors[0]:
-            tasks.append(asyncio.create_task(self.pullingMotor2.moveTo(coord)))
-        if motors[1]:
-            tasks.append(asyncio.create_task(self.pullingMotor1.moveTo(coord)))
-        
-        for task in tasks:
-            await task
+        with self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempAccel), \
+        self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempSpeed):
+            
+            if motors[0]:
+                tasks.append(asyncio.create_task(self.pullingMotor2.moveTo(coord)))
+            if motors[1]:
+                tasks.append(asyncio.create_task(self.pullingMotor1.moveTo(coord)))
+            
+            await asyncio.gather(*tasks)
                 
     def _getX(self):
         xr0 = self.pullingMotor1StartPos + self.pullingMotor2StartPos
