@@ -52,6 +52,8 @@ class MainWindow(QMainWindow):
 
         self.Lv = 5 # Thorlabs velocity
         self.La = 300 # Thorlabs acceleration
+        
+        self.x0 = 0 # initial standa coord * 2
 
         self.burnerPullingPos = 36.55
 
@@ -195,7 +197,7 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
-        setupWindow = SetupWindow(omegaType=self.omegaType, r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, tW=self.tW, dr=self.dr)
+        setupWindow = SetupWindow(omegaType=self.omegaType, r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, tW=self.tW, dr=self.dr, x0=self.x0)
         if setupWindow.exec():
             self.omegaType = setupWindow.omegaType
             self.k = setupWindow.k
@@ -208,6 +210,9 @@ class MainWindow(QMainWindow):
             self.lw = setupWindow.lw
             self.tW = setupWindow.tW
             self.dr = setupWindow.dr
+            self.x0 = setupWindow.x0
+        self.proc.pullingMotor1StartPos = self.x0 / 2
+        self.proc.pullingMotor2StartPos = self.x0 / 2
 
     @asyncSlot()
     async def callMTS(self):
@@ -326,7 +331,7 @@ class MainWindow(QMainWindow):
 
 
     def loadSettings(self, name):
-        self.omegaType, self.k, self.omega, self.x, self.L0, self.alpha, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr = self.settingsLoader.load(name)
+        self.omegaType, self.k, self.omega, self.x, self.L0, self.alpha, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr, self.x0 = self.settingsLoader.load(name)
         self.xvInput.setValue(self.xv)
         self.xaInput.setValue(self.xa)
         self.xdInput.setValue(self.xd)
@@ -336,9 +341,9 @@ class MainWindow(QMainWindow):
     def newSettings(self):
         name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
         if name and ok:
-            self.settingsLoader.save(name, omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr)
+            self.settingsLoader.save(name, omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr, x0=self.x0)
             self.settingsList.addItem(name)
             self.settingsList.setCurrentText(name)
             self.loadSettings(name)
     def saveSettings(self):
-        self.settingsLoader.save(self.settingsList.currentText(), omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr)
+        self.settingsLoader.save(self.settingsList.currentText(), omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr, x0=self.x0)
