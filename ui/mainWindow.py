@@ -28,7 +28,7 @@ newSettingsText = 'Новые настройки'
 saveSettingsText = 'Сохранить'
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, hardware=True):
         super().__init__()
 
         # pulling parameters
@@ -168,14 +168,16 @@ class MainWindow(QMainWindow):
         self.ignitionButton.released.connect(self.callIgnition)
 
         #proc init
-        self.proc = Proc(self.Lv, self.La, self.xv, self.xa, self.xd)
+        if hardware:
+            self.proc = Proc(self.Lv, self.La, self.xv, self.xa, self.xd)
 
         # settings
         self.settingsLoader = SettingsLoader()
         self.settingsList.addItems(self.settingsLoader.getNames())
         self.settingsList.textActivated.connect(self.loadSettings)
         self.settingsList.setCurrentText(self.settingsLoader.last)
-        self.loadSettings(self.settingsLoader.last)
+        if hardware:
+            self.loadSettings(self.settingsLoader.last)
         self.newAction.triggered.connect(self.newSettings)
         self.saveAction.triggered.connect(self.saveSettings)
 
