@@ -257,7 +257,7 @@ class Proc:
                 self.pullingMotor2.softStop()
                 break
 
-            if self.pullingMotor1.getPosition() >= xMax/2:
+            if self._getX() >= xMax:
                 break
 
             if pullerMotorTask.done():
