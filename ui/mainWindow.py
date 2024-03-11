@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVB
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
-from ui import Plot, SetupWindow
+from ui import Plot, SetupWindow, MoveApartWindow
 from proc import Proc
 from misc import SettingsLoader
 
@@ -20,6 +20,7 @@ HHOGenButtonStartText = 'Включить подачу смеси'
 HHOGenButtonStopText = 'Остановить подачу смеси'
 ignitionButtonStartText = 'Зажечь пламя'
 ignitionButtonStopText = 'Потушить пламя'
+moveButtonText = 'Развести подвижки'
 startButtonStartText = 'Запуск'
 startButtonStopText = 'Стоп'
 pullingSetupButtonText = 'Настройка растяжки...'
@@ -100,11 +101,13 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton = QPushButton(burnerSetupButtonText)
         self.HHOGenButton = QPushButton(HHOGenButtonStartText)
         self.ignitionButton = QPushButton(ignitionButtonStartText)
+        self.moveButton = QPushButton(moveButtonText)
         sideButtonLayout.addWidget(self.homingButton)
         sideButtonLayout.addWidget(self.MTSButton)
         sideButtonLayout.addWidget(self.burnerSetupButton)
         sideButtonLayout.addWidget(self.HHOGenButton)
         sideButtonLayout.addWidget(self.ignitionButton)
+        sideButtonLayout.addWidget(self.moveButton)
 
         # progress bar
         self.progressBar = QProgressBar()
@@ -166,6 +169,7 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.released.connect(self.callBurnerSetup)
         self.HHOGenButton.released.connect(self.callHHOOn)
         self.ignitionButton.released.connect(self.callIgnition)
+        self.moveButton.released.connect(self.callMoveApart)
 
         #proc init
         if hardware:
@@ -268,6 +272,10 @@ class MainWindow(QMainWindow):
 
         self.HHOGenButton.setEnabled(True)
         self._setMovementEnabled(True)
+
+    @asyncSlot()
+    async def callMoveApart(self):
+        await self.proc.moveApart()
 
     @asyncSlot()
     async def callRun(self):

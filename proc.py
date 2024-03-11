@@ -1,6 +1,6 @@
 from time import time
 import os
-from ui import BurnerSetupWindow, FinishWindow
+from ui import BurnerSetupWindow, FinishWindow, MoveApartWindow
 from PyQt6.QtWidgets import QMessageBox
 import asyncio
 import pandas as pd
@@ -153,6 +153,21 @@ class Proc:
             if repeatition.exec() == QMessageBox.StandardButton.No: # check if extinguished
                 break   
 
+    async def moveApart(self):
+        maw = MoveApartWindow()
+        if maw.exec():
+            await self._waitWindow('Подвижки разовдятся...', self._moveApart, maw.getMotors(), maw.coord)
+
+    async def _moveApart(self, motors, coord):
+        tasks = []
+        if motors[0]:
+            tasks.append(asyncio.create_task(self.pullingMotor1.moveTo(coord)))
+        if motors[1]:
+            tasks.append(asyncio.create_task(self.pullingMotor2.moveTo(coord)))
+        
+        for task in tasks:
+            await task
+                
     def _getX(self):
         xr0 = self.pullingMotor1StartPos + self.pullingMotor2StartPos
         xr = self.pullingMotor1.getPosition() + self.pullingMotor2.getPosition()
