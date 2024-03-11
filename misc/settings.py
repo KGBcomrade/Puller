@@ -25,12 +25,13 @@ class SettingsLoader:
                                 'Lv': 8,
                                 'La': 20,
                                 'tW': 45,
-                                'dr': .1}}}
+                                'dr': .1,
+                                'x0': 0}}}
         self.last = s['last']
         self.s = s['settings']
 
     def _returnSettings(dictr):
-        return dictr['omegaType'], dictr.get('k', 7), dictr.get('omega', 6.2), dictr.get('x', 12), dictr.get('L0', 2), dictr.get('alpha', -0.01), dictr['r0'], dictr['rw'], dictr['lw'], dictr['xv'], dictr['xa'], dictr['xd'], dictr['Lv'], dictr['La'], dictr['tW'], dictr['dr']
+        return dictr['omegaType'], dictr.get('k', 7), dictr.get('omega', 6.2), dictr.get('x', 12), dictr.get('L0', 2), dictr.get('alpha', -0.01), dictr['r0'], dictr['rw'], dictr['lw'], dictr['xv'], dictr['xa'], dictr['xd'], dictr['Lv'], dictr['La'], dictr['tW'], dictr['dr'], dictr.get('x0', 0)
 
     def getLast(self):
         return SettingsLoader._returnSettings(self.s[self.last])

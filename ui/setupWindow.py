@@ -23,6 +23,7 @@ class SetupWindow(QDialog):
         self.x = kwargs['x']
         self.L0 = kwargs['L0']
         self.alpha = kwargs['alpha']
+        self.x0 = kwargs['x0']
 
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
@@ -68,6 +69,10 @@ class SetupWindow(QDialog):
         self.drInput.setMaximum(2)
         self.drInput.setMinimum(.001)
         self.drInput.setValue(self.dr)
+        self.x0Input = QDoubleSpinBox(prefix='x0=', suffix='мм')
+        self.x0Input.setMaximum(30)
+        self.x0Input.setMinimum(0)
+        self.x0Input.setValue(self.x0)
         inputsLayout.addWidget(self.omegaTypesCB)
         inputsLayout.addWidget(self.kInput)
         inputsLayout.addWidget(self.omegaInput)
@@ -79,6 +84,7 @@ class SetupWindow(QDialog):
         inputsLayout.addWidget(self.lwInput)
         inputsLayout.addWidget(self.tWInput)
         inputsLayout.addWidget(self.drInput)
+        inputsLayout.addWidget(self.x0Input)
         
         self.buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         inputsLayout.addWidget(self.buttonBox)
@@ -98,6 +104,7 @@ class SetupWindow(QDialog):
         self.lwInput.valueChanged.connect(self.updateLw)
         self.tWInput.valueChanged.connect(self.updateTW)
         self.drInput.valueChanged.connect(self.updateDr)
+        self.x0Input.valueChanged.connect(self.updateX0)
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -158,4 +165,6 @@ class SetupWindow(QDialog):
     def updateDr(self, dr):
         self.dr = dr
         self.updatePlots()
+    def updateX0(self, x0):
+        self.x0 = x0
     
