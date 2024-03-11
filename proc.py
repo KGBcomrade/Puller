@@ -156,14 +156,14 @@ class Proc:
     async def moveApart(self):
         maw = MoveApartWindow()
         if maw.exec():
-            await self._waitWindow('Подвижки разовдятся...', self._moveApart, maw.getMotors(), maw.coord)
+            await Proc._waitWindow('Подвижки разовдятся...', self._moveApart, maw.getMotors(), -maw.coord)
 
     async def _moveApart(self, motors, coord):
         tasks = []
         if motors[0]:
-            tasks.append(asyncio.create_task(self.pullingMotor1.moveTo(coord)))
-        if motors[1]:
             tasks.append(asyncio.create_task(self.pullingMotor2.moveTo(coord)))
+        if motors[1]:
+            tasks.append(asyncio.create_task(self.pullingMotor1.moveTo(coord)))
         
         for task in tasks:
             await task

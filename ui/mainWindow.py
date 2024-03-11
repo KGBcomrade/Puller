@@ -211,8 +211,8 @@ class MainWindow(QMainWindow):
             self.tW = setupWindow.tW
             self.dr = setupWindow.dr
             self.x0 = setupWindow.x0
-        self.proc.pullingMotor1StartPos = self.x0 / 2
-        self.proc.pullingMotor2StartPos = self.x0 / 2
+        self.proc.pullingMotor1StartPos = -self.x0 / 2
+        self.proc.pullingMotor2StartPos = -self.x0 / 2
 
     @asyncSlot()
     async def callMTS(self):
