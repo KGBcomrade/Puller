@@ -53,11 +53,11 @@ class Proc:
         self.plotEvent = asyncio.Event()
 
 
-    async def _waitWindow(message: str, proc):
+    async def _waitWindow(message: str, proc, *args, **kwargs):
         waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди...', message, QMessageBox.StandardButton.NoButton)
         waitWindow.setStandardButtons(QMessageBox.StandardButton.NoButton)
         waitWindow.show()
-        await proc()
+        await proc(*args, **kwargs)
         waitWindow.accept()
 
     async def _homing(self):
