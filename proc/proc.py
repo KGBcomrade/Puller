@@ -228,10 +228,10 @@ class Proc:
     async def run(self, win, omegaType='theta', r0=62.5, tWarmen=0, **kwargs):
         Lx, Rx, xMax, _, _ = getLx(omegaType, r0, **kwargs)
 
+        mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         ppTask = asyncio.create_task(self._delayedPPStart(tWarmen))
         self.tStart = time() # Время начала прогрева
-        mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < tWarmen:
             await asyncio.sleep(0)
