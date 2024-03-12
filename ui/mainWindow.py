@@ -53,8 +53,6 @@ class MainWindow(QMainWindow):
         self.Lv = 5 # Thorlabs velocity
         self.La = 300 # Thorlabs acceleration
         
-        self.x0 = 0 # initial standa coord * 2
-
         self.burnerPullingPos = 36.55
 
         self.stopFlag = False
@@ -211,8 +209,6 @@ class MainWindow(QMainWindow):
             self.tW = setupWindow.tW
             self.dr = setupWindow.dr
             self.x0 = setupWindow.x0
-        self.proc.pullingMotor1StartPos = -self.x0 / 2
-        self.proc.pullingMotor2StartPos = -self.x0 / 2
 
     @asyncSlot()
     async def callMTS(self):
@@ -328,6 +324,17 @@ class MainWindow(QMainWindow):
 
         self.progressText.setText(f'{r} → {self.rw}')
         self.progressBar.setValue(p)
+
+    @property
+    def x0(self):
+        return self._x0
+    
+    @x0.setter
+    def x0(self, value):
+        self._x0 = value
+
+        self.proc.pullingMotor1StartPos = -self.x0 / 2
+        self.proc.pullingMotor2StartPos = -self.x0 / 2
 
 
     def loadSettings(self, name):
