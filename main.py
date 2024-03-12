@@ -10,10 +10,8 @@ app = QApplication(sys.argv)
 loop = qasync.QEventLoop(app)
 asyncio.set_event_loop(loop)
 
-# without hardware init
-noHardware = ('--no-hardware' in sys.argv)
 
-mainWindow = MainWindow(hardware = not noHardware)
+mainWindow = MainWindow()
 mainWindow.show()
 
 with loop:

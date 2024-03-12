@@ -7,9 +7,6 @@ import pandas as pd
 import numpy as np
 import datetime
 
-from hardware import DDS220M, PowerPlot, StandaMotor, VControl
-from hardware.standa import initDevices as initStandaMotors
-
 from misc import getLx
 from hardware.pathes import save_path
 
@@ -36,17 +33,6 @@ class Proc:
         self.stretch = 0.001 # мм, шаг ручного растяжения
 
         self.data = pd.DataFrame({'t': [], 'x': [], 'L': []})
-
-        self.mainMotor = DDS220M(speed=mainMotorSpeed, accel=mainMotorAccel)
-        ids = initStandaMotors()
-        if len(ids) < 3:
-            raise RuntimeError('Certain standa motors undetected')
-        self.pullingMotor1 = StandaMotor(ids[0], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
-        self.pullingMotor2 = StandaMotor(ids[2], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
-        self.burnerMotor = StandaMotor(ids[1], speed=1.5)
-
-        self.vControl = VControl()
-        self.powerPlot = PowerPlot()
 
         self.tStart = 0
 
