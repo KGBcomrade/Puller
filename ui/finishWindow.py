@@ -1,8 +1,5 @@
 import typing
-from PyQt6 import QtCore
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
-from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QDialog, QCheckBox
 
 class FinishWindow(QDialog):
     def __init__(self, stretchFunction: typing.Callable) -> None:

@@ -1,12 +1,7 @@
 import typing
-from PyQt6 import QtCore
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, \
-     QFrame, QButtonGroup, QRadioButton
-from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
-from PyQt6.QtGui import QIntValidator, QDoubleValidator
-import asyncio
-from qasync import asyncSlot
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QSlider, QDialog, QDialogButtonBox, QDoubleSpinBox, \
+     QButtonGroup, QRadioButton
+from PyQt6.QtCore import Qt
 
 class MoveApartWindow(QDialog):
     def __init__(self) -> None:

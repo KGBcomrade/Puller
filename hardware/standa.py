@@ -1,11 +1,6 @@
 from ctypes import *
-import os
-import re
 import sys
-import tempfile
-import urllib
 import asyncio
-from . import pathes
 from .motor import Motor, MotorTempSpeed
 
 try: 

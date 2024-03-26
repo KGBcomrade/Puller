@@ -1,8 +1,4 @@
-import typing
-from PyQt6 import QtCore
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame, QComboBox
-from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QDialogButtonBox, QDoubleSpinBox, QComboBox
 import numpy as np
 
 from ui import Plot
