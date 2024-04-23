@@ -1,16 +1,11 @@
-import typing
-from PyQt6 import QtCore
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame, \
-     QMessageBox, QToolBar, QComboBox, QInputDialog
+from PyQt6.QtWidgets import QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
+     QProgressBar, QDoubleSpinBox, QFrame, QMessageBox, QComboBox, QInputDialog
 from PyQt6.QtGui import QAction
-from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
 
-from ui import Plot, SetupWindow, MoveApartWindow
+from ui import Plot, SetupWindow
 from proc import Proc
 from misc import SettingsLoader
 
-import asyncio
 from qasync import asyncSlot
 
 homingButtonText = 'Поиск нуля'

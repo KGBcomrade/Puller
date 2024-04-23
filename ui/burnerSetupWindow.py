@@ -1,11 +1,8 @@
 import typing
-from PyQt6 import QtCore
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,\
-     QSlider, QDial, QProgressBar, QLineEdit, QDialog, QDialogButtonBox, QGridLayout, QCheckBox, QDoubleSpinBox, QFrame
-from PyQt6.QtCore import QSize, Qt, pyqtSignal, QLocale
-from PyQt6.QtGui import QIntValidator, QDoubleValidator
-import asyncio
-from qasync import asyncSlot
+from PyQt6.QtWidgets import QPushButton, QVBoxLayout, QHBoxLayout, QLabel,\
+     QLineEdit, QDialog
+from PyQt6.QtCore import QLocale
+from PyQt6.QtGui import QDoubleValidator
 
 def simulateMovement(pos):
     print(pos)
