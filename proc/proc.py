@@ -72,10 +72,12 @@ class Proc:
         asyncio.run(self.burnerMotor.moveTo(pos))
 
     def _stretch(self):
-        self.pullingMotor1.moveByS(-self.stretch)
-        self.pullingMotor2.moveByS(-self.stretch)
-        self.pullingMotor1.waitForStop()
-        self.pullingMotor2.waitForStop()
+        with self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempAccel), \
+        self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempSpeed):
+            self.pullingMotor1.moveByS(-self.stretch)
+            self.pullingMotor2.moveByS(-self.stretch)
+            self.pullingMotor1.waitForStop()
+            self.pullingMotor2.waitForStop()
 
     async def homing(self):
         # warning
