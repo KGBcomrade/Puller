@@ -318,12 +318,12 @@ class MainWindow(QMainWindow):
         self.xdInput.setValue(self.xd)
         # self.xdInput.valueChanged.connect(self.setXd)
 
-    def setLv(self, Lv):
-        self.Lv = Lv
+    def setLv(self):
+        self.Lv = self.LvInput.value()
         self.proc.mainMotor.setSpeed(self.Lv)
 
-    def setLa(self, La):
-        self.La = La
+    def setLa(self):
+        self.La = self.LaInput.value()
         self.proc.mainMotor.setAccel(self.La)
 
     def updateIndicators(self, ts, xs, Ls, r, p):
