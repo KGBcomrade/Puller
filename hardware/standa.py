@@ -163,16 +163,19 @@ class StandaMotor(Motor):
         return StandaMotorTempSpeed(self, speed, accel, accel if decel is None else decel)
 
     def setSpeed(self, speed):
-        super().setSpeed(speed)
         set_speed(self.id, self.speed)
-    
+        speed = get_speed(self.id)
+        super().setSpeed(speed)
+
     def setAccel(self, accel):
-        super().setAccel(accel)
         set_accel(self.id, self.accel)
+        accel = get_accel(self.id)
+        super().setAccel(accel)
 
     def setDecel(self, decel):
-        self.decel = decel
         set_decel(self.id, self.decel)
+        decel = get_decel(self.id)
+        self.decel = decel
 
     def moveByS(self, dp):
         lib.command_movr_calb(self.id, c_float(dp), SetCalibr)
