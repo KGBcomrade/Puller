@@ -151,11 +151,11 @@ class MainWindow(QMainWindow):
 
 
         self.pullingSetupButton.released.connect(self.callSetupDialog)
-        self.xvInput.valueChanged.connect(self.setXv)
-        self.xaInput.valueChanged.connect(self.setXa)
-        self.xdInput.valueChanged.connect(self.setXd)
-        self.LvInput.valueChanged.connect(self.setLv)
-        self.LaInput.valueChanged.connect(self.setLa)
+        self.xvInput.editingFinished.connect(self.setXv)
+        self.xaInput.editingFinished.connect(self.setXa)
+        self.xdInput.editingFinished.connect(self.setXd)
+        self.LvInput.editingFinished.connect(self.setLv)
+        self.LaInput.editingFinished.connect(self.setLa)
         
         self.ignitionButton.setEnabled(False)
 
@@ -288,35 +288,35 @@ class MainWindow(QMainWindow):
         self.startButton.setEnabled(False)
         self.stopFlag = True
         
-    def setXv(self, xv):
-        self.xv = xv
+    def setXv(self):
+        self.xv = self.xvInput.value()
         self.proc.pullingMotor1.setSpeed(self.xv)
         self.proc.pullingMotor2.setSpeed(self.xv)
         
         self.xv = self.proc.pullingMotor1.speed
-        self.xvInput.valueChanged.disconnect()
+        # self.xvInput.valueChanged.disconnect()
         self.xvInput.setValue(self.xv)
-        self.xvInput.valueChanged.connect(self.setXv)
+        # self.xvInput.valueChanged.connect(self.setXv)
 
-    def setXa(self, xa):
-        self.xa = xa
+    def setXa(self):
+        self.xa = self.xaInput.value()
         self.proc.pullingMotor1.setAccel(self.xa)
         self.proc.pullingMotor2.setAccel(self.xa)
 
         self.xa = self.proc.pullingMotor1.accel
-        self.xaInput.valueChanged.disconnect()
+        # self.xaInput.valueChanged.disconnect()
         self.xaInput.setValue(self.xa)
-        self.xaInput.valueChanged.connect(self.setXa)
+        # self.xaInput.valueChanged.connect(self.setXa)
 
-    def setXd(self, xd):
-        self.xd = xd
+    def setXd(self):
+        self.xd = self.xdInput.value()
         self.proc.pullingMotor1.setDecel(self.xd)
         self.proc.pullingMotor2.setDecel(self.xd)
 
         self.xd = self.proc.pullingMotor1.decel
-        self.xdInput.valueChanged.disconnect()
+        # self.xdInput.valueChanged.disconnect()
         self.xdInput.setValue(self.xd)
-        self.xdInput.valueChanged.connect(self.setXd)
+        # self.xdInput.valueChanged.connect(self.setXd)
 
     def setLv(self, Lv):
         self.Lv = Lv

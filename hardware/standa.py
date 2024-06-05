@@ -77,8 +77,8 @@ def serial(device_id):
         print("Serial: " + repr(x_serial.value))
 
 def get_speed(device_id):
-    mvst = move_settings_t()
-    lib.get_move_settings(device_id, byref(mvst))
+    mvst = move_settings_calb_t()
+    lib.get_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
     
     return mvst.Speed
         
@@ -100,14 +100,14 @@ def set_microstep_mode_256(device_id):
     lib.set_engine_settings(device_id, byref(eng))
 
 def get_accel(device_id):
-    mvst = move_settings_t()
-    lib.get_move_settings(device_id, byref(mvst))
+    mvst = move_settings_calb_t()
+    lib.get_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
     
     return mvst.Accel
 
 def get_decel(device_id):
-    mvst = move_settings_t()
-    lib.get_move_settings(device_id, byref(mvst))
+    mvst = move_settings_calb_t()
+    lib.get_move_settings_calb(device_id, byref(mvst), byref(SetCalibr))
     
     return mvst.Decel
 
@@ -163,17 +163,17 @@ class StandaMotor(Motor):
         return StandaMotorTempSpeed(self, speed, accel, accel if decel is None else decel)
 
     def setSpeed(self, speed):
-        set_speed(self.id, self.speed)
+        set_speed(self.id, speed)
         speed = get_speed(self.id)
         super().setSpeed(speed)
 
     def setAccel(self, accel):
-        set_accel(self.id, self.accel)
+        set_accel(self.id, accel)
         accel = get_accel(self.id)
         super().setAccel(accel)
 
     def setDecel(self, decel):
-        set_decel(self.id, self.decel)
+        set_decel(self.id, decel)
         decel = get_decel(self.id)
         self.decel = decel
 
