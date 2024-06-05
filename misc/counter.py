@@ -59,7 +59,9 @@ def getLx(type: str, r0=62.5, Ltorch=.49, **kwargs):
     elif type == 'nano':
         x = np.linspace(0, kwargs['x'], 10)
         L = np.linspace(kwargs['L0'], kwargs['L0'] + kwargs['alpha'] * kwargs['x'], 10)
-        r = r0 * (kwargs['L0'] / L) ** (1 / 2 / kwargs['alpha'])
+        r = r0 * (kwargs['L0'] / L) ** (1 / 2 / kwargs['alpha']) \
+            if kwargs['alpha'] != 0 \
+            else r0 * np.exp(-x / 2 / (kwargs['L0'] + Ltorch))
         
         z = (1 - kwargs['alpha']) / 2 * x
         
