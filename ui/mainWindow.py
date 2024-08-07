@@ -348,10 +348,15 @@ class MainWindow(QMainWindow):
     def loadSettings(self, name):
         self.omegaType, self.k, self.omega, self.x, self.L0, self.alpha, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr, self.x0 = self.settingsLoader.load(name)
         self.xvInput.setValue(self.xv)
+        self.setXv()
         self.xaInput.setValue(self.xa)
+        self.setXa()
         self.xdInput.setValue(self.xd)
+        self.setXd()
         self.LvInput.setValue(self.Lv)
+        self.setLv()
         self.LaInput.setValue(self.La)
+        self.setLa()
 
     def newSettings(self):
         name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
