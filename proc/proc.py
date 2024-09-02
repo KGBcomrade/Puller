@@ -24,7 +24,7 @@ class Proc:
         self.lock = asyncio.Lock()
 
         self.mainMotorStartPos = 14.4
-        self.mainMotorEndPos = 214
+        self.mainMotorEndPos = 181
         self.burnerMotorStartPos = 6
         self.burnerMotorExtPos = self.burnerMotorStartPos + 10
         self.burnerMotorWorkPos = 36.8
