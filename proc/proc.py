@@ -66,7 +66,8 @@ class Proc:
 
     async def _alignMove(self):
         await self.burnerMotor.moveTo(self.burnerMotorStartPos)
-        await self.mainMotor.moveTo(self.mainMotorAlignPos)
+        with self.mainMotor.tempSpeed(mainMotorTempSpeed, mainMotorTempAccel):
+            await self.mainMotor.moveTo(self.mainMotorAlignPos)
         
 
     async def _burnerForward(self):
