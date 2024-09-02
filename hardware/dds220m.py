@@ -85,6 +85,22 @@ class DDS220M(Motor):
                             break
             await asyncio.sleep(interval)
 
+    def _waitForStopS(self, interval):
+        x = 0
+        while True:
+            self.drive.write(b'\x92\x04\x00\x00\x21\x01')      # ich bin da
+            time.sleep(0.05)
+            w1 = self.drive.read(nchars = (self.drive.getStatus())[0])
+            if len(w1) >= 12 :
+                if w1[0:2] == b'\x91\x04'    :
+                    # ort = (int(w1[8]) + 16**2 * int(w1[9]) + 16**4 * int(w1[10]) + 16**6 * int(w1[11]))/20000
+                    if ((int(w1[12]) + 16**2 * int(w1[13]))/20000 == 0):
+                        if (x < 5): 
+                            x += 1
+                        else:
+                            break
+            time.sleep(interval)
+
     async def waitForStop(self, y, tolerance=.2):
         while True:
             await asyncio.sleep(0)
@@ -114,3 +130,13 @@ class DDS220M(Motor):
         self.drive.write(MOVE_RELATIVE_220(dp))
         if lock:
             await self._waitForStop(interval)
+
+    def moveByS(self, dp, interval=0.1, lock=True):
+        self.drive.write(MOVE_RELATIVE_220(dp))
+        if lock:
+            self._waitForStopS(interval)
+
+    def moveToS(self, position, interval=0.1, lock=True):
+        self.drive.write(MOVE_ABSolute_220(position))
+        if lock:
+            self._waitForStopS(interval)

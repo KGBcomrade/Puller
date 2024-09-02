@@ -36,14 +36,17 @@ class Motor:
     def tempSpeed(self, speed, accel):
         return MotorTempSpeed(self, speed, accel)
 
-    @abstractclassmethod
     async def moveBy(self, dp, interval=.1, lock=True):
         pass
 
-    @abstractclassmethod
+    def moveByS(self, dp, interval=.1, lock=True):
+        pass
+
     async def moveTo(self, position, interval=.1, lock=True):
         pass
 
-    @abstractclassmethod
+    def moveToS(self, position, interval=.1, lock=True):
+        pass
+
     async def home(self, interval=.1, lock=True):
         pass

@@ -177,15 +177,18 @@ class StandaMotor(Motor):
         decel = get_decel(self.id)
         self.decel = decel
 
-    def moveByS(self, dp):
+    def moveByS(self, dp, interval=.1, lock=True):
         lib.command_movr_calb(self.id, c_float(dp), SetCalibr)
+        if lock:
+            lib.command_wait_for_stop(self.id, interval*1000)
 
     def waitForStop(self):
         lib.command_wait_for_stop(self.id, waitInterval)
 
-    def moveToS(self, position):
+    def moveToS(self, position, interval=.1, lock=True):
         lib.command_move_calb(self.id, c_float(position), SetCalibr)
-        lib.command_wait_for_stop(self.id, waitInterval) 
+        if lock:
+            lib.command_wait_for_stop(self.id, interval*1000) 
 
     def getPosition(self):
         return get_position_calb(self.id)
