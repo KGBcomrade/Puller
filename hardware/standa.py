@@ -180,7 +180,7 @@ class StandaMotor(Motor):
     def moveByS(self, dp, interval=.1, lock=True):
         lib.command_movr_calb(self.id, c_float(dp), SetCalibr)
         if lock:
-            lib.command_wait_for_stop(self.id, interval*1000)
+            lib.command_wait_for_stop(self.id, int(interval*1000))
 
     def waitForStop(self):
         lib.command_wait_for_stop(self.id, waitInterval)
@@ -188,7 +188,7 @@ class StandaMotor(Motor):
     def moveToS(self, position, interval=.1, lock=True):
         lib.command_move_calb(self.id, c_float(position), SetCalibr)
         if lock:
-            lib.command_wait_for_stop(self.id, interval*1000) 
+            lib.command_wait_for_stop(self.id, int(interval*1000)) 
 
     def getPosition(self):
         return get_position_calb(self.id)
