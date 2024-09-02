@@ -1,6 +1,6 @@
 from time import time
 import os
-from ui import BurnerSetupWindow, FinishWindow, MoveApartWindow
+from ui import BurnerSetupWindow, FinishWindow, MoveApartWindow, AlignWindow
 from PyQt6.QtWidgets import QMessageBox
 import asyncio
 import pandas as pd
@@ -25,6 +25,8 @@ class Proc:
 
         self.mainMotorStartPos = 14.4
         self.mainMotorEndPos = 181
+        self.mainMotorAlignPos = 110
+        self.gapLength = 52 # мм, расстояние между краями тянущих подвижек
         self.burnerMotorStartPos = 6
         self.burnerMotorExtPos = self.burnerMotorStartPos + 10
         self.burnerMotorWorkPos = 36.8
@@ -62,6 +64,11 @@ class Proc:
                                 self.pullingMotor1.moveTo(self.pullingMotor1StartPos), 
                                 self.pullingMotor2.moveTo(self.pullingMotor2StartPos))
 
+    async def _alignMove(self):
+        await self.burnerMotor.moveTo(self.burnerMotorStartPos)
+        await self.mainMotor.moveTo(self.mainMotorAlignPos)
+        
+
     async def _burnerForward(self):
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos)
 
@@ -78,6 +85,18 @@ class Proc:
             self.pullingMotor2.moveByS(-self.stretch)
             self.pullingMotor1.waitForStop()
             self.pullingMotor2.waitForStop()
+
+
+    def _moveApartS(self, x):
+        with self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempAccel), \
+        self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempSpeed):
+            self.pullingMotor1.moveToS(x)
+            self.pullingMotor2.moveToS(x)
+            self.pullingMotor1.waitForStop()
+            self.pullingMotor2.waitForStop()
+
+    def _moveMainMotorS(self, x):
+        self.mainMotor.moveToS(x)
 
     async def homing(self):
         # warning
@@ -145,6 +164,11 @@ class Proc:
         maw = MoveApartWindow()
         if maw.exec():
             await Proc._waitWindow('Подвижки разовдятся...', self._moveApart, maw.getMotors(), -maw.coord)
+
+    async def align(self):
+        await self._alignMove()
+        alignWindow = AlignWindow(self._moveApartS, self._moveMainMotorS, self.mainMotorAlignPos, self.gapLength)
+        alignWindow.exec()
 
     async def _moveApart(self, motors, coord):
         tasks = []

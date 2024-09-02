@@ -16,6 +16,7 @@ HHOGenButtonStopText = 'Остановить подачу смеси'
 ignitionButtonStartText = 'Зажечь пламя'
 ignitionButtonStopText = 'Потушить пламя'
 moveButtonText = 'Развести подвижки'
+alignButtonText = 'Юстировка...'
 startButtonStartText = 'Запуск'
 startButtonStopText = 'Стоп'
 pullingSetupButtonText = 'Настройка растяжки...'
@@ -97,12 +98,14 @@ class MainWindow(QMainWindow):
         self.HHOGenButton = QPushButton(HHOGenButtonStartText)
         self.ignitionButton = QPushButton(ignitionButtonStartText)
         self.moveButton = QPushButton(moveButtonText)
+        self.alignButton = QPushButton(alignButtonText)
         sideButtonLayout.addWidget(self.homingButton)
         sideButtonLayout.addWidget(self.MTSButton)
         sideButtonLayout.addWidget(self.burnerSetupButton)
         sideButtonLayout.addWidget(self.HHOGenButton)
         sideButtonLayout.addWidget(self.ignitionButton)
         sideButtonLayout.addWidget(self.moveButton)
+        sideButtonLayout.addWidget(self.alignButton)
 
         # progress bar
         self.progressBar = QProgressBar()
@@ -165,6 +168,7 @@ class MainWindow(QMainWindow):
         self.HHOGenButton.released.connect(self.callHHOOn)
         self.ignitionButton.released.connect(self.callIgnition)
         self.moveButton.released.connect(self.callMoveApart)
+        self.alignButton.released.connect(self.callAlign)
 
         #proc init
         self.proc = Proc(self.Lv, self.La, self.xv, self.xa, self.xd)
@@ -270,6 +274,10 @@ class MainWindow(QMainWindow):
     @asyncSlot()
     async def callMoveApart(self):
         await self.proc.moveApart()
+
+    @asyncSlot()
+    async def callAlign(self):
+        await self.proc.align()
 
     @asyncSlot()
     async def callRun(self):
