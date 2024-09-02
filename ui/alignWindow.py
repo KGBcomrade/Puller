@@ -82,7 +82,7 @@ class AlignWindow(QDialog):
         self.moveMainMotorFunc(self.mainMotorAlignCoord)
     
     def _moveMMLeft(self):
-        self.moveMainMotorFunc(self.mainMotorAlignCoord - self.gapLength / 2 - self.realCoord)
+        self.moveMainMotorFunc(self.mainMotorAlignCoord + self.gapLength / 2 + self.realCoord)
     
     def _moveMMRight(self):
-        self.moveMainMotorFunc(self.mainMotorAlignCoord + self.gapLength / 2 + self.realCoord)
+        self.moveMainMotorFunc(self.mainMotorAlignCoord - self.gapLength / 2 - self.realCoord)
