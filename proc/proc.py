@@ -167,7 +167,7 @@ class Proc:
             await Proc._waitWindow('Подвижки разовдятся...', self._moveApart, maw.getMotors(), -maw.coord)
 
     async def align(self):
-        await self._alignMove()
+        await Proc._waitWindow('Рама подводится под камеру...', self._alignMove)
         alignWindow = AlignWindow(self._moveApartS, self._moveMainMotorS, self.mainMotorAlignPos, self.gapLength)
         alignWindow.exec()
 

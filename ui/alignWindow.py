@@ -71,7 +71,11 @@ class AlignWindow(QDialog):
         if warning.exec() == QMessageBox.StandardButton.No:
             return -1
         
+        wait = QMessageBox(QMessageBox.Icon.Information, 'Подожди', 'Подвижки разводятся в разные стороны...', QMessageBox.StandardButton.NoButton)
+        wait.setStandardButtons(QMessageBox.StandardButton.NoButton)
+        wait.show()
         self.moveApartFunc(self.coord)
+        wait.accept()
         self.realCoord = self.coord
 
     def _moveMMCenter(self):
