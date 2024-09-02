@@ -90,8 +90,8 @@ class Proc:
     def _moveApartS(self, x):
         with self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempAccel), \
         self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel, pullingMotorTempSpeed):
-            self.pullingMotor1.moveToS(x)
-            self.pullingMotor2.moveToS(x)
+            self.pullingMotor1.moveToS(-x)
+            self.pullingMotor2.moveToS(-x)
             self.pullingMotor1.waitForStop()
             self.pullingMotor2.waitForStop()
 
