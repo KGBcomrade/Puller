@@ -1,5 +1,5 @@
 from .proc import Proc
-from hardware import DDS220M, PowerPlot, StandaMotor, VControl
+from hardware import DDS220M, PowerPlot, StandaMotor, VControl, Fixmov
 from hardware.standa import initDevices as initStandaMotors
 
 class HardwareProc(Proc):
@@ -16,3 +16,4 @@ class HardwareProc(Proc):
 
         self.vControl = VControl()
         self.powerPlot = PowerPlot()
+        self.fixmov = Fixmov()

@@ -18,6 +18,7 @@ mainMotorTempSpeed = 16
 mainMotorTempAccel = 20
 pullingMotorTempSpeed = 2
 pullingMotorTempAccel = 1
+fixMotorDelay = 12.3
 
 class Proc:
     def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
@@ -56,6 +57,7 @@ class Proc:
             await asyncio.gather(self.mainMotor.home(), self.pullingMotor1.home(), self.pullingMotor2.home())
 
     async def _MTS(self):
+        await self.fixmov.moveBack(fixMotorDelay)
         with self.mainMotor.tempSpeed(mainMotorTempSpeed, mainMotorTempAccel), \
             self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel), \
             self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel):

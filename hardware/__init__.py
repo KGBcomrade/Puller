@@ -6,3 +6,4 @@ else:
     from .powerPlot import PowerPlot
     from .standa import StandaMotor
     from .vcontrol import VControl
+    from .fixmov import Fixmov
