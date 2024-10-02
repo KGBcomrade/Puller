@@ -9,13 +9,6 @@ class PowerPlot:
     def __init__(self, address = 'USB0::0x0957::0x179B::MY54491022::INSTR') -> None:
         self.osc = DSO_X2002A(address)  #('USB0::2391::6043::MY54490944::INSTR')
 
-        self.osc.set_y_scale(5)
-        self.osc.conn.write(":CHANnel1:OFFSet 18")
-        self.osc.set_x_scale(0.1)
-        self.osc.conn.write(':TIMebase:POSition 0.000')
-        self.osc.conn.write(':TIMebase:REFerence LEFT')
-        self.osc.conn.write(':ACQuire:TYPE HRES')
-
         self.osc.conn.write(':STOP')
         
         self.osc.set_y_scale(5)
