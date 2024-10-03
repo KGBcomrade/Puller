@@ -14,7 +14,7 @@ class PowerPlot:
         self.osc.set_y_scale(5)
         self.osc.set_x_scale(50) # (meast*0.1)
         self.osc.conn.write(":CHANnel1:OFFSet 18")
-        self.osc.conn.write(':TIMebase:POSition -49')
+        self.osc.conn.write(':TIMebase:POSition 49')
         self.osc.conn.write(':TIMebase:REFerence LEFT')
         self.osc.conn.write(':ACQuire:TYPE HRES')
         self.osc.conn.write(':WAVeform:SOURce CHAN{}'.format(1))
