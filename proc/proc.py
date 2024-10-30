@@ -49,6 +49,19 @@ class Proc:
         await proc(*args, **kwargs)
         waitWindow.accept()
 
+    async def _cancellableWaitWindow(message: str, proc, *args, **kwargs):
+        waitWindow = QMessageBox(QMessageBox.Icon.Information, 'Подожди...', message, QMessageBox.StandardButton.Cancel)
+        waitWindow.show()
+
+        waitEvent = asyncio.Event()
+
+        def onCancel():
+            waitEvent.set()
+
+        waitWindow.rejected.connect(onCancel)
+
+        await proc(*args, **kwargs, event=waitEvent)
+
     async def _homing(self):
         with self.mainMotor.tempSpeed(mainMotorTempSpeed, mainMotorTempAccel), \
             self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel), \
@@ -56,8 +69,15 @@ class Proc:
             await self.burnerMotor.home()
             await asyncio.gather(self.mainMotor.home(), self.pullingMotor1.home(), self.pullingMotor2.home())
 
+    async def _fixmovMove(self, event):
+        async def moveDelay():
+            await asyncio.sleep(fixMotorDelay)
+            event.set()
+        mdTask = asyncio.create_task(moveDelay())
+        await self.fixmov.moveBack(event)
+        mdTask.cancel()
+
     async def _MTS(self):
-        await self.fixmov.moveBack(fixMotorDelay)
         with self.mainMotor.tempSpeed(mainMotorTempSpeed, mainMotorTempAccel), \
             self.pullingMotor1.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel), \
             self.pullingMotor2.tempSpeed(pullingMotorTempSpeed, pullingMotorTempAccel):
@@ -115,6 +135,7 @@ class Proc:
         return 0
 
     async def MTS(self):
+        await Proc._cancellableWaitWindow('Отвод вилки для заклеивания...', self._fixmovMove)
         await Proc._waitWindow('Свдиг подвижек на начальные позиции...', self._MTS)
 
     async def burnerSetup(self, burnerPullingPos = 36.8):
