@@ -12,7 +12,7 @@ class HardwareProc(Proc):
             raise RuntimeError('Certain standa motors undetected')
         self.pullingMotor1 = StandaMotor(ids[0], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
         self.pullingMotor2 = StandaMotor(ids[2], speed=pullingMotorSpeed, accel=pullingMotorAccel, decel=pullingMotorDecel)
-        self.burnerMotor = StandaMotor(ids[1], speed=1.5)
+        self.burnerMotor = StandaMotor(ids[1], speed=2, accel=2, decel=2)
 
         self.vControl = VControl()
         self.powerPlot = PowerPlot()
