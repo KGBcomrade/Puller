@@ -279,8 +279,8 @@ class Proc:
         Lx, Rx, xMax, _, _ = getLx(omegaType, r0, **kwargs)
 
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
-        await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         ppTask = asyncio.create_task(self._delayedPPStart(0))
+        await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.tStart = time() # Время начала прогрева
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < tWarmen:
