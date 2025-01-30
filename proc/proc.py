@@ -295,7 +295,7 @@ class Proc:
                 self.pullingMotor2.softStop()
                 break
 
-            if self._getX() >= xMax - win.xv ** 2 / win.xd:
+            if self._getX() >= xMax - 0.5 * win.xv ** 2 / win.xd:
                 break
 
             if pullerMotorTask.done():
