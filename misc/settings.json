@@ -1,5 +1,5 @@
 {
-    "last": "NanoLim",
+    "last": "SensorShort",
     "settings": {
         "Sensor": {
             "omegaType": "theta",
@@ -146,7 +146,7 @@
             "xd": 1.0,
             "Lv": 3.0,
             "La": 300.0,
-            "tW": 0.0,
+            "tW": 3.0,
             "dr": 0.1,
             "x0": 0.0
         },
