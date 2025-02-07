@@ -108,6 +108,7 @@ class SetupWindow(QDialog):
         self.altInputs = [self.kInput, self.omegaInput, self.xInput, self.L0Input, self.alphaInput, self.lwInput, self.rwInput, self.drInput]
         self.altInputsMap = {
             'theta': [self.kInput, self.lwInput, self.rwInput, self.drInput],
+            'theta405': [self.kInput, self.lwInput, self.rwInput, self.drInput],
             'const': [self.omegaInput, self.lwInput, self.rwInput, self.drInput],
             'nano': [self.xInput, self.L0Input, self.alphaInput]
         }

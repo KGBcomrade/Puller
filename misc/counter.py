@@ -3,8 +3,9 @@ from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz
 
 radius, thetas = np.genfromtxt('misc/theta.csv')
+radius405, thetas405 = np.genfromtxt('misc/theta405.csv')
 
-omegaTypes = ['theta', 'const', 'nano']
+omegaTypes = ['theta', 'theta405', 'const', 'nano']
 
 def getLxAdiab(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     '''Вычисляет зависимость эфективной ширины пламяни L, радиуса перетяжки R
@@ -54,6 +55,8 @@ def getLx(type: str, r0=62.5, Ltorch=.49, **kwargs):
     assert type in omegaTypes
     if type == 'theta':
         return getLxAdiab(radius, thetas / kwargs['k'], r0, Ltorch, kwargs['lw'], kwargs['rw'], kwargs['dr'])
+    if type == 'theta405':
+        return getLxAdiab(radius405, thetas405 / kwargs['k'], r0, Ltorch, kwargs['lw'], kwargs['rw'], kwargs['dr'])
     elif type == 'const':
         return getLxAdiab(np.linspace(1e-4, r0, 100), np.ones(100) * kwargs['omega'], r0, Ltorch, kwargs['lw'], kwargs['rw'], kwargs['dr'])
     elif type == 'nano':
