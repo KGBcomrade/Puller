@@ -3,7 +3,7 @@ from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz
 
 radius, thetas = np.genfromtxt('misc/theta.csv')
-radius405, thetas405 = np.genfromtxt('misc/theta405.csv')
+radius405, thetas405 = np.genfromtxt('misc/theta405F.csv')
 
 omegaTypes = ['theta', 'theta405', 'const', 'nano']
 
