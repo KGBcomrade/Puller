@@ -66,7 +66,7 @@ class SetupWindow(QDialog):
         self.drInput.setMinimum(.001)
         self.drInput.setValue(self.dr)
         self.x0Input = QDoubleSpinBox(prefix='x0=', suffix='мм')
-        self.x0Input.setMaximum(30)
+        self.x0Input.setMaximum(80)
         self.x0Input.setMinimum(0)
         self.x0Input.setValue(self.x0)
         inputsLayout.addWidget(self.omegaTypesCB)
