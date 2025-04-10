@@ -268,8 +268,8 @@ class Proc:
                 _run.log_scalar('power', tp[1])
             
             meanN = 50 # power sampling
-            P0 = power[:meanN, 1]
-            P1 = power[-meanN:, 1]
+            P0 = power[:meanN, 1].mean()
+            P1 = power[-meanN:, 1].mean()
             T = P1 / P0 * 100
             print(f'Calculated transmition: {T}%')
             return T
