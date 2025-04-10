@@ -257,7 +257,9 @@ class Proc:
             for _, d in self.data.iterrows():
                 for n, v in d.items():
                     _run.log_scalar(n, v)
-            power = np.genfromtxt(os.path.join(save_path, str(datetime.date.today()), f'power_{num}.csv'), delimiter=',')
+            fname = os.path.join(save_path, str(datetime.date.today()), f'power_{num}.csv')
+            _run.add_artifact(fname)
+            power = np.genfromtxt(fname, delimiter=',')
             power[:, 0] += -power[:, 0].min() + self.tStart
 
             for tp in power:
