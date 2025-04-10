@@ -262,7 +262,8 @@ class Proc:
             power = np.genfromtxt(fname, delimiter=',')
             power[:, 0] += -power[:, 0].min() + self.tStart
 
-            for tp in power:
+            NN = 100 # reduced pplot metrics upload
+            for tp in power[::NN]:
                 _run.log_scalar('t_power', tp[0])
                 _run.log_scalar('power', tp[1])
             
