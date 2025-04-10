@@ -271,7 +271,7 @@ class Proc:
             P0 = power[:meanN, 1].mean()
             P1 = power[-meanN:, 1].mean()
             T = P1 / P0 * 100
-            print(f'Calculated transmition: {T}%')
+
             return float(T)
 
         ex.run()
