@@ -31,7 +31,7 @@ class SetupWindow(QDialog):
         self.omegaTypesCB.setCurrentText(self.omegaType)
 
         self.kInput = QDoubleSpinBox(prefix='𝚯/=')
-        self.kInput.setMaximum(20)
+        self.kInput.setMaximum(50)
         self.kInput.setMinimum(.01)
         self.kInput.setValue(self.k)
         self.omegaInput = QDoubleSpinBox(prefix='Ω=', suffix='мрад')
