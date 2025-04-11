@@ -315,7 +315,7 @@ class MainWindow(QMainWindow):
         self.xPlot.plot(ts, xs)
         self.LPlot.plot(ts, Ls)
 
-        self.progressText.setText(f'{r} → {self.rw}')
+        self.progressText.setText(f'{r} → {self.settings.rw}')
         self.progressBar.setValue(p)
 
     @property
