@@ -239,7 +239,7 @@ class Proc:
         await asyncio.gather(self.pullingMotor1.moveTo(self.pullingMotor1StartPos - xMax / 2),
                             self.pullingMotor2.moveTo(self.pullingMotor2StartPos - xMax / 2))
 
-    def _upload(self, num):
+    def _upload(self, num, settings: Settings):
         ex = Experiment('pulling_g')
         dotenv.load_dotenv('keys.env')
         url = 'mongodb://{user}:{pw}@{host}:{port}/?replicaSet={rs}&authSource={auth_src}'.format(
@@ -251,6 +251,8 @@ class Proc:
             auth_src=os.environ['mango_database'])
 
         ex.observers.append(MongoObserver(url, tlsCAFile='cert.crt', db_name=os.environ['mango_database']))
+
+        ex.add_config(settings.__dict__)
 
         @ex.automain
         def _push(_run):
@@ -335,7 +337,7 @@ class Proc:
             self.data.to_csv(os.path.join(save_path, str(datetime.date.today()), f'movement_{num}.csv'))
 
             if finishWindow.mongoDBCheckBox.isChecked():
-                self._upload(num)
+                self._upload(num, settings)
 
 
         asyncio.gather(*finishTasks)
