@@ -2,6 +2,8 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz
 
+from .settings import Settings
+
 radius, thetas = np.genfromtxt('misc/theta.csv')
 radius405, thetas405 = np.genfromtxt('misc/theta405F.csv')
 
@@ -51,7 +53,10 @@ def getLxAdiab(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     z = np.hstack((0, cumtrapz(dz, r)))
     return L_x, R_x, xMax, z, r
 
-def getLx(type: str, r0=62.5, Ltorch=.49, **kwargs):
+def getLx(settings: Settings, Ltorch=.49):
+    type = settings.omegaType
+    r0 = settings.r0
+    kwargs = settings.__dict__
     assert type in omegaTypes
     if type == 'theta':
         return getLxAdiab(radius, thetas / kwargs['k'], r0, Ltorch, kwargs['lw'], kwargs['rw'], kwargs['dr'])

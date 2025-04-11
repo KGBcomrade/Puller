@@ -2,24 +2,13 @@ from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QDialog, QDialogButtonBox,
 import numpy as np
 
 from ui import Plot
-from misc import getLx, omegaTypes
+from misc import getLx, omegaTypes, Settings
 
 class SetupWindow(QDialog):
-    def __init__(self, omegaType = 'theta', r0 = 62.5, **kwargs) -> None:
+    def __init__(self, settings: Settings) -> None:
         super().__init__()
 
-        self.omegaType = omegaType
-        self.rw = kwargs['rw']
-        self.lw = kwargs['lw']
-        self.r0 = r0
-        self.k = kwargs['k']
-        self.tW = kwargs['tW']
-        self.dr = kwargs['dr']
-        self.omega = kwargs['omega']
-        self.x = kwargs['x']
-        self.L0 = kwargs['L0']
-        self.alpha = kwargs['alpha']
-        self.x0 = kwargs['x0']
+        self.settings = settings
 
         mainLayout = QHBoxLayout()
         inputsLayout = QVBoxLayout()
@@ -28,47 +17,47 @@ class SetupWindow(QDialog):
         self.omegaTypesCB = QComboBox()
         self.omegaTypesCB.addItems(omegaTypes)
         self.omegaTypesCB.textActivated.connect(self.updateOmegaType)
-        self.omegaTypesCB.setCurrentText(self.omegaType)
+        self.omegaTypesCB.setCurrentText(self.settings.omegaType)
 
         self.kInput = QDoubleSpinBox(prefix='𝚯/=')
         self.kInput.setMaximum(50)
         self.kInput.setMinimum(.01)
-        self.kInput.setValue(self.k)
+        self.kInput.setValue(self.settings.k)
         self.omegaInput = QDoubleSpinBox(prefix='Ω=', suffix='мрад')
         self.omegaInput.setMinimum(.01)
         self.omegaInput.setMaximum(100)
-        self.omegaInput.setValue(self.omega)
+        self.omegaInput.setValue(self.settings.omega)
         self.xInput = QDoubleSpinBox(prefix='x=', suffix='мм')
         self.xInput.setMinimum(0.1)
         self.xInput.setMaximum(100)
-        self.xInput.setValue(self.x)
+        self.xInput.setValue(self.settings.x)
         self.L0Input = QDoubleSpinBox(prefix='L₀=', suffix='мм')
         self.L0Input.setMinimum(0)
         self.L0Input.setMaximum(10)
-        self.L0Input.setValue(self.L0)
+        self.L0Input.setValue(self.settings.L0)
         self.alphaInput = QDoubleSpinBox(prefix='α=')
         self.alphaInput.setMinimum(-1)
         self.alphaInput.setMaximum(1)
-        self.alphaInput.setValue(self.alpha)
+        self.alphaInput.setValue(self.settings.alpha)
         self.r0Input = QDoubleSpinBox(prefix='r0=', suffix=' мкм')
         self.r0Input.setMaximum(62.5)
-        self.r0Input.setValue(r0)
+        self.r0Input.setValue(self.settings.r0)
         self.rwInput = QDoubleSpinBox(prefix='rw=', suffix=' мкм')
-        self.rwInput.setValue(self.rw)
+        self.rwInput.setValue(self.settings.rw)
         self.lwInput = QDoubleSpinBox(prefix='lw=', suffix=' мм')
-        self.lwInput.setValue(self.lw)
+        self.lwInput.setValue(self.settings.lw)
         self.tWInput = QDoubleSpinBox(prefix='tW=', suffix='с')
         self.tWInput.setMinimum(0)
         self.tWInput.setMaximum(500)
-        self.tWInput.setValue(self.tW)
+        self.tWInput.setValue(self.settings.tW)
         self.drInput = QDoubleSpinBox(prefix='dr=')
         self.drInput.setMaximum(2)
         self.drInput.setMinimum(.001)
-        self.drInput.setValue(self.dr)
+        self.drInput.setValue(self.settings.dr)
         self.x0Input = QDoubleSpinBox(prefix='x0=', suffix='мм')
         self.x0Input.setMaximum(80)
         self.x0Input.setMinimum(0)
-        self.x0Input.setValue(self.x0)
+        self.x0Input.setValue(self.settings.x0)
         inputsLayout.addWidget(self.omegaTypesCB)
         inputsLayout.addWidget(self.kInput)
         inputsLayout.addWidget(self.omegaInput)
@@ -114,18 +103,18 @@ class SetupWindow(QDialog):
         }
 
         self.updatePlots()
-        self.updateOmegaType(self.omegaType)
+        self.updateOmegaType(self.settings.omegaType)
         
         self.setLayout(mainLayout)
 
     def updatePlots(self):
-        Lx, Rx, xMax, _, _ = getLx(self.omegaType, r0=self.r0, lw=self.lw, rw=self.rw, dr=self.dr, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha)
+        Lx, Rx, xMax, _, _ = getLx(self.settings)
         x = np.linspace(0, xMax, 100)
         self.LPlot.plot(x, Lx(x))
         self.rPlot.plot(x, Rx(x))
 
     def updateOmegaType(self, omegaType):
-        self.omegaType = omegaType
+        self.settings.omegaType = omegaType
         for w in self.altInputs:
             w.hide()
         for w in self.altInputsMap[omegaType]:
@@ -133,35 +122,35 @@ class SetupWindow(QDialog):
 
         self.updatePlots()
     def updateK(self, k):
-        self.k = k
+        self.settings.k = k
         self.updatePlots()
     def updateOmega(self, omega):
-        self.omega = omega
+        self.settings.omega = omega
         self.updatePlots()
     def updateX(self, x):
-        self.x = x
+        self.settings.x = x
         self.updatePlots()
     def updateL0(self, L0):
-        self.L0 = L0
+        self.settings.L0 = L0
         self.updatePlots()
     def updateAlpha(self, alpha):
-        self.alpha = alpha
+        self.settings.alpha = alpha
         self.updatePlots()
     def updateR0(self, r0):
-        self.r0 = r0
+        self.settings.r0 = r0
         self.updatePlots()
     def updateRw(self, rw):
-        self.rw = rw
+        self.settings.rw = rw
         self.updatePlots()
     def updateLw(self, lw):
-        self.lw = lw
+        self.settings.lw = lw
         self.updatePlots()
     def updateTW(self, tW):
-        self.tW = tW
+        self.settings.tW = tW
         self.updatePlots()
     def updateDr(self, dr):
-        self.dr = dr
+        self.settings.dr = dr
         self.updatePlots()
     def updateX0(self, x0):
-        self.x0 = x0
+        self.settings.x0 = x0
     

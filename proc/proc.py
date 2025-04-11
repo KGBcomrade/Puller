@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import datetime
 
-from misc import getLx
+from misc import getLx, Settings
 from hardware.pathes import save_path
 
 from sacred.observers import MongoObserver
@@ -283,15 +283,15 @@ class Proc:
                 
 
 
-    async def run(self, win, omegaType='theta', r0=62.5, tWarmen=0, **kwargs):
-        Lx, Rx, xMax, _, _ = getLx(omegaType, r0, **kwargs)
+    async def run(self, win, settings: Settings):
+        Lx, Rx, xMax, _, _ = getLx(settings)
 
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         ppTask = asyncio.create_task(self._delayedPPStart(0))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.tStart = time() # Время начала прогрева
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
-        while time() - self.tStart < tWarmen:
+        while time() - self.tStart < settings.tW:
             await asyncio.sleep(0)
         pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1)))
 
@@ -303,7 +303,7 @@ class Proc:
                 self.pullingMotor2.softStop()
                 break
 
-            if self._getX() >= xMax - 2 * win.xv ** 2 / win.xd:
+            if self._getX() >= xMax - 2 * win.settings.xv ** 2 / win.settings.xd:
                 break
 
             if pullerMotorTask.done():

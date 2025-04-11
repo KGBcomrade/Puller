@@ -1,2 +1,2 @@
 from .counter import getLx, omegaTypes
-from .settings import SettingsLoader
+from .settings import SettingsLoader, Settings

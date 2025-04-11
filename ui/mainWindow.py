@@ -4,7 +4,7 @@ from PyQt6.QtGui import QAction
 
 from ui import Plot, SetupWindow
 from proc import Proc
-from misc import SettingsLoader
+from misc import SettingsLoader, Settings
 
 from qasync import asyncSlot
 
@@ -29,25 +29,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         # pulling parameters
-        self.omegaType = 'theta'
-        self.k = 7
-        self.omega = 6.2
-        self.x = 10
-        self.L0 = 2
-        self.alpha = -0.01
-        self.r0 = 125 / 2
-        self.rw = 25
-        self.lw = 25
-
-        self.tW = 45
-        self.dr = .1
-
-        self.xv = .03 # Standa velocity
-        self.xa = 1 # Standa acceleration
-        self.xd = 1 # Standa deceleraion
-
-        self.Lv = 5 # Thorlabs velocity
-        self.La = 300 # Thorlabs acceleration
+        self.settings = Settings()
         
         self.burnerPullingPos = 36.55
 
@@ -109,7 +91,7 @@ class MainWindow(QMainWindow):
 
         # progress bar
         self.progressBar = QProgressBar()
-        self.progressText = QLabel(f'r={self.r0} → {self.rw}')
+        self.progressText = QLabel(f'r={self.settings.r0} → {self.settings.rw}')
         self.startButton = QPushButton(startButtonStartText)
         progressBarLayout.addWidget(self.progressBar)
         progressBarLayout.addWidget(self.progressText)
@@ -118,14 +100,14 @@ class MainWindow(QMainWindow):
         # x plot
         self.xPlot = Plot(ylabel='$x$, mm')
         self.xvInput = QDoubleSpinBox(decimals=5, prefix='v=', suffix=' мм/с')
-        self.xvInput.setValue(self.xv)
+        self.xvInput.setValue(self.settings.xv)
         self.xvInput.setRange(1e-5, 2000)
         self.xaInput = QDoubleSpinBox(decimals=5, prefix='a=', suffix=' мм/с²')
-        self.xaInput.setValue(self.xa)
+        self.xaInput.setValue(self.settings.xa)
         self.xaInput.setRange(1e-5, 2000)
         self.xaInput.setSingleStep(.001)
         self.xdInput = QDoubleSpinBox(decimals=5, prefix='d=', suffix=' мм/с²')
-        self.xdInput.setValue(self.xd)
+        self.xdInput.setValue(self.settings.xd)
         self.xdInput.setRange(1e-5, 2000)
         xPlotLayout.addWidget(self.xPlot)
         xPlotLayout.addLayout(xPlotSideLayout)
@@ -139,10 +121,10 @@ class MainWindow(QMainWindow):
         self.LPlot = Plot(ylabel='$L$, mm')
         self.LvInput = QDoubleSpinBox(decimals=2, prefix='v=', suffix=' мм/с')
         self.LvInput.setRange(1, 300)
-        self.LvInput.setValue(self.Lv)
+        self.LvInput.setValue(self.settings.Lv)
         self.LaInput = QDoubleSpinBox(decimals=2, prefix='a=', suffix=' мм/с²')
         self.LaInput.setRange(1, 5000)
-        self.LaInput.setValue(self.La)
+        self.LaInput.setValue(self.settings.La)
         self.pullingSetupButton = QPushButton(pullingSetupButtonText)
         LPlotLayout.addWidget(self.LPlot)
         LPlotLayout.addLayout(LPlotSideLayout)
@@ -171,7 +153,13 @@ class MainWindow(QMainWindow):
         self.alignButton.released.connect(self.callAlign)
 
         #proc init
-        self.proc = Proc(self.Lv, self.La, self.xv, self.xa, self.xd)
+        self.proc = Proc(
+            self.settings.Lv, 
+            self.settings.La, 
+            self.settings.xv, 
+            self.settings.xa, 
+            self.settings.xd
+        )
 
         # settings
         self.settingsLoader = SettingsLoader()
@@ -192,20 +180,9 @@ class MainWindow(QMainWindow):
         self.burnerSetupButton.setEnabled(enabled)
 
     def callSetupDialog(self):
-        setupWindow = SetupWindow(omegaType=self.omegaType, r0=self.r0, rw=self.rw, lw=self.lw, k = self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, tW=self.tW, dr=self.dr, x0=self.x0)
+        setupWindow = SetupWindow(self.settings)
         if setupWindow.exec():
-            self.omegaType = setupWindow.omegaType
-            self.k = setupWindow.k
-            self.omega = setupWindow.omega
-            self.x = setupWindow.x
-            self.L0 = setupWindow.L0
-            self.alpha = setupWindow.alpha
-            self.r0 = setupWindow.r0
-            self.rw = setupWindow.rw
-            self.lw = setupWindow.lw
-            self.tW = setupWindow.tW
-            self.dr = setupWindow.dr
-            self.x0 = setupWindow.x0
+            self.settings = setupWindow.settings
 
     @asyncSlot()
     async def callMTS(self):
@@ -289,7 +266,7 @@ class MainWindow(QMainWindow):
         self.startButton.released.disconnect()
         self.startButton.released.connect(self.callStop)
         self.toolBar.setEnabled(False)
-        await self.proc.run(self, self.omegaType, self.r0, tWarmen=self.tW, lw=self.lw, rw=self.rw, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, k=self.k, dr=self.dr)
+        await self.proc.run(self, self.settings)
 
     def callStop(self):
         self.toolBar.setEnabled(True)
@@ -297,42 +274,42 @@ class MainWindow(QMainWindow):
         self.stopFlag = True
         
     def setXv(self):
-        self.xv = self.xvInput.value()
-        self.proc.pullingMotor1.setSpeed(self.xv)
-        self.proc.pullingMotor2.setSpeed(self.xv)
+        self.settings.xv = self.xvInput.value()
+        self.proc.pullingMotor1.setSpeed(self.settings.xv)
+        self.proc.pullingMotor2.setSpeed(self.settings.xv)
         
-        self.xv = self.proc.pullingMotor1.speed
+        self.settings.xv = self.proc.pullingMotor1.speed
         # self.xvInput.valueChanged.disconnect()
-        self.xvInput.setValue(self.xv)
+        self.xvInput.setValue(self.settings.xv)
         # self.xvInput.valueChanged.connect(self.setXv)
 
     def setXa(self):
-        self.xa = self.xaInput.value()
-        self.proc.pullingMotor1.setAccel(self.xa)
-        self.proc.pullingMotor2.setAccel(self.xa)
+        self.settings.xa = self.xaInput.value()
+        self.proc.pullingMotor1.setAccel(self.settings.xa)
+        self.proc.pullingMotor2.setAccel(self.settings.xa)
 
-        self.xa = self.proc.pullingMotor1.accel
+        self.settings.xa = self.proc.pullingMotor1.accel
         # self.xaInput.valueChanged.disconnect()
-        self.xaInput.setValue(self.xa)
+        self.xaInput.setValue(self.settings.xa)
         # self.xaInput.valueChanged.connect(self.setXa)
 
     def setXd(self):
-        self.xd = self.xdInput.value()
-        self.proc.pullingMotor1.setDecel(self.xd)
-        self.proc.pullingMotor2.setDecel(self.xd)
+        self.settings.xd = self.xdInput.value()
+        self.proc.pullingMotor1.setDecel(self.settings.xd)
+        self.proc.pullingMotor2.setDecel(self.settings.xd)
 
-        self.xd = self.proc.pullingMotor1.decel
+        self.settings.xd = self.proc.pullingMotor1.decel
         # self.xdInput.valueChanged.disconnect()
-        self.xdInput.setValue(self.xd)
+        self.xdInput.setValue(self.settings.xd)
         # self.xdInput.valueChanged.connect(self.setXd)
 
     def setLv(self):
-        self.Lv = self.LvInput.value()
-        self.proc.mainMotor.setSpeed(self.Lv)
+        self.settings.Lv = self.LvInput.value()
+        self.proc.mainMotor.setSpeed(self.settings.Lv)
 
     def setLa(self):
-        self.La = self.LaInput.value()
-        self.proc.mainMotor.setAccel(self.La)
+        self.settings.La = self.LaInput.value()
+        self.proc.mainMotor.setAccel(self.settings.La)
 
     def updateIndicators(self, ts, xs, Ls, r, p):
         self.xPlot.plot(ts, xs)
@@ -354,24 +331,24 @@ class MainWindow(QMainWindow):
 
 
     def loadSettings(self, name):
-        self.omegaType, self.k, self.omega, self.x, self.L0, self.alpha, self.r0, self.rw, self.lw, self.xv, self.xa, self.xd, self.Lv, self.La, self.tW, self.dr, self.x0 = self.settingsLoader.load(name)
-        self.xvInput.setValue(self.xv)
+        self.settings = self.settingsLoader.load(name)
+        self.xvInput.setValue(self.settings.xv)
         self.setXv()
-        self.xaInput.setValue(self.xa)
+        self.xaInput.setValue(self.settings.xa)
         self.setXa()
-        self.xdInput.setValue(self.xd)
+        self.xdInput.setValue(self.settings.xd)
         self.setXd()
-        self.LvInput.setValue(self.Lv)
+        self.LvInput.setValue(self.settings.Lv)
         self.setLv()
-        self.LaInput.setValue(self.La)
+        self.LaInput.setValue(self.settings.La)
         self.setLa()
 
     def newSettings(self):
         name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
         if name and ok:
-            self.settingsLoader.save(name, omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr, x0=self.x0)
+            self.settingsLoader.save(name, self.settings)
             self.settingsList.addItem(name)
             self.settingsList.setCurrentText(name)
             self.loadSettings(name)
     def saveSettings(self):
-        self.settingsLoader.save(self.settingsList.currentText(), omegaType=self.omegaType, k=self.k, omega=self.omega, x=self.x, L0=self.L0, alpha=self.alpha, r0=self.r0, rw=self.rw, lw=self.lw, xv=self.xv, xa=self.xa, xd=self.xd, Lv=self.Lv, La=self.La, tW=self.tW, dr=self.dr, x0=self.x0)
+        self.settingsLoader.save(self.settingsList.currentText(), self.settings)
