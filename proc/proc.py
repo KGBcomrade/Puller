@@ -252,7 +252,9 @@ class Proc:
 
         ex.observers.append(MongoObserver(url, tlsCAFile='cert.crt', db_name=os.environ['mango_database']))
 
-        ex.add_config(settings.__dict__)
+        conf = settings.__dict__
+        conf['bX'] = self.burnerMotorWorkPos
+        ex.add_config(conf)
 
         @ex.automain
         def _push(_run):
