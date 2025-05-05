@@ -183,6 +183,7 @@ class MainWindow(QMainWindow):
         setupWindow = SetupWindow(self.settings)
         if setupWindow.exec():
             self.settings = setupWindow.settings
+            self.x0 = self.settings.x0
 
     @asyncSlot()
     async def callMTS(self):
@@ -342,6 +343,7 @@ class MainWindow(QMainWindow):
         self.setLv()
         self.LaInput.setValue(self.settings.La)
         self.setLa()
+        self.x0 = self.settings.x0
 
     def newSettings(self):
         name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
