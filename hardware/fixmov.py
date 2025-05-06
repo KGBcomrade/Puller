@@ -10,3 +10,11 @@ class Fixmov:
         self.ard.write(b'm')
         await event.wait()
         self.ard.write(b's')
+
+    async def valveDelay(self, delay=20):
+        self.ard.write(b'c')
+        await asyncio.sleep(delay)
+        self.ard.write(b'o')
+
+    def valveClose(self):
+        self.ard.write(b'c')

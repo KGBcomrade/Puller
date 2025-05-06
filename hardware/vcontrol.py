@@ -10,7 +10,7 @@ rigol_i2 = 1    # Rigol
 rigol_v2 = 24	# Rigol
 
 rigol_i3 = 1	# Rigol
-rigol_v3 = 8	# Rigol
+rigol_v3 = 12	# Rigol
 
 class VControl:
     def __init__(self, address='USB0::0x1AB1::0x0E11::DP8A221000017::INSTR') -> None:
@@ -39,7 +39,10 @@ class VControl:
         await asyncio.sleep(interval)
         self.rigol.say(':OUTP CH1,OFF')
 
-    async def extinguish(self, interval=1):
+    async def extinguish(self, fixmov, delay=20, interval=1):
+        valveTask = asyncio.create_task(fixmov.valveDelay(delay))
         self.rigol.say(':OUTP CH3,ON')
+        await valveTask
         await asyncio.sleep(interval)
         self.rigol.say(':OUTP CH3,OFF')
+        fixmov.valveClose()

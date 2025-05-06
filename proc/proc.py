@@ -176,13 +176,11 @@ class Proc:
 
 
     async def extinguish(self):
-        await self.vControl.extinguish()
+        await self.vControl.extinguish(self.fixmov, delay=10, interval=2)
         repeatition = QMessageBox(QMessageBox.Icon.Question, 'Повторить?', 'Повторить тушение?', 
                                 QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes)
-        while True:
-            await self.vControl.extinguish()
-            if repeatition.exec() == QMessageBox.StandardButton.No: # check if extinguished
-                break   
+        while repeatition.exec() == QMessageBox.StandardButton.Yes:
+            await self.vControl.extinguish(self.fixmov, interval=3)  
 
     async def moveApart(self):
         maw = MoveApartWindow()
