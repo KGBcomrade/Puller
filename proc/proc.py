@@ -305,7 +305,9 @@ class Proc:
                 self.pullingMotor2.softStop()
                 break
 
-            if self._getX() >= xMax - 2 * win.settings.xv ** 2 / win.settings.xd:
+            if self._getX() >= xMax - \
+                2 * win.settings.xv ** 2 / win.settings.xd - \
+                    2 * 0.77 * win.settings.xv:
                 break
 
             if pullerMotorTask.done():
