@@ -20,6 +20,11 @@ pullingMotorTempSpeed = 2
 pullingMotorTempAccel = 1
 fixMotorDelay = 12.3
 
+#periodic
+periodic = False
+period = .73
+cycles = 30
+
 class Proc:
     def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
         self.lock = asyncio.Lock()
@@ -283,9 +288,46 @@ class Proc:
         await asyncio.sleep(delay)
         self.powerPlot.run()
                 
+    async def runPeriodic(self, win, settings: Settings):
+        Lx, Rx, xMax, _, _ = getLx(settings)
+        await self.mainMotor.moveTo(self.mainMotorStartPos - period * cycles / 2)
+        ppTask = asyncio.create_task(self._delayedPPStart(0))
+        for i in range(cycles):
+            await self.burnerMotor.moveTo(self.burnerMotorWorkPos)
+            await self._pullerMotorRun(xMax)
+            await self.burnerMotor.moveTo(self.burnerMotorExtPos)
+            if i != cycles - 1:
+                await self.mainMotor.moveBy(period)
+        
+        await win.callExtinguish()
+        await win.callHHOOff()
 
+        finishWindow = FinishWindow(self._stretch)
+        finishWindow.exec()
+
+        self.powerPlot.stop()
+
+        finishTasks = [asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorStartPos))]
+
+        if finishWindow.moveCheckBox.isChecked():
+            finishTasks.append(asyncio.create_task(self.mainMotor.moveTo(self.mainMotorEndPos)))
+
+        if finishWindow.saveCheckBox.isChecked():
+            num = await asyncio.create_task(self.powerPlot.save(save_path))
+            self.data.to_csv(os.path.join(save_path, str(datetime.date.today()), f'movement_{num}.csv'))
+
+            if finishWindow.mongoDBCheckBox.isChecked():
+                self._upload(num, settings)
+
+
+        asyncio.gather(*finishTasks)
+        win.callStop()
 
     async def run(self, win, settings: Settings):
+        if periodic:
+            await self.runPeriodic(win, settings)
+            return
+
         Lx, Rx, xMax, _, _ = getLx(settings)
 
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
