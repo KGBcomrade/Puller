@@ -14,6 +14,8 @@ dvr_address = 'http://10.201.2.244'
 dvr_port = 8090
 top_oid = 3
 side_oid = 4
+top_scale = 10.8
+side_scale = 12.7
 
 def getPhoto(oid):
     resp = requests.request('GET', f'{dvr_address}:{dvr_port}/photo.jpg?oid={oid}')
@@ -164,17 +166,19 @@ class ResultWindow(QDialog):
         topRightEq = QLabel(f'Top right: {top2a1} * x + {top2b1}, {top2a2} * x + {top2b2}')
         sideLeftEq = QLabel(f'Side left: {side1a1} * x + {side1b1}, {side1a2} * x + {side1b2}')
         sideRightEq = QLabel(f'Side right: {side2a1} * x + {side2b1}, {side2a2} * x + {side2b2}')
-
-        topShift = QLabel(f'Top shift: {(top1b1 + top1b2) / 2 - (top2b1 + top2b2) / 2} px')
-        sideShift = QLabel(f'Side shift: {(side1b1 + side1b2) / 2 - (side2b1 + side2b2) / 2} px')
+        
+        topShift = (top1b1 + top1b2) / 2 - (top2b1 + top2b2) / 2
+        sideShift = (side1b1 + side1b2) / 2 - (side2b1 + side2b2) / 2
+        topShiftLabel = QLabel(f'Top shift: {topShift * top_scale} um ({topShift} px)')
+        sideShiftLabel = QLabel(f'Side shift: {sideShift * side_scale} um ({sideShift} px)')
 
         labelLayout = QVBoxLayout()
         labelLayout.addWidget(topLeftEq)
         labelLayout.addWidget(topRightEq)
         labelLayout.addWidget(sideLeftEq)
         labelLayout.addWidget(sideRightEq)
-        labelLayout.addWidget(topShift)
-        labelLayout.addWidget(sideShift)
+        labelLayout.addWidget(topShiftLabel)
+        labelLayout.addWidget(sideShiftLabel)
         labelFrame = QFrame()
         labelFrame.setLayout(labelLayout)
         mainLayout.addWidget(labelFrame)
