@@ -1,12 +1,13 @@
 import typing
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QSlider, QDialog, QDoubleSpinBox, \
-     QPushButton, QMessageBox
+     QPushButton, QMessageBox, QLabel, QFrame
 from PyQt6.QtCore import Qt
 
 import requests
 import cv2
 import numpy as np
 from misc import getFiberEdges
+from .canvas import Canvas
 
 # CV params
 dvr_address = 'http://10.201.2.244'
@@ -115,15 +116,71 @@ class AlignWindow(QDialog):
         top2 = getPhoto(top_oid)
         side2 = getPhoto(side_oid)
 
+        resultWindow = ResultWindow(top1, side1, top2, side2)
+        resultWindow.exec()
+
+
+
+class ResultWindow(QDialog):
+    def __init__(self, top1, side1, top2, side2):
+        super().__init__()
+
         top1a1, top1b1, top1a2, top1b2 = getFiberEdges(top1)
         side1a1, side1b1, side1a2, side1b2 = getFiberEdges(side1)
         top2a1, top2b1, top2a2, top2b2 = getFiberEdges(top2)
         side2a1, side2b1, side2a2, side2b2 = getFiberEdges(side2)
 
-        print(f'top left: {top1a1} * x + {top1b1}, {top1a2} * x + {top1b2}')
-        print(f'top right: {top2a1} * x + {top2b1}, {top2a2} * x + {top2b2}')
-        print(f'side left: {side1a1} * x + {side1b1}, {side1a2} * x + {side1b2}')
-        print(f'side right: {side2a1} * x + {side2b1}, {side2a2} * x + {side2b2}')
+        top1Fig = Canvas()
+        top2Fig = Canvas()
+        side1Fig = Canvas()
+        side2Fig = Canvas()
 
-        print(f'top shift: {(top1b1 + top1b2) / 2 - (top2b1 + top2b2) / 2}')
-        print(f'side shift: {(side1b1 + side1b2) / 2 - (side2b1 + side2b2) / 2}')
+        x = np.arange(top1.shape[1])
+        top1Fig.imshow(top1)
+        top1Fig.plot(x, top1a1 * x + top1b1)
+        top1Fig.plot(x, top1a2 * x + top1b2)
+        top2Fig.imshow(top2)
+        top2Fig.plot(x, top2a1 * x + top2b1)
+        top2Fig.plot(x, top2a2 * x + top2b2)
+        side1Fig.imshow(side1)
+        side1Fig.plot(x, side1a1 * x + side1b1)
+        side1Fig.plot(x, side1a2 * x + side1b2)
+        side2Fig.imshow(side2)
+        side2Fig.plot(x, side2a1 * x + side2b1)
+        side2Fig.plot(x, side2a2 * x + side2b2)
+        
+
+        topFigLayout = QHBoxLayout()
+        sideFigLayout = QHBoxLayout()
+        mainLayout = QVBoxLayout()
+        topFigLayout.addWidget(top1Fig)
+        topFigLayout.addWidget(top2Fig)
+        sideFigLayout.addWidget(side1Fig)
+        sideFigLayout.addWidget(side2Fig)
+        mainLayout.addLayout(topFigLayout)
+        mainLayout.addLayout(sideFigLayout)
+
+        topLeftEq = QLabel(f'Top left: {top1a1} * x + {top1b1}, {top1a2} * x + {top1b2}')
+        topRightEq = QLabel(f'Top right: {top2a1} * x + {top2b1}, {top2a2} * x + {top2b2}')
+        sideLeftEq = QLabel(f'Side left: {side1a1} * x + {side1b1}, {side1a2} * x + {side1b2}')
+        sideRightEq = QLabel(f'Side right: {side2a1} * x + {side2b1}, {side2a2} * x + {side2b2}')
+
+        topShift = QLabel(f'Top shift: {(top1b1 + top1b2) / 2 - (top2b1 + top2b2) / 2} px')
+        sideShift = QLabel(f'Side shift: {(side1b1 + side1b2) / 2 - (side2b1 + side2b2) / 2} px')
+
+        labelLayout = QVBoxLayout()
+        labelLayout.addWidget(topLeftEq)
+        labelLayout.addWidget(topRightEq)
+        labelLayout.addWidget(sideLeftEq)
+        labelLayout.addWidget(sideRightEq)
+        labelLayout.addWidget(topShift)
+        labelLayout.addWidget(sideShift)
+        labelFrame = QFrame()
+        labelFrame.setLayout(labelLayout)
+        mainLayout.addWidget(labelFrame)
+
+        exitButton = QPushButton('Выход')
+        exitButton.released.connect(self.accept)
+        mainLayout.addWidget(exitButton)
+
+        self.setLayout(mainLayout)
