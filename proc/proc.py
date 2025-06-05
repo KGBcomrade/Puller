@@ -26,8 +26,8 @@ class Proc:
 
         self.mainMotorStartPos = 14.4
         self.mainMotorEndPos = 181
-        self.mainMotorAlignPos = 110
-        self.gapLength = 52 # мм, расстояние между краями тянущих подвижек
+        self.mainMotorAlignPos = 102.5
+        self.gapLength = 31 # мм, расстояние между краями тянущих подвижек
         self.burnerMotorStartPos = 6
         self.burnerMotorExtPos = self.burnerMotorStartPos + 10
         self.burnerMotorWorkPos = 36.8
