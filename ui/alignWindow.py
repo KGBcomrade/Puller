@@ -17,7 +17,7 @@ side_oid = 4
 def getPhoto(oid):
     resp = requests.request('GET', f'{dvr_address}:{dvr_port}/photo.jpg?oid={top_oid}')
     nar = np.fromstring(resp.content, np.uint8)
-    return cv2.imdecode(nar, cv2.CV_LOAD_IMAGE_COLOR)
+    return cv2.imdecode(nar, cv2.IMREAD_GRAYSCALE)
 
 
 class AlignWindow(QDialog):
