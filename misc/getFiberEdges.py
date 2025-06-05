@@ -121,8 +121,6 @@ def getFiberEdges(im):
     wf.calc_grad(150)
     wf.find_edge(0.3, 0.3, .6)
 
-    X, Y = wf.get_arr(x)
-
     X = np.linspace(0, 1, wf.boards.shape[0])
 
     Rev = np.linalg.inv(M[:, :-1])
