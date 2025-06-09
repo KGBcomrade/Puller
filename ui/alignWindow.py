@@ -3,24 +3,9 @@ from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QSlider, QDialog, QDoubleS
      QPushButton, QMessageBox, QLabel, QFrame
 from PyQt6.QtCore import Qt
 
-import requests
-import cv2
 import numpy as np
-from misc import getFiberEdges
+from misc import getFiberEdges, Cam
 from .canvas import Canvas
-
-# CV params
-dvr_address = 'http://10.201.2.244'
-dvr_port = 8090
-top_oid = 3
-side_oid = 4
-top_scale = 10.8
-side_scale = 12.7
-
-def getPhoto(oid):
-    resp = requests.request('GET', f'{dvr_address}:{dvr_port}/photo.jpg?oid={oid}')
-    nar = np.fromstring(resp.content, np.uint8)
-    return cv2.imdecode(nar, cv2.IMREAD_GRAYSCALE)
 
 
 class AlignWindow(QDialog):
@@ -112,19 +97,21 @@ class AlignWindow(QDialog):
 
     def _auto(self):
         self._moveMMLeft()
-        top1 = getPhoto(top_oid)
-        side1 = getPhoto(side_oid)
+        topCam = Cam('top')
+        sideCam = Cam('side')
+        top1 = topCam.getPhoto()
+        side1 = sideCam.getPhoto()
         self._moveMMRight()
-        top2 = getPhoto(top_oid)
-        side2 = getPhoto(side_oid)
+        top2 = topCam.getPhoto()
+        side2 = sideCam.getPhoto()
 
-        resultWindow = ResultWindow(top1, side1, top2, side2)
+        resultWindow = ResultWindow(top1, side1, top2, side2, topCam.scale, sideCam.scale)
         resultWindow.exec()
 
 
 
 class ResultWindow(QDialog):
-    def __init__(self, top1, side1, top2, side2):
+    def __init__(self, top1, side1, top2, side2, top_scale, side_scale):
         super().__init__()
 
         top1a1, top1b1, top1a2, top1b2 = getFiberEdges(top1)
