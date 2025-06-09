@@ -292,7 +292,7 @@ class Proc:
 
     async def run(self, win, settings: Settings):
         Lx, Rx, xMax, _, _ = getLx(settings)
-        fcv = FiberCV()
+        fcv = FiberCV(delay=.25)
 
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         ppTask = asyncio.create_task(self._delayedPPStart(0))
