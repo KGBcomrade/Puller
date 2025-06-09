@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import math
 from scipy.signal import find_peaks
+from scipy.interpolate import interp1d
 from sklearn.linear_model import (RANSACRegressor)
 
 def find_fiber(edges, **args):
@@ -139,9 +140,24 @@ def getFiberEdges(im):
         xy = Rev @ (np.array([X[i], b]) - d)
         board2X[i] = xy[0]
         board2Y[i] = xy[1] + down
-        
+
+    return board1X, board1Y, board2X, board2Y
+
+def getFiberEdgesLinear(im):
+    board1X, board1Y, board2X, board2Y = getFiberEdges(im)
+
     [a1, b1] = np.polyfit(board1X, board1Y, 1)
     [a2, b2] = np.polyfit(board2X, board2Y, 1)
 
     return a1, b1, a2, b2
     
+def getFiberInterp(im):
+    board1X, board1Y, board2X, board2Y = getFiberEdges(im)
+    xmin = np.max((board1X.min(), board2X.min()))
+    xmax = np.min((board1X.max(), board2X.max()))
+    lineX = np.linspace(xmin, xmax, 100)
+    upper = interp1d(board1X, board1Y)
+    lower = interp1d(board2X, board2Y)
+    mid = (upper(lineX) + lower(lineX)) / 2
+
+    return lineX, mid

@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QSlider, QDialog, QDoubleS
 from PyQt6.QtCore import Qt
 
 import numpy as np
-from misc import getFiberEdges, Cam
+from misc import getFiberEdgesLinear, Cam
 from .canvas import Canvas
 
 
@@ -114,10 +114,10 @@ class ResultWindow(QDialog):
     def __init__(self, top1, side1, top2, side2, top_scale, side_scale):
         super().__init__()
 
-        top1a1, top1b1, top1a2, top1b2 = getFiberEdges(top1)
-        side1a1, side1b1, side1a2, side1b2 = getFiberEdges(side1)
-        top2a1, top2b1, top2a2, top2b2 = getFiberEdges(top2)
-        side2a1, side2b1, side2a2, side2b2 = getFiberEdges(side2)
+        top1a1, top1b1, top1a2, top1b2 = getFiberEdgesLinear(top1)
+        side1a1, side1b1, side1a2, side1b2 = getFiberEdgesLinear(side1)
+        top2a1, top2b1, top2a2, top2b2 = getFiberEdgesLinear(top2)
+        side2a1, side2b1, side2a2, side2b2 = getFiberEdgesLinear(side2)
 
         top1Fig = Canvas()
         top2Fig = Canvas()
