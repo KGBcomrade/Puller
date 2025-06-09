@@ -8,14 +8,15 @@ top_oid = 3
 side_oid = 4
 top_scale = 10.8
 side_scale = 12.7
-sides = { #oid, scale
-    'top': (3, 10.8),
-    'side': (4, 12.7)
+cams = { #oid, scale
+    't_side': (1, 1),
+    'a_top': (3, 10.8),
+    'a_side': (4, 12.7)
 }
 
 class Cam:
     def __init__(self, side):
-        self.oid, self.scale = sides[side]
+        self.oid, self.scale = cams[side]
 
     def getPhoto(self):
         resp = requests.request('GET', f'{dvr_address}:{dvr_port}/photo.jpg?oid={self.oid}')

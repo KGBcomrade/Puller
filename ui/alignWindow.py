@@ -97,8 +97,8 @@ class AlignWindow(QDialog):
 
     def _auto(self):
         self._moveMMLeft()
-        topCam = Cam('top')
-        sideCam = Cam('side')
+        topCam = Cam('a_top')
+        sideCam = Cam('a_side')
         top1 = topCam.getPhoto()
         side1 = sideCam.getPhoto()
         self._moveMMRight()
