@@ -2,6 +2,7 @@ from time import time
 import os
 from ui import BurnerSetupWindow, FinishWindow, MoveApartWindow, AlignWindow
 from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import QThreadPool
 import asyncio
 import pandas as pd
 import numpy as np
@@ -13,6 +14,8 @@ from hardware.pathes import save_path
 from sacred.observers import MongoObserver
 from sacred import Experiment
 import dotenv
+
+from .fibercv import FiberCV
 
 mainMotorTempSpeed = 16
 mainMotorTempAccel = 20
@@ -40,6 +43,8 @@ class Proc:
         self.tStart = 0
 
         self.plotEvent = asyncio.Event()
+
+        self.threadPool = QThreadPool()
 
 
     async def _waitWindow(message: str, proc, *args, **kwargs):
@@ -287,11 +292,13 @@ class Proc:
 
     async def run(self, win, settings: Settings):
         Lx, Rx, xMax, _, _ = getLx(settings)
+        fcv = FiberCV()
 
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         ppTask = asyncio.create_task(self._delayedPPStart(0))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.tStart = time() # Время начала прогрева
+        self.threadPool.start(fcv)
         plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < settings.tW:
             await asyncio.sleep(0)
@@ -311,6 +318,7 @@ class Proc:
             if pullerMotorTask.done():
                 break
 
+        fcv.stop()
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
 
         await asyncio.sleep(6) 
