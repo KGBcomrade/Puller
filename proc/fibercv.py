@@ -14,7 +14,7 @@ class FiberCV(QRunnable):
         super().__init__()
         self.delay = delay
         self.stopFlag = False
-        self.cam = Cam('side')
+        self.cam = Cam('t_side')
     
     def run(self):
         print('start fibercv')
