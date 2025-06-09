@@ -2,8 +2,9 @@ from PyQt6.QtCore import QRunnable
 import numpy as np
 from misc import getFiberInterp, Cam
 import time
-from scipy.integrate import quad
+from scipy.integrate import fixed_quad
 from scipy.interpolate import interp1d
+import cv2
 
 #crop params
 lbound = 20
@@ -18,21 +19,22 @@ class FiberCV(QRunnable):
     
     def run(self):
         print('start fibercv')
-        photo = self.cam.getPhoto()[lbound:ubound]
-        fiber0X, fiber0Y = getFiberInterp(photo)
+        photo = self.cam.getPhoto()
+        fiber0X, fiber0Y = getFiberInterp(photo, lbound, ubound)
+        
         fiber0 = interp1d(fiber0X, fiber0Y)
         while not self.stopFlag:
             time.sleep(self.delay)
 
-            photo = self.cam.getPhoto()[lbound:ubound]
-            fiberX, fiberY = getFiberInterp(photo)
+            photo = self.cam.getPhoto()
+            fiberX, fiberY = getFiberInterp(photo, lbound, ubound)
             fiber = interp1d(fiberX, fiberY)
 
             xmin = np.max((fiber0X[0], fiberX[0]))
             xmax = np.min((fiber0X[-1], fiberX[-1]))
 
-            shift = quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0]
-            print(f'shift = {shift * self.cam.scale} um')
+            shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
+            print(f'shift = {shift / np.sqrt(photo.shape[1]) * self.cam.scale} um')
 
         print('fibercv stopped')
 
