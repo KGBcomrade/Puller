@@ -109,12 +109,16 @@ class window_fit():
             self.boards[x, 1] = w * props['right_ips'][ind2] + (1 - w) * peaks[ind2]
 
 
-def getFiberEdges(im):
+def getFiberEdges(im, lbound=None, ubound=None):
     y, x = im.shape
     coef = 1
     thr = 200
     im4 = cv2.resize(im, dsize=(x // coef, y // coef))
     edges = cv2.Canny(im4, thr, thr * 2, L2gradient=True)
+    if lbound is not None:
+        edges[:lbound, :] = 0
+    if ubound is not None:
+        edges[ubound:, :] = 0
     alf, b, std = find_fiber(edges, plot=True)
     rotated, [M, up, down] = turn_crop(im, alf, b, std, width=4, plot=True)
     mas = cuts(rotated, 30)
@@ -151,8 +155,8 @@ def getFiberEdgesLinear(im):
 
     return a1, b1, a2, b2
     
-def getFiberInterp(im):
-    board1X, board1Y, board2X, board2Y = getFiberEdges(im)
+def getFiberInterp(im, lbound=None, ubound=None):
+    board1X, board1Y, board2X, board2Y = getFiberEdges(im, lbound, ubound)
     xmin = np.max((board1X.min(), board2X.min()))
     xmax = np.min((board1X.max(), board2X.max()))
     lineX = np.linspace(xmin, xmax, 100)
