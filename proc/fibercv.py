@@ -18,7 +18,6 @@ class FiberCV(QRunnable):
         self.cam = Cam('t_side')
     
     def run(self):
-        print('start fibercv')
         photo = self.cam.getPhoto()
         fiber0X, fiber0Y = getFiberInterp(photo, lbound, ubound)
         
@@ -37,10 +36,7 @@ class FiberCV(QRunnable):
             xmax = np.min((fiber0X[-1], fiberX[-1]))
 
             shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
-            print(f'shift = {shift / np.sqrt(photo.shape[1]) * self.cam.scale} um')
 
-        print('fibercv stopped')
 
     def stop(self):
         self.stopFlag = True
-        print('stop fibercv')
