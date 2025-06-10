@@ -49,7 +49,8 @@ class FiberCV(QRunnable):
             shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
             self.shifts.append(shift)
             self.t.append(time.time() - t0)
-            self.I += shift * (self.t[-1] - self.t[-2])
+            self.I += shift * (self.t[-1] - 
+                               (self.t[-2] if len(self.t) > 1 else t0))
 
 
     def stop(self):
