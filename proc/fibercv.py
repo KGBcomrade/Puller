@@ -11,7 +11,7 @@ lbound = 20
 ubound = 160
 
 class FiberCV(QRunnable):
-    def __init__(self, delay=1):
+    def __init__(self, Kp, Ki=0, Kd=0, delay=1):
         super().__init__()
         self.delay = delay
         self.stopFlag = False
@@ -19,6 +19,10 @@ class FiberCV(QRunnable):
 
         self.t = []
         self.shifts = []
+
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
     
     def run(self):
         photo = self.cam.getPhoto()
@@ -48,3 +52,6 @@ class FiberCV(QRunnable):
 
     def stop(self):
         self.stopFlag = True
+
+    def getVCoef(self):
+        pass

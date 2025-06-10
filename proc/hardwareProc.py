@@ -3,8 +3,8 @@ from hardware import DDS220M, PowerPlot, StandaMotor, VControl, Fixmov
 from hardware.standa import initDevices as initStandaMotors
 
 class HardwareProc(Proc):
-    def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
-        super().__init__(mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel)
+    def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel, Kp, Ki, Kd) -> None:
+        super().__init__(mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel, Kp, Ki, Kd)
         
         self.mainMotor = DDS220M(speed=mainMotorSpeed, accel=mainMotorAccel)
         ids = initStandaMotors()

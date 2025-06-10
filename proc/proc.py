@@ -24,7 +24,7 @@ pullingMotorTempAccel = 1
 fixMotorDelay = 12.3
 
 class Proc:
-    def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
+    def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel, Kp, Ki, Kd) -> None:
         self.lock = asyncio.Lock()
 
         self.mainMotorStartPos = 14.4
@@ -45,6 +45,7 @@ class Proc:
         self.plotEvent = asyncio.Event()
 
         self.threadPool = QThreadPool()
+        self.fcv = FiberCV(Kp, Ki, Kd, delay=.25)
 
 
     async def _waitWindow(message: str, proc, *args, **kwargs):
@@ -227,13 +228,13 @@ class Proc:
             
             self.plotEvent.set()
 
-    async def _plotter(self, Lx, Rx, xMax, updater, fcv: FiberCV):
+    async def _plotter(self, Lx, Rx, xMax, updater):
         while True:
             x = self._getX()
             if x >= xMax:
                 break
             self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
-            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax, fcv.t, fcv.shifts)
+            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax, self.fcv.t, self.fcv.shifts)
             
             await self.plotEvent.wait()
             self.plotEvent.clear()
@@ -292,14 +293,13 @@ class Proc:
 
     async def run(self, win, settings: Settings):
         Lx, Rx, xMax, _, _ = getLx(settings)
-        fcv = FiberCV(delay=.25)
 
         mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
         ppTask = asyncio.create_task(self._delayedPPStart(0))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.tStart = time() # Время начала прогрева
-        self.threadPool.start(fcv)
-        plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators, fcv))
+        self.threadPool.start(self.fcv)
+        plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
         while time() - self.tStart < settings.tW:
             await asyncio.sleep(0)
         pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1)))
@@ -318,7 +318,7 @@ class Proc:
             if pullerMotorTask.done():
                 break
 
-        fcv.stop()
+        self.fcv.stop()
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
 
         await asyncio.sleep(6) 

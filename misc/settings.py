@@ -19,7 +19,10 @@ _defaultSetting = {
     'La': 20,
     'tW': 45,
     'dr': .1,
-    'x0': 0
+    'x0': 0,
+    'Kp': 1/150,
+    'Ki': 0,
+    'Kd': 0
 }
 
 class Settings:

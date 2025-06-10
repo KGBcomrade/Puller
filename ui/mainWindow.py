@@ -88,6 +88,7 @@ class MainWindow(QMainWindow):
 
         xPlotSideLayout = QVBoxLayout()
         LPlotSideLayout = QVBoxLayout()
+        vcPlotSideLayout = QVBoxLayout()
 
         # side buttons
         self.homingButton = QPushButton(homingButtonText)
@@ -157,6 +158,23 @@ class MainWindow(QMainWindow):
         #v coef plot
         self.vcPlot = Plot(ylabel=r'$\alpha_v$, s/mm')
         vcPlotLayout.addWidget(self.vcPlot)
+        vcPlotLayout.addLayout(vcPlotSideLayout)
+        self.KpInput = QDoubleSpinBox(decimals=5, prefix='Kp=')
+        self.KpInput.setRange(0, 1)
+        self.KpInput.setSingleStep(.01)
+        self.KpInput.setValue(self.settings.Kp)
+        self.KiInput = QDoubleSpinBox(decimals=5, prefix='Ki=')
+        self.KiInput.setRange(0, 1)
+        self.KiInput.setSingleStep(.01)
+        self.KiInput.setValue(self.settings.Ki)
+        self.KdInput = QDoubleSpinBox(decimals=5, prefix='Kd=')
+        self.KdInput.setRange(-1, 1)
+        self.KdInput.setSingleStep(.01)
+        self.KdInput.setValue(self.settings.Kd)
+        vcPlotSideLayout.addWidget(self.KpInput)
+        vcPlotSideLayout.addWidget(self.KiInput)
+        vcPlotSideLayout.addWidget(self.KdInput)
+        vcPlotFrame.setMinimumHeight(315)
 
         self.pullingSetupButton.released.connect(self.callSetupDialog)
         self.xvInput.editingFinished.connect(self.setXv)
@@ -164,6 +182,9 @@ class MainWindow(QMainWindow):
         self.xdInput.editingFinished.connect(self.setXd)
         self.LvInput.editingFinished.connect(self.setLv)
         self.LaInput.editingFinished.connect(self.setLa)
+        self.KpInput.editingFinished.connect(self.setKp)
+        self.KiInput.editingFinished.connect(self.setKi)
+        self.KdInput.editingFinished.connect(self.setKd)
         
         self.ignitionButton.setEnabled(False)
 
@@ -181,7 +202,10 @@ class MainWindow(QMainWindow):
             self.settings.La, 
             self.settings.xv, 
             self.settings.xa, 
-            self.settings.xd
+            self.settings.xd,
+            self.settings.Kp,
+            self.settings.Ki,
+            self.settings.Kd
         )
 
         # settings
@@ -335,6 +359,18 @@ class MainWindow(QMainWindow):
         self.settings.La = self.LaInput.value()
         self.proc.mainMotor.setAccel(self.settings.La)
 
+    def setKp(self):
+        self.settings.Kp = self.KpInput.value()
+        self.proc.fcv.Kp = self.settings.Kp
+
+    def setKi(self):
+        self.settings.Ki = self.KiInput.value()
+        self.proc.fcv.Ki = self.settings.Ki
+
+    def setKd(self):
+        self.settings.Kd = self.KdInput.value()
+        self.proc.fcv.Kd = self.settings.Kd
+
     def updateIndicators(self, ts, xs, Ls, r, p, tshift, shift):
         self.xPlot.plot(ts, xs)
         self.LPlot.plot(ts, Ls)
@@ -368,6 +404,12 @@ class MainWindow(QMainWindow):
         self.LaInput.setValue(self.settings.La)
         self.setLa()
         self.x0 = self.settings.x0
+        self.KpInput.setValue(self.settings.Kp)
+        self.setKp()
+        self.KiInput.setValue(self.settings.Ki)
+        self.setKi()
+        self.KdInput.setValue(self.settings.Kd)
+        self.setKd()
 
     def newSettings(self):
         name, ok = QInputDialog().getText(self, 'Имя настройки', 'Имя:')
