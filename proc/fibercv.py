@@ -16,12 +16,16 @@ class FiberCV(QRunnable):
         self.delay = delay
         self.stopFlag = False
         self.cam = Cam('t_side')
+
+        self.t = []
+        self.shifts = []
     
     def run(self):
         photo = self.cam.getPhoto()
         fiber0X, fiber0Y = getFiberInterp(photo, lbound, ubound)
         
         fiber0 = interp1d(fiber0X, fiber0Y)
+        t0 = time.time()
         while not self.stopFlag:
             time.sleep(self.delay)
 
@@ -36,6 +40,8 @@ class FiberCV(QRunnable):
             xmax = np.min((fiber0X[-1], fiberX[-1]))
 
             shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
+            self.shifts.append(shift)
+            self.t.append(time.time() - t0)
 
 
     def stop(self):
