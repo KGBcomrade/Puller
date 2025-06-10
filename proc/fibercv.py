@@ -34,6 +34,8 @@ class FiberCV(QRunnable):
                 fiberX, fiberY = getFiberInterp(photo, lbound, ubound)
             except IndexError:
                 print('Error')
+            except cv2.error:
+                print('cv2 Error')
             fiber = interp1d(fiberX, fiberY)
 
             xmin = np.max((fiber0X[0], fiberX[0]))
