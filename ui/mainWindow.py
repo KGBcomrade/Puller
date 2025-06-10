@@ -335,9 +335,10 @@ class MainWindow(QMainWindow):
         self.settings.La = self.LaInput.value()
         self.proc.mainMotor.setAccel(self.settings.La)
 
-    def updateIndicators(self, ts, xs, Ls, r, p):
+    def updateIndicators(self, ts, xs, Ls, r, p, tshift, shift):
         self.xPlot.plot(ts, xs)
         self.LPlot.plot(ts, Ls)
+        self.shiftPlot.plot(tshift, shift)
 
         self.progressText.setText(f'{r} → {self.settings.rw}')
         self.progressBar.setValue(p)

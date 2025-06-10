@@ -227,13 +227,13 @@ class Proc:
             
             self.plotEvent.set()
 
-    async def _plotter(self, Lx, Rx, xMax, updater):
+    async def _plotter(self, Lx, Rx, xMax, updater, fcv: FiberCV):
         while True:
             x = self._getX()
             if x >= xMax:
                 break
             self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
-            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax)
+            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax, fcv.t, fcv.shifts)
             
             await self.plotEvent.wait()
             self.plotEvent.clear()
@@ -299,7 +299,7 @@ class Proc:
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.tStart = time() # Время начала прогрева
         self.threadPool.start(fcv)
-        plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators))
+        plotterTask = asyncio.create_task(self._plotter(Lx, Rx, xMax, win.updateIndicators, fcv))
         while time() - self.tStart < settings.tW:
             await asyncio.sleep(0)
         pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1)))
