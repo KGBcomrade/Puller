@@ -38,7 +38,7 @@ class Proc:
         self.pullingMotor2StartPos = 0
         self.stretch = 0.001 # мм, шаг ручного растяжения
 
-        self.data = pd.DataFrame({'t': [], 'x': [], 'L': []})
+        self.data = pd.DataFrame({'t': [], 'x': [], 'L': [], 'vc': []})
 
         self.tStart = 0
 
@@ -233,8 +233,9 @@ class Proc:
             x = self._getX()
             if x >= xMax:
                 break
-            self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
-            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax, self.fcv.t, self.fcv.shifts)
+            vAlpha = self.fcv.getVCoef()
+            self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item(), vAlpha]
+            updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax, self.fcv.t, self.fcv.shifts, self.data['vc'])
             
             await self.plotEvent.wait()
             self.plotEvent.clear()

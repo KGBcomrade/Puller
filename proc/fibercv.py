@@ -19,6 +19,7 @@ class FiberCV(QRunnable):
 
         self.t = []
         self.shifts = []
+        self.I = 0
 
         self.Kp = Kp
         self.Ki = Ki
@@ -48,10 +49,11 @@ class FiberCV(QRunnable):
             shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
             self.shifts.append(shift)
             self.t.append(time.time() - t0)
+            self.I += shift * (self.t[-1] - self.t[-2])
 
 
     def stop(self):
         self.stopFlag = True
 
     def getVCoef(self):
-        pass
+        return self.Kp * (self.shifts[-1] + self.Ki * self.I)

@@ -371,10 +371,11 @@ class MainWindow(QMainWindow):
         self.settings.Kd = self.KdInput.value()
         self.proc.fcv.Kd = self.settings.Kd
 
-    def updateIndicators(self, ts, xs, Ls, r, p, tshift, shift):
+    def updateIndicators(self, ts, xs, Ls, r, p, tshift, shift, vc):
         self.xPlot.plot(ts, xs)
         self.LPlot.plot(ts, Ls)
         self.shiftPlot.plot(tshift, shift)
+        self.vcPlot.plot(ts, vc)
 
         self.progressText.setText(f'{r} → {self.settings.rw}')
         self.progressBar.setValue(p)
