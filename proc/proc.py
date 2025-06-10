@@ -22,6 +22,7 @@ mainMotorTempAccel = 20
 pullingMotorTempSpeed = 2
 pullingMotorTempAccel = 1
 fixMotorDelay = 12.3
+PIDAccel = 1
 
 class Proc:
     def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel, Kp, Ki, Kd) -> None:
@@ -310,6 +311,7 @@ class Proc:
             await asyncio.sleep(0)
         pullerMotorTask = asyncio.create_task(self._pullerMotorRun(xMax * (1)))
 
+        PIDAccelFlag = False
         while True:
             await asyncio.sleep(0)
             if win.stopFlag:
@@ -323,6 +325,11 @@ class Proc:
 
             if pullerMotorTask.done():
                 break
+
+            if not PIDAccelFlag and self._getX() >= win.settings.xv ** 2 / win.settings.xa:
+                PIDAccelFlag = True
+                self.pullingMotor1.setAccel(PIDAccel)
+                self.pullingMotor2.setAccel(PIDAccel)
 
         self.fcv.stop()
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
