@@ -236,6 +236,11 @@ class Proc:
             vAlpha = self.fcv.getVCoef()
             self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item(), vAlpha]
             updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax, self.fcv.t, self.fcv.shifts, self.data['vc'])
+
+            # apply speed coef
+            vBeta = 1 + vAlpha
+            self.pullingMotor1.speedScale(vBeta)
+            self.pullingMotor2.speedScale(vBeta)
             
             await self.plotEvent.wait()
             self.plotEvent.clear()
@@ -323,6 +328,10 @@ class Proc:
         returnTask = asyncio.create_task(self.burnerMotor.moveTo(self.burnerMotorExtPos))
 
         await asyncio.sleep(6) 
+
+        #cancel speed scale
+        self.pullingMotor1.speedScale(1)
+        self.pullingMotor2.speedScale(1)
 
         mainMotorTask.cancel()
         plotterTask.cancel()

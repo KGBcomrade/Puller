@@ -177,6 +177,10 @@ class StandaMotor(Motor):
         decel = get_decel(self.id)
         self.decel = decel
 
+    def speedScale(self, scale):
+        set_speed(self.id, self.speed * scale)
+        return get_speed(self.id)
+
     def moveByS(self, dp, interval=.1, lock=True):
         lib.command_movr_calb(self.id, c_float(dp), SetCalibr)
         if lock:
