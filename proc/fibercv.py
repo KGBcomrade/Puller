@@ -57,4 +57,6 @@ class FiberCV(QRunnable):
         self.stopFlag = True
 
     def getVCoef(self):
+        if len(self.shifts) == 0:
+            return 0
         return self.Kp * (self.shifts[-1] + self.Ki * self.I)
