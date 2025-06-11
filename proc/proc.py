@@ -2,6 +2,7 @@ from time import time
 import os
 from ui import BurnerSetupWindow, FinishWindow, MoveApartWindow, AlignWindow
 from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtCore import QThreadPool, QRunnable
 import asyncio
 import pandas as pd
 import numpy as np
@@ -19,6 +20,31 @@ mainMotorTempAccel = 20
 pullingMotorTempSpeed = 2
 pullingMotorTempAccel = 1
 fixMotorDelay = 12.3
+plotDelay = 0.25
+
+class MainMotorRunner(QRunnable):
+    def __init__(self, mainMotor, startPos, L, getX, xMax):
+        super().__init__()
+        self.mainMotor = mainMotor
+        self.startPos = startPos
+        self.L = L
+        self.getX = getX
+        self.xMax = xMax
+
+        self.stopFlag = False
+
+    def run(self):
+        turn = 1
+        while not self.stopFlag:
+            x = self.getX()
+            if x >= self.xMax:
+                x = self.xMax
+            yTarget = self.L(x) / 2 * turn + self.startPos
+            self.mainMotor.moveToS(yTarget)
+            turn *= -1
+    
+    def stop(self):
+        self.stopFlag = True
 
 class Proc:
     def __init__(self, mainMotorSpeed, mainMotorAccel, pullingMotorSpeed, pullingMotorAccel, pullingMotorDecel) -> None:
@@ -39,7 +65,7 @@ class Proc:
 
         self.tStart = 0
 
-        self.plotEvent = asyncio.Event()
+        self.threadPool = QThreadPool()
 
 
     async def _waitWindow(message: str, proc, *args, **kwargs):
@@ -209,19 +235,6 @@ class Proc:
         xr = self.pullingMotor1.getPosition() + self.pullingMotor2.getPosition()
         return xr0 - xr
 
-    async def _mainMotorRun(self, Lx, xMax):
-        turn = 1
-        while True:
-            x = self._getX()
-            if x >= xMax:
-                x = xMax
-            yTarget = Lx(x) / 2 * turn + self.mainMotorStartPos
-            await self.mainMotor.moveTo(yTarget, lock=False)
-            await self.mainMotor.waitForStop(yTarget)
-            turn *= -1
-            
-            self.plotEvent.set()
-
     async def _plotter(self, Lx, Rx, xMax, updater):
         while True:
             x = self._getX()
@@ -229,9 +242,10 @@ class Proc:
                 break
             self.data.loc[len(self.data) + 1] = [time() - self.tStart, x, Lx(x).item()]
             updater(self.data['t'], self.data['x'], self.data['L'], Rx(x), x * 100 // xMax)
+
             
-            await self.plotEvent.wait()
-            self.plotEvent.clear()
+
+            await asyncio.sleep(plotDelay)
 
     async def _pullerMotorRun(self, xMax):
         await asyncio.gather(self.pullingMotor1.moveTo(self.pullingMotor1StartPos - xMax / 2),
@@ -288,7 +302,8 @@ class Proc:
     async def run(self, win, settings: Settings):
         Lx, Rx, xMax, _, _ = getLx(settings)
 
-        mainMotorTask = asyncio.create_task(self._mainMotorRun(Lx, xMax))
+        mainMotorRunnable = MainMotorRunner(self.mainMotor, self.mainMotorStartPos, Lx, self._getX, xMax)
+        self.threadPool.start(mainMotorRunnable)
         ppTask = asyncio.create_task(self._delayedPPStart(0))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки
         self.tStart = time() # Время начала прогрева
@@ -315,7 +330,7 @@ class Proc:
 
         await asyncio.sleep(6) 
 
-        mainMotorTask.cancel()
+        mainMotorRunnable.stop()
         plotterTask.cancel()
         
         await returnTask
