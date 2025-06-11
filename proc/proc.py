@@ -328,7 +328,7 @@ class Proc:
             if pullerMotorTask.done():
                 break
 
-            if not PIDAccelFlag and self._getX() >= win.settings.xv ** 2 / win.settings.xa:
+            if not PIDAccelFlag and self._getX() >= win.settings.xv ** 2 / win.settings.xa / 2:
                 PIDAccelFlag = True
                 self.pullingMotor1.setAccel(PIDAccel)
                 self.pullingMotor2.setAccel(PIDAccel)
