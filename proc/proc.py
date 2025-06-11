@@ -40,7 +40,8 @@ class MainMotorRunner(QRunnable):
             if x >= self.xMax:
                 x = self.xMax
             yTarget = self.L(x) / 2 * turn + self.startPos
-            self.mainMotor.moveToS(yTarget)
+            self.mainMotor.moveToS(yTarget, lock=False)
+            self.mainMotor.waitForStopS(yTarget)
             turn *= -1
     
     def stop(self):
