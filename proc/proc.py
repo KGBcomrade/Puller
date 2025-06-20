@@ -374,6 +374,10 @@ class Proc:
         if finishWindow.saveCheckBox.isChecked():
             num = await asyncio.create_task(self.powerPlot.save(save_path))
             self.data.to_csv(os.path.join(save_path, str(datetime.date.today()), f'movement_{num}.csv'))
+            np.savetxt(
+                os.path.join(save_path, str(datetime.date.today()), f'shift_{num}.csv'),
+                np.vstack((self.fcv.t, self.fcv.shifts))
+            )
 
             if finishWindow.mongoDBCheckBox.isChecked():
                 self._upload(num, settings)
