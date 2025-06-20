@@ -10,7 +10,7 @@ top_scale = 10.8
 side_scale = 12.7
 cams = { #oid, scale
     't_side': (1, 10.4),
-    't_top': (2, 9.62),
+    't_top': (6, 10.4),
     'a_top': (3, 10.8),
     'a_side': (4, 12.7)
 }
