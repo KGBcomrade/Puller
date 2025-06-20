@@ -29,10 +29,20 @@ class FiberCV(QRunnable):
     
     def run(self):
         time.sleep(17)
-        photoSide = self.camSide.getPhoto()
-        photoTop = self.camTop.getPhoto()
-        fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lbound, ubound, scale=self.camSide.scale)
-        fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lbound, -lbound, rbound=rbound, scale=self.camTop.scale)
+        photo0Flag = False
+        while not photo0Flag:
+            photoSide = self.camSide.getPhoto()
+            photoTop = self.camTop.getPhoto()
+            try:
+                fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lbound, ubound, scale=self.camSide.scale)
+                fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lbound, -lbound, rbound=rbound, scale=self.camTop.scale)
+                photo0Flag = True
+            except IndexError:
+                print('Error')
+                photo0Flag = False
+            except cv2.error:
+                print('cv2 Error')
+                photo0Flag = False
         
         fiber0 = interp1d(fiber0Xs, np.sqrt(fiber0Ys ** 2 + fiber0Yt ** 2))
         t0 = time.time()
