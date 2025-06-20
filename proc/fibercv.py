@@ -7,9 +7,10 @@ from scipy.interpolate import interp1d
 import cv2
 
 #crop params
-lbound = 20
-ubound = 160
-rbound = -150
+lboundS = 20
+uboundS = 160
+lboundT = 20
+uboundT = 180
 
 class FiberCV(QRunnable):
     def __init__(self, Kp, Ki=0, Kd=0, delay=1):
@@ -34,8 +35,8 @@ class FiberCV(QRunnable):
             photoSide = self.camSide.getPhoto()
             photoTop = self.camTop.getPhoto()
             try:
-                fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lbound, ubound, scale=self.camSide.scale)
-                fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lbound, -lbound, scale=self.camTop.scale)
+                fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lboundS, uboundS, scale=self.camSide.scale)
+                fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lboundT, uboundT, scale=self.camTop.scale)
                 photo0Flag = True
             except IndexError:
                 print('Error')
@@ -52,8 +53,8 @@ class FiberCV(QRunnable):
             photoSide = self.camSide.getPhoto()
             photoTop = self.camTop.getPhoto()
             try:
-                fiberXs, fiberYs = getFiberInterp(photoSide, lbound, ubound, scale=self.camSide.scale)
-                fiberXt, fiberYt = getFiberInterp(photoTop, lbound, -lbound, scale=self.camTop.scale)
+                fiberXs, fiberYs = getFiberInterp(photoSide, lboundS, uboundS, scale=self.camSide.scale)
+                fiberXt, fiberYt = getFiberInterp(photoTop, lboundS, -lboundS, scale=self.camTop.scale)
             except IndexError:
                 print('Error')
             except cv2.error:
