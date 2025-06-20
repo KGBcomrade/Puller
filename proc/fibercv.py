@@ -9,13 +9,15 @@ import cv2
 #crop params
 lbound = 20
 ubound = 160
+rbound = -150
 
 class FiberCV(QRunnable):
     def __init__(self, Kp, Ki=0, Kd=0, delay=1):
         super().__init__()
         self.delay = delay
         self.stopFlag = False
-        self.cam = Cam('t_side')
+        self.camSide = Cam('t_side')
+        self.camTop = Cam('t_top')
 
         self.t = []
         self.shifts = []
@@ -26,25 +28,30 @@ class FiberCV(QRunnable):
         self.Kd = Kd
     
     def run(self):
-        photo = self.cam.getPhoto()
-        fiber0X, fiber0Y = getFiberInterp(photo, lbound, ubound)
+        time.sleep(17)
+        photoSide = self.camSide.getPhoto()
+        photoTop = self.camTop.getPhoto()
+        fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lbound, ubound, scale=self.camSide.scale)
+        fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lbound, -lbound, rbound=rbound, scale=self.camTop.scale)
         
-        fiber0 = interp1d(fiber0X, fiber0Y)
+        fiber0 = interp1d(fiber0Xs, np.sqrt(fiber0Ys ** 2 + fiber0Yt ** 2))
         t0 = time.time()
         while not self.stopFlag:
             time.sleep(self.delay)
 
-            photo = self.cam.getPhoto()
+            photoSide = self.camSide.getPhoto()
+            photoTop = self.camTop.getPhoto()
             try:
-                fiberX, fiberY = getFiberInterp(photo, lbound, ubound)
+                fiberXs, fiberYs = getFiberInterp(photoSide, lbound, ubound, scale=self.camSide.scale)
+                fiberXt, fiberYt = getFiberInterp(photoTop, lbound, -lbound, rbound=rbound, scale=self.camTop.scale)
             except IndexError:
                 print('Error')
             except cv2.error:
                 print('cv2 Error')
-            fiber = interp1d(fiberX, fiberY)
+            fiber = interp1d(fiberXs, np.sqrt(fiberYs ** 2 + fiberYt ** 2))
 
-            xmin = np.max((fiber0X[0], fiberX[0]))
-            xmax = np.min((fiber0X[-1], fiberX[-1]))
+            xmin = np.max((fiber0Xs[0], fiberXs[0]))
+            xmax = np.min((fiber0Xs[-1], fiberXs[-1]))
 
             shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
             self.shifts.append(shift)
