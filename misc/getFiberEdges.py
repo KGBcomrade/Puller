@@ -10,7 +10,8 @@ def find_fiber(edges, **args):
     num = np.tile(np.linspace(0, 1, y), (x, 1)).T
     edges = edges > 0
     s = np.sum(edges, axis=0)
-    m = np.sum(edges * num, axis=0) / s
+    s[s==0] = 1
+    m = np.sum(edges * num, axis=0)
     st = np.sqrt(np.sum(edges * (num - m)**2, axis=0) / s)
     std = np.nanmedian(st)
     X = np.linspace(0, 1, x)
