@@ -129,7 +129,7 @@ def getFiberEdges(im, lbound=None, ubound=None, leftbound=None, rbound=None):
     mas = cuts(rotated, 30)
     wf = window_fit(mas, 0)
     wf.calc_grad(150)
-    wf.find_edge(0.3, 0.1, .6)
+    wf.find_edge(0.3, 0.3, .6)
 
     X = np.linspace(0, 1, wf.boards.shape[0])
 
