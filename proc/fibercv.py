@@ -9,8 +9,8 @@ import cv2
 #crop params
 lboundS = 20
 uboundS = 160
-lboundT = 20
-uboundT = 180
+lboundT = 135
+uboundT = -20
 
 class FiberCV(QRunnable):
     def __init__(self, Kp, Ki=0, Kd=0, delay=1):
@@ -54,7 +54,7 @@ class FiberCV(QRunnable):
             photoTop = self.camTop.getPhoto()
             try:
                 fiberXs, fiberYs = getFiberInterp(photoSide, lboundS, uboundS, scale=self.camSide.scale)
-                fiberXt, fiberYt = getFiberInterp(photoTop, lboundS, -lboundS, scale=self.camTop.scale)
+                fiberXt, fiberYt = getFiberInterp(photoTop, lboundT, uboundT, scale=self.camTop.scale)
             except IndexError:
                 print('Error')
             except cv2.error:
