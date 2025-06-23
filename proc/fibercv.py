@@ -45,7 +45,8 @@ class FiberCV(QRunnable):
                 print('cv2 Error')
                 photo0Flag = False
         
-        fiber0 = interp1d(fiber0Xs, np.sqrt(fiber0Ys ** 2 + fiber0Yt ** 2))
+        fiber0S = interp1d(fiber0Xs, fiber0Ys)
+        fiber0T = interp1d(fiber0Xt, fiber0Yt)
         t0 = time.time()
         while not self.stopFlag:
             time.sleep(self.delay)
@@ -59,12 +60,14 @@ class FiberCV(QRunnable):
                 print('Error')
             except cv2.error:
                 print('cv2 Error')
-            fiber = interp1d(fiberXs, np.sqrt(fiberYs ** 2 + fiberYt ** 2))
 
-            xmin = np.max((fiber0Xs[0], fiberXs[0]))
-            xmax = np.min((fiber0Xs[-1], fiberXs[-1]))
+            fiberS = interp1d(fiberXs, fiberYs)
+            fiberT = interp1d(fiberXt, fiberYt)
 
-            shift = np.sqrt(fixed_quad(lambda x: (fiber0(x) - fiber(x)) ** 2, xmin, xmax)[0])
+            xmin = np.max((fiber0Xs[0], fiber0Xt[0], fiberXs[0], fiberXt[0]))
+            xmax = np.min((fiber0Xs[-1], fiber0Xt[-1], fiberXs[-1], fiberXt[-1]))
+
+            shift = np.sqrt(fixed_quad(lambda x: (fiber0S(x) - fiberS(x)) ** 2 + (fiber0T(x) - fiberT(x)) ** 2, xmin, xmax)[0])
             self.shifts.append(shift)
             self.t.append(time.time() - t0)
             self.I += shift * (self.t[-1] - 
