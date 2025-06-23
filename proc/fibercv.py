@@ -45,7 +45,8 @@ class FiberCV(QRunnable):
                 photo0Flag = False
         
         fiber0S = interp1d(fiber0Xs, fiber0Ys)
-        fiber0T = interp1d(fiber0Xt, fiber0Yt)
+        fiber0T1 = interp1d(fiber0Xt, fiber0Yt)
+        fiber0T = lambda x: np.sqrt(2) * fiber0T1(x) - fiber0S(x)
         t0 = time.time()
         while not self.stopFlag:
             time.sleep(self.delay)
@@ -61,7 +62,8 @@ class FiberCV(QRunnable):
                 print('cv2 Error')
 
             fiberS = interp1d(fiberXs, fiberYs)
-            fiberT = interp1d(fiberXt, fiberYt)
+            fiberT1 = interp1d(fiberXt, fiberYt)
+            fiberT = lambda x: np.sqrt(2) * fiberT1(x) - fiberS(x)
 
             xmin = np.max((fiber0Xs[0], fiber0Xt[0], fiberXs[0], fiberXt[0]))
             xmax = np.min((fiber0Xs[-1], fiber0Xt[-1], fiberXs[-1], fiberXt[-1]))
