@@ -66,7 +66,7 @@ class FiberCV(QRunnable):
             xmin = np.max((fiber0Xs[0], fiber0Xt[0], fiberXs[0], fiberXt[0]))
             xmax = np.min((fiber0Xs[-1], fiber0Xt[-1], fiberXs[-1], fiberXt[-1]))
 
-            shift = np.sqrt(fixed_quad(lambda x: (fiber0S(x) - fiberS(x)) ** 2 + (fiber0T(x) - fiberT(x)) ** 2, xmin, xmax)[0])
+            shift = np.sqrt(fixed_quad(lambda x: (fiber0S(x) - fiberS(x)) ** 2 + (fiber0T(x) - fiberT(x)) ** 2, xmin, xmax)[0] / (xmax - xmin))
             self.shifts.append(shift)
             self.t.append(time.time() - t0)
             self.I += shift * (self.t[-1] - 
