@@ -29,7 +29,6 @@ class FiberCV(QRunnable):
         self.Kd = Kd
     
     def run(self):
-        time.sleep(3)
         photo0Flag = False
         while not photo0Flag:
             photoSide = self.camSide.getPhoto()
