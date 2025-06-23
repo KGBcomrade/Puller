@@ -113,7 +113,7 @@ class window_fit():
 def getFiberEdges(im, lbound=None, ubound=None, leftbound=None, rbound=None):
     y, x = im.shape
     coef = 1
-    thr = 200
+    thr = 150
     im4 = cv2.resize(im, dsize=(x // coef, y // coef))
     edges = cv2.Canny(im4, thr, thr * 2, L2gradient=True)
     if lbound is not None:
