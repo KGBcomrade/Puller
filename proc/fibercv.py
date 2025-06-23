@@ -36,8 +36,6 @@ class FiberCV(QRunnable):
             try:
                 fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lboundS, uboundS, scale=self.camSide.scale)
                 fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lboundT, uboundT, scale=self.camTop.scale)
-                fiber0Xs, fiber0Ys = getFiberInterp(photoSide, lboundS, uboundS, scale=self.camSide.scale)
-                fiber0Xt, fiber0Yt = getFiberInterp(photoTop, lboundT, uboundT, scale=self.camTop.scale)
                 photo0Flag = True
             except IndexError:
                 print('Error')
