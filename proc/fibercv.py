@@ -9,7 +9,7 @@ import cv2
 #crop params
 lboundS = 20
 uboundS = 160
-lboundT = 135
+lboundT = 125
 uboundT = -20
 
 class FiberCV(QRunnable):
