@@ -1,5 +1,5 @@
 {
-    "last": "Period1",
+    "last": "NanoLim",
     "settings": {
         "Sensor": {
             "omegaType": "theta",
@@ -119,7 +119,7 @@
             "omegaType": "nano",
             "k": 0.01,
             "omega": 6.2,
-            "x": 25.0,
+            "x": 22.5,
             "L0": 1.6,
             "alpha": 0.01,
             "r0": 62.5,
