@@ -113,6 +113,17 @@ class DDS220M(Motor):
                     if abs(ort - y) < tolerance:
                         break
 
+    def waitForStopS(self, y, tolerance=.2):
+        while True:
+            self.drive.write(b'\x92\x04\x00\x00\x21\x01')      # ich bin da
+            time.sleep(0.02)
+            w1 = (self.drive.read(nchars = (self.drive.getStatus())[0]))
+            if len(w1) >= 12:
+                if w1[0:2] == b'\x91\x04':
+                    ort = (int(w1[8]) + 16**2 * int(w1[9]) + 16**4 * int(w1[10]) + 16**6 * int(w1[11]))/20000
+                    if abs(ort - y) < tolerance:
+                        break
+
 
     async def home(self, interval=.1, lock=True):
         self.drive.write(com('\\x43\\x04\\x01\\x00\\x21\\x01')) # MOVE_HOME
