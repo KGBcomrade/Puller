@@ -31,7 +31,6 @@ def getLxAdiab(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     def Map(fun, x):
         return np.array(list(map(fun, x)))
 
-    lw = lw - Ltorch
     Theta = interp1d(radius, omegas, kind='cubic')
     r = np.arange(rw, r0, dr)
     rMin = radius.min()
@@ -45,6 +44,7 @@ def getLxAdiab(radius, omegas, r0=62.5, Ltorch=0.49, lw=30, rw=20, dr=.1):
     x = np.append(x, -0.1)
     r = np.append(r, r[-1])
     L = np.append(L, L[-1])
+    L -= Ltorch
     R_x = interp1d(x, r, kind='cubic')
     L_x = interp1d(x, L, kind='cubic')
     xMax = x[0]
