@@ -10,7 +10,7 @@ from misc import getFiberEdges
 from .canvas import Canvas
 
 # CV params
-dvr_address = 'http://10.201.2.118'
+dvr_address = 'http://10.201.3.195'
 dvr_port = 8090
 top_oid = 3
 side_oid = 4
