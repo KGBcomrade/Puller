@@ -25,7 +25,7 @@ class SetupWindow(QDialog):
         self.kInput.setValue(self.settings.k)
         self.omegaInput = QDoubleSpinBox(prefix='Ω=', suffix='мрад')
         self.omegaInput.setMinimum(.01)
-        self.omegaInput.setMaximum(100)
+        self.omegaInput.setMaximum(500)
         self.omegaInput.setValue(self.settings.omega)
         self.xInput = QDoubleSpinBox(prefix='x=', suffix='мм')
         self.xInput.setMinimum(0.1)
