@@ -305,7 +305,7 @@ class Proc:
         Lx, Rx, xMax, _, _ = getLx(settings)
         self.Ls = settings.Ls
 
-        mainMotorRunnable = MainMotorRunner(self.mainMotor, self.mainMotorStartPos, Lx, settings.Ls, self._getX, xMax)
+        mainMotorRunnable = MainMotorRunner(self.mainMotor, self.mainMotorStartPos + settings.Ls0, Lx, settings.Ls, self._getX, xMax)
         self.threadPool.start(mainMotorRunnable)
         ppTask = asyncio.create_task(self._delayedPPStart(0))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки

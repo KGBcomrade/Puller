@@ -8,6 +8,7 @@ _defaultSetting = {
     'omega': 6.2,
     'x': 12,
     'L0': 2,
+    'Ls0': 0,
     'Ls': 0,
     'alpha': -0.01,
     'r0': 62.5,
