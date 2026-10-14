@@ -8,6 +8,7 @@ _defaultSetting = {
     'omega': 6.2,
     'x': 12,
     'L0': 2,
+    'Ls': 0,
     'alpha': -0.01,
     'r0': 62.5,
     'rw': 25,
@@ -39,7 +40,8 @@ class SettingsLoader:
                     'default': _defaultSetting
                     }}
         self.last = s['last']
-        self.s = s['settings']
+        
+        self.s = {name: {k: setting.get(k, _defaultSetting[k]) for k in _defaultSetting} for name, setting in s['settings'].items()}
 
     def getLast(self) -> Settings:
         return Settings(**self.s[self.last])

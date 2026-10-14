@@ -23,11 +23,12 @@ fixMotorDelay = 12.3
 plotDelay = 0.25
 
 class MainMotorRunner(QRunnable):
-    def __init__(self, mainMotor, startPos, L, getX, xMax):
+    def __init__(self, mainMotor, startPos, L, Ls, getX, xMax):
         super().__init__()
         self.mainMotor = mainMotor
         self.startPos = startPos
         self.L = L
+        self.Ls = Ls
         self.getX = getX
         self.xMax = xMax
 
@@ -39,7 +40,7 @@ class MainMotorRunner(QRunnable):
             x = self.getX()
             if x >= self.xMax:
                 x = self.xMax
-            yTarget = self.L(x) / 2 * turn + self.startPos
+            yTarget = self.L(x) / 2 * turn + self.startPos + x * self.Ls
             self.mainMotor.moveToS(yTarget, lock=False)
             self.mainMotor.waitForStopS(yTarget)
             turn *= -1
@@ -302,8 +303,9 @@ class Proc:
 
     async def run(self, win, settings: Settings):
         Lx, Rx, xMax, _, _ = getLx(settings)
+        self.Ls = settings.Ls
 
-        mainMotorRunnable = MainMotorRunner(self.mainMotor, self.mainMotorStartPos, Lx, self._getX, xMax)
+        mainMotorRunnable = MainMotorRunner(self.mainMotor, self.mainMotorStartPos, Lx, settings.Ls, self._getX, xMax)
         self.threadPool.start(mainMotorRunnable)
         ppTask = asyncio.create_task(self._delayedPPStart(0))
         await self.burnerMotor.moveTo(self.burnerMotorWorkPos) # Подвод горелки

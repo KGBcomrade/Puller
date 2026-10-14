@@ -35,6 +35,10 @@ class SetupWindow(QDialog):
         self.L0Input.setMinimum(0)
         self.L0Input.setMaximum(10)
         self.L0Input.setValue(self.settings.L0)
+        self.LsInput = QDoubleSpinBox(prefix='Ls=', suffix='мм')
+        self.LsInput.setMinimum(-1/2)
+        self.LsInput.setMaximum(1/2)
+        self.LsInput.setValue(self.settings.Ls)
         self.alphaInput = QDoubleSpinBox(prefix='α=')
         self.alphaInput.setMinimum(-1)
         self.alphaInput.setMaximum(1)
@@ -63,6 +67,7 @@ class SetupWindow(QDialog):
         inputsLayout.addWidget(self.omegaInput)
         inputsLayout.addWidget(self.xInput)
         inputsLayout.addWidget(self.L0Input)
+        inputsLayout.addWidget(self.LsInput)
         inputsLayout.addWidget(self.alphaInput)
         inputsLayout.addWidget(self.r0Input)
         inputsLayout.addWidget(self.rwInput)
@@ -83,6 +88,7 @@ class SetupWindow(QDialog):
         self.omegaInput.valueChanged.connect(self.updateOmega)
         self.xInput.valueChanged.connect(self.updateX)
         self.L0Input.valueChanged.connect(self.updateL0)
+        self.LsInput.valueChanged.connect(self.updateLs)
         self.alphaInput.valueChanged.connect(self.updateAlpha)
         self.r0Input.valueChanged.connect(self.updateR0)
         self.rwInput.valueChanged.connect(self.updateRw)
@@ -94,12 +100,12 @@ class SetupWindow(QDialog):
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
-        self.altInputs = [self.kInput, self.omegaInput, self.xInput, self.L0Input, self.alphaInput, self.lwInput, self.rwInput, self.drInput]
+        self.altInputs = [self.kInput, self.omegaInput, self.xInput, self.L0Input, self.LsInput, self.alphaInput, self.lwInput, self.rwInput, self.drInput]
         self.altInputsMap = {
-            'theta': [self.kInput, self.lwInput, self.rwInput, self.drInput],
-            'theta405': [self.kInput, self.lwInput, self.rwInput, self.drInput],
-            'const': [self.omegaInput, self.lwInput, self.rwInput, self.drInput],
-            'nano': [self.xInput, self.L0Input, self.alphaInput]
+            'theta': [self.kInput, self.lwInput, self.LsInput, self.rwInput, self.drInput],
+            'theta405': [self.kInput, self.lwInput, self.LsInput, self.rwInput, self.drInput],
+            'const': [self.omegaInput, self.lwInput, self.LsInput, self.rwInput, self.drInput],
+            'nano': [self.xInput, self.L0Input, self.LsInput, self.alphaInput]
         }
 
         self.updatePlots()
@@ -132,6 +138,9 @@ class SetupWindow(QDialog):
         self.updatePlots()
     def updateL0(self, L0):
         self.settings.L0 = L0
+        self.updatePlots()
+    def updateLs(self, Ls):
+        self.settings.Ls = Ls
         self.updatePlots()
     def updateAlpha(self, alpha):
         self.settings.alpha = alpha
